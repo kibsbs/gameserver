@@ -1,0 +1,7 @@
+[{
+	"name": "wii-ws2",
+	"script": "app.js",
+	"args": ["--service wii-ws2"],
+	"instances": 1,
+	"exec_mode": "fork"
+}]
