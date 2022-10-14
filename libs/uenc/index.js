@@ -6,8 +6,8 @@ class Serializer {
         return require("./client")(req, res, next)
     }
 
-    serialize(data = {}) {
-        return Object.entries(data).map(([k, v]) => `${k}=${v}`).join("&")
+    serialize(data = {}, joinBy = "&") {
+        return Object.entries(data).map(([k, v]) => `${k}=${v}`).join(joinBy)
     }
 
     serializeWdf(data = [], index = false, indexOffset = 0) {

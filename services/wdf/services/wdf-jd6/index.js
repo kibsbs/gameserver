@@ -7,7 +7,6 @@ module.exports = {
     version: `1.0.0`,
 
     async init(app, router, config) {
-
         
         global.logger = require("logger")(["WDF", config.serviceName])
 
@@ -20,8 +19,8 @@ module.exports = {
          */
 
         const functions = global.config.functions
-        
-        logger.info(`Running functions: ${functions.join(", ")}`)
+        logger.info(`Running functions: ${Object.keys(functions).join(", ")}`)
+
         router.post("/", require("schema-validator"), async (req, res, next) => {
             
             let funcName = req.query.d
@@ -32,14 +31,17 @@ module.exports = {
             let isJson = req.query.json ? true : false
             if (req.query.json === "") isJson = true
 
-            if (!fs.existsSync(funcPath))
+            if (!functions[funcName] || !fs.existsSync(funcPath))
                 return next({
                     status: 404,
                     message: `${funcName} is not an existing function, try again later.`
                 });
             
+            let funcObj = functions[funcName]
+            
             req.isJson = isJson
             req.serviceName = "wdfjd6"
+            req.methodId = funcObj.id
 
             // If requested func requires a token make sure we assign every necessary thing to req
             if (req.body.token) {
@@ -48,6 +50,7 @@ module.exports = {
                 req.sessionId = req.body.token.sid
                 req.gameId = req.body.token.gid
                 req.game = await games.getById(req.gameId)
+                req.version = req.game.version
             }
 
             await require(funcPath).init(req, res, next)

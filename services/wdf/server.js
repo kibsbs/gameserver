@@ -13,6 +13,9 @@ const fs = require("fs");
 
 const app = express();
 
+app.set("etag", false);
+app.disable("x-powered-by");
+
 // ---------------------------
 // Load all services
 const services = {
@@ -44,7 +47,7 @@ for (var serviceName in services) {
     })
 
     // To make access serialization while sending responses easier
-    // We use uenc's client that adds res.uenc and res.wdf for serialized respones
+    // We use uenc"s client that adds res.uenc and res.wdf for serialized respones
     app.use(require("uenc").client)
     
     app.use(urlPrefix, serviceRouter)

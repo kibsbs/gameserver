@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const uuid = require("uuid")
 
-const countries = require("countries")
-
 const Schema = new mongoose.Schema({
     sessionId: {
         type: Number,
@@ -26,4 +24,4 @@ const Schema = new mongoose.Schema({
     { timestamps: true, versionKey: false }
 );
 
-module.exports = mongoose.model("WDFSession", Schema);
+module.exports = mongoose.model("Session", Schema);

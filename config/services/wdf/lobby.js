@@ -1,3 +1,5 @@
 module.exports = {
-    maxPlayers: 8
+
+    maxSessions: 8 // Amount of max players allowed in lobby
+
 }

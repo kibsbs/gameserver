@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const uuid = require("uuid")
 
-const countries = require("countries")
-
 const Schema = new mongoose.Schema(
   {
     sessionId: {
@@ -53,4 +51,4 @@ const Schema = new mongoose.Schema(
   { timestamps: true, versionKey: false }
 );
 
-module.exports = mongoose.model("WDFScore", Schema);
+module.exports = mongoose.model("Score", Schema);

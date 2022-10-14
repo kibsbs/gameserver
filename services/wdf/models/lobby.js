@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const uuid = require("uuid")
 
-const countries = require("countries")
-
 const Schema = new mongoose.Schema(
   {
     lobbyId: {
@@ -11,16 +9,16 @@ const Schema = new mongoose.Schema(
       dropDups: true,
       default: uuid.v4()
     },
-    players: {
-      type: Array,
-      default: []
-    },
     version: {
       type: Number,
       required: true
+    },
+    sessions: {
+      type: Array,
+      default: []
     }
   },
   { timestamps: true, versionKey: false }
 );
 
-module.exports = mongoose.model("WDFLobby", Schema);
+module.exports = mongoose.model("Lobby", Schema);

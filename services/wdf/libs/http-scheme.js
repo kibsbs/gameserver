@@ -59,7 +59,7 @@ const httpSchema = {
 
     disconnectFromWDF: {
         body: {
-            sid,
+            sid: sid.optional(),
             token: token()
         }
     },
@@ -110,8 +110,8 @@ const httpSchema = {
         body: {
             nr_players: Joi.number()
                 .min(1)
-                .max(global.config.lobby.maxPlayers)
-                .default(global.config.lobby.maxPlayers)
+                .max(global.config.lobby.maxSessions)
+                .default(global.config.lobby.maxSessions)
                 .required(),
             player_sid: sid,
             sid_list,

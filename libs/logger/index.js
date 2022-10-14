@@ -76,6 +76,6 @@ class Logger {
 	}
 }
 
-module.exports = function(serviceName, root) {
-	return new Logger(serviceName, root)
+module.exports = function(services, root) {
+	return new Logger(services, root)
 };

@@ -67,7 +67,7 @@ module.exports = {
         name: "Just Dance 2017",
         region: "PAL",
         version: 2017,
-        isAvailable: false,
+        isAvailable: true,
         stats: {
             stars: 275,
             songsPlayed: 55,

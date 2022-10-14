@@ -29,7 +29,7 @@ program
     .description("Initiate DanceParty GS services")
     .version(project.version)
     .option("-s, --service <serviceName>", "service name to initiate")
-    .option("-e, --env <envName>", "enviroment for the service", "DEV")
+    .option("-e, --env <envName>", "enviroment for the service", "LOCAL")
 
 if (process.argv.length < 3) program.help() // If no argument given show help
 
@@ -47,10 +47,9 @@ if (!config.services[serviceName]) {
 
 const srvConfig = require(`./config/services/${serviceName}`) // Load service's config
 const srvPath = __dirname + config.services[serviceName].path
-const srvEnv = serviceEnv || "DEV"
 const srvAliases = path.resolve(srvPath, "..", "aliases.js")
 
-global.ENV = srvEnv
+global.ENV = serviceEnv || "LOCAL"
 global.config = srvConfig
 global.clients = {}
 global.service = {
