@@ -132,13 +132,15 @@ const httpSchema = {
     },
 
     getPlayerScores: {
-        body: {
+        body: Joi.object({
             event: Joi.string().allow("").required(),
             sid,
-            sid_list,
-            send_score: Joi.number().min(0).max(1).optional(),
+            sid_list: Joi.string()
+                .allow("")
+                .default("")
+                .optional(),
             token: token()
-        }
+        }).unknown(true)
     },
 
     sendVote: {

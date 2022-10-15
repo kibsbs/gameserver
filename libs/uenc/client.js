@@ -3,6 +3,7 @@ module.exports = function(req, res, next) {
 
     res.uenc = function(msg) {
         
+        if (!msg) msg = {}
         if (req.isJson) return res.json(msg)
         else {
             if (req.methodId) {

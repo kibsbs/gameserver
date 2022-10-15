@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const uuid = require("uuid")
 
-const Schema = new mongoose.Schema(
-  {
+const Schema = new mongoose.Schema({
     lobbyId: {
       type: String,
       unique: true,

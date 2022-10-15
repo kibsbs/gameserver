@@ -50,7 +50,7 @@ class Session {
         // Make sure to make sid leave any previous lobbies they were in
         const prevLobby = await this.db.findOne({ version, sessions: sessionId })
         if (prevLobby) {
-            global.logger.info(`${sessionId} is already in a lobby, leaving ${prevLobby.lobbyId}`)
+            // global.logger.info(`${sessionId} is already in a lobby, leaving ${prevLobby.lobbyId}`)
             await this.leave(sessionId, version)
         }
 
@@ -89,7 +89,7 @@ class Session {
 
         // No available lobby found we can create a new one
         if (!lobby) {
-            global.logger.info("No lobby found, creating a new one!")
+            // global.logger.info("No lobby found, creating a new one!")
             
             const newLobby = await this.new({ version })
             return newLobby
@@ -97,7 +97,7 @@ class Session {
 
         // A lobby was found return it
         else {
-            global.logger.info("Existing lobby found! " + lobby.lobbyId)
+            // global.logger.info("Existing lobby found! " + lobby.lobbyId)
             return lobby
         }
 

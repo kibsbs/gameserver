@@ -40,6 +40,10 @@ class Scores {
         return await this.db.findOneAndDelete(query)
     }
 
+    async getRanks(version, sessionId) {
+        return await this.db.find({ version }).sort({ totalScore: -1 })
+    }
+
 }
 
 module.exports = new Scores();

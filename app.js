@@ -1,4 +1,3 @@
-
 // -------------------------------
 // Register all library aliases
 const moduleAlias = require("module-alias")
@@ -45,20 +44,19 @@ if (!config.services[serviceName]) {
     )
 }
 
-const srvConfig = require(`./config/services/${serviceName}`) // Load service's config
 const srvPath = __dirname + config.services[serviceName].path
 const srvAliases = path.resolve(srvPath, "..", "aliases.js")
 
-global.ENV = serviceEnv || "LOCAL"
-global.config = srvConfig
+logger.info(`Initiating service "${serviceName}"`)
+
+global.ENV = serviceEnv.toLowerCase() || "local"
+global.config = require(`./config/services/${serviceName}`) // Load service's config
 global.clients = {}
 global.service = {
     name: serviceName
 }
 
-logger.info(`Initiating service "${serviceName}"`)
-
-// Each service will have it's own clients and required config keys.
+// Each service will have it's own clients and required config keys 
 // 1. Push all clients the service needs to "clients" array
 // 2. Push all required keys that are meant to be in the service's config
 let clients = [];
@@ -77,16 +75,16 @@ switch(serviceName) {
 
 }
 
-// Check if the required keys are actually in the service config
-// If at least one isn't, the process will stop
+// Check if the required keys are in the service config
+// If at least one isn't the process will stop
 let reqKeys = ["database", "redis"];
 reqKeys.forEach((key) => {
-	if (!srvConfig.hasOwnProperty(key)) {
+	if (!global.config.hasOwnProperty(key)) {
 		throw new Error(`ConfigException: Required key "${key}" is missing from ${serviceName} config.`);
 	}
 });
 
-// Register service's aliases if they exist.
+// Register service's aliases if they exist
 if (fs.existsSync(srvAliases)) {
     moduleAlias.addAliases(require(srvAliases)(path.dirname(srvAliases)))
 }
@@ -106,7 +104,7 @@ async.auto({
     redisClient: function(callback) {
 		if (!clients.includes("redisClient")) return callback();
 
-        require('./clients/redis-client')(srvConfig, (err, client) => {
+        require('./clients/redis-client')(global.config, (err, client) => {
             if (err) return callback(err.toString());
 			global.redisClient = client;
 			return callback();
@@ -116,7 +114,7 @@ async.auto({
     dbClient: function(callback) {
 		if (!clients.includes("dbClient")) return callback();
 
-        require('./clients/db-client')(srvConfig, (err, connected) => {
+        require('./clients/db-client')(global.config, (err, connected) => {
             if (err) return callback(err.toString());
 			return callback();
         });

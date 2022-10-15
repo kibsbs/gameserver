@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
 const uuid = require("uuid")
 
-const Schema = new mongoose.Schema(
-  {
+const Schema = new mongoose.Schema({
     sessionId: {
       type: Number,
       required: true
@@ -23,10 +22,6 @@ const Schema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    onlineScore: {
-      type: Number,
-      required: true
-    },
     score: {
       type: Number,
       required: true
@@ -43,7 +38,7 @@ const Schema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    profile: {
+    player: {
       type: Object,
       required: true
     }

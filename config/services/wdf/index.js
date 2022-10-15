@@ -8,15 +8,8 @@ module.exports = {
 
     maxScore: 13333,
 
-    database: {
-        path: `mongodb://localhost:27017`,
-        db: `dp-wdf`
-    },
-    redis: {
-        host: "185.225.232.253",
-        port: 6379,
-        db: 0
-    },
+    database: require("./database")[global.ENV],
+    redis: require("./redis")[global.ENV],
 
     constants: require("./constants"),
     secrets: require("./secrets"),
@@ -24,6 +17,7 @@ module.exports = {
     lobby: require("./lobby"),
     functions: require("./functions"),
 
-    games: require("../../games")
+    games: require("../../games"),
 
+    ...require("./envs")[global.ENV]
 }

@@ -4,7 +4,7 @@ const session = require("jd-session")
 
 module.exports = {
 
-    name: `getServerTime`,
+    name: `getRandomPlayers`,
     description: ``,
     version: `1.0.0`,
 
@@ -12,18 +12,11 @@ module.exports = {
 
         const { nr_players, player_sid, sid_list } = req.body
 
-        // Get all sessions from requester's game excluding requester's session
-        session.db.aggregate([
-            {
-                $match: { sessionId: { $ne: req.sessionId }}
-            },
-            { 
-                $sample: { 
-                    size: nr_players 
-                } 
-            }
-        ], async function (err, sessions) {
-            
+        // Get sessions of client's lobby players excluding client
+        session.db.find({
+            sessionId: { $ne: req.sessionId },
+            lobbyId: req.lobbyId
+        }, async function (err, sessions) {
             if (err) {
                 return next({
                     status: 500,

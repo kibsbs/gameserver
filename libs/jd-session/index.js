@@ -44,6 +44,13 @@ class Session {
         return await this.db.findOneAndDelete(query)
     }
 
+    async count(version, sessionId) {
+        return await this.db.count({
+            version,
+            sessionId: { $ne: sessionId }
+        })
+    }
+
 }
 
 module.exports = new Session();

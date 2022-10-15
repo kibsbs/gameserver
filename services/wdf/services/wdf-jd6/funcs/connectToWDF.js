@@ -15,7 +15,7 @@ module.exports = {
 
         if (await session.exists({ sessionId: req.sessionId })) {
             await session.delete({ sessionId: req.sessionId })
-            global.logger.info(`${req.sessionId} ${name} already had a previous session, removing their session...`)
+            // global.logger.info(`${req.sessionId} ${name} already had a previous session, removing their session...`)
         }
 
         // Get amount of players from player's country by gameId
@@ -37,7 +37,7 @@ module.exports = {
                     country: pays
                 }
             });
-            global.logger.success(`${name} connected to WDF of ${req.gameId} and joined lobby ${playerLobby.lobbyId}`)
+            global.logger.success(`${name} connected WDF of ${req.gameId} and joined lobby ${playerLobby.lobbyId}`)
             return res.uenc({
                 sid: req.sessionId,
                 players_in_country: playersInCountry,

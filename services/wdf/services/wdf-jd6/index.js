@@ -8,7 +8,7 @@ module.exports = {
 
     async init(app, router, config) {
         
-        global.logger = require("logger")(["WDF", config.serviceName])
+        global.logger = require("logger")(["WDF"])
         
         const session = require("jd-session")
         const query = require("query-middleware")
@@ -17,7 +17,7 @@ module.exports = {
 
         router.get("/", (req, res, next) => {
             return res.send({
-                functions
+                functions: global.config.functions
             })
         })
 

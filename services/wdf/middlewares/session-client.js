@@ -25,6 +25,7 @@ module.exports = async (req, res, next) => {
 
         req.session = result
         req.player = result.player
+        req.lobbyId = result.lobbyId
         return next();
     }
 

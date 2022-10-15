@@ -27,7 +27,7 @@ class Serializer {
         return obj
     }
 
-    setIndex(data = [ data ], seperator = "", indexOffset = 0) {
+    setIndex(data = [ data ], indexOffset = 0, seperator = "") {
         let result = {}
         data.forEach((obj, i) => {
             i += indexOffset
