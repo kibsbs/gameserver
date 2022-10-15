@@ -10,7 +10,7 @@ class Games {
         return require("./client")(req, res, next)
     }
 
-    async getById(gameId) {
+    getById(gameId) {
         return this.games[gameId]
     }
 

@@ -11,6 +11,6 @@ module.exports = {
             return res.status(403).send()
             
         global.logger.info(`${req.userId} user connected from ${req.game.name} ${req.game.region}!`)
-        return res.status(200).uenc()
+        return res.uenc()
     }
 }

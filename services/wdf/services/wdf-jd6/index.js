@@ -9,51 +9,45 @@ module.exports = {
     async init(app, router, config) {
         
         global.logger = require("logger")(["WDF", config.serviceName])
+        
+        const session = require("jd-session")
+        const query = require("query-middleware")
 
-        const games = require("jd-games")
+        logger.info(`Running functions: ${Object.keys(global.config.functions).join(", ")}`)
+
+        router.get("/", (req, res, next) => {
+            return res.send({
+                functions
+            })
+        })
 
         /**
          * Main route
          * 
          * The game will do POST connects under /wdfjd6/?d=example to get traffic of WDF
          */
+        router.post("/",  
+            require("schema-validator"),
+            require("wdf-middleware")("wdfjd6", __dirname),
+            require("session-client"),
+        async (req, res, next) => {
+            return await require(req.funcPath).init(req, res, next)
+        });
 
-        const functions = global.config.functions
-        logger.info(`Running functions: ${Object.keys(functions).join(", ")}`)
+        router.get("/lobbies", query(10), async (req, res) => {
+            return res.send(
+                await require("jd-lobby").db
+                .find({})
+                .limit(req.limit)
+            )
+        });
 
-        router.post("/", require("schema-validator"), async (req, res, next) => {
-            
-            let funcName = req.query.d
-            let funcPath = __dirname + "/funcs/" + funcName + ".js"
-
-            // If query has "json" it means response must be json
-            // even if json query is empty make it true
-            let isJson = req.query.json ? true : false
-            if (req.query.json === "") isJson = true
-
-            if (!functions[funcName] || !fs.existsSync(funcPath))
-                return next({
-                    status: 404,
-                    message: `${funcName} is not an existing function, try again later.`
-                });
-            
-            let funcObj = functions[funcName]
-            
-            req.isJson = isJson
-            req.serviceName = "wdfjd6"
-            req.methodId = funcObj.id
-
-            // If requested func requires a token make sure we assign every necessary thing to req
-            if (req.body.token) {
-                req.ticket = req.body.token
-                req.userId = req.body.token.uid
-                req.sessionId = req.body.token.sid
-                req.gameId = req.body.token.gid
-                req.game = await games.getById(req.gameId)
-                req.version = req.game.version
-            }
-
-            await require(funcPath).init(req, res, next)
+        router.get("/sessions", query(10), async (req, res) => {
+            return res.send(
+                await require("jd-session").db
+                .find({})
+                .limit(req.limit)
+            )
         });
 
         router.get("/cmu/{id}", (req, res) => {

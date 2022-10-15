@@ -1,9 +1,13 @@
+const session = require("jd-session")
+
 module.exports = async (req, res, next) => {
 
-    const session = require("jd-session")
+    if (!req.funcData) return next(); // If theres no funcdata pass
+    if (!req.funcData.sessionRequired) return next(); // If there is funcdata but func doesnt need session check pass
 
     const sessionId = req.sessionId
     const version = req.version
+
     if (!sessionId || !version) return next({
         status: 400,
         message: `Session is required for this request.`
@@ -18,6 +22,9 @@ module.exports = async (req, res, next) => {
         message: `Got sessionId but no session was found.`
     })
     else {
+
+        req.session = result
+        req.player = result.player
         return next();
     }
 

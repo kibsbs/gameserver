@@ -12,7 +12,6 @@ module.exports = {
             sendscore_interval: global.config.timings.sendscore_interval / 1000
         }
 
-        if (req.isJson) res.json(data)
-        else res.uenc(data)
+        return res.uenc(data)
     }
 }

@@ -9,12 +9,12 @@ module.exports = function validateRequest(req, res, next) {
 	let func = req.query.d
 	if (!func) return next({
 		status: 400,
-		message: `Please provide a func!`
+		message: `Please provide a function!`
 	});
 
 	let schema = httpScheme[func];
+	let toValidate = {};
 
-	var toValidate = {};
 	if (!schema) {
 		return next();
 	}

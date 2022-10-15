@@ -11,13 +11,15 @@ module.exports = function(req, res, next) {
                     ...msg,
                     stat: 1
                 }
-                
+
                 res.type("text/html")
                 return res.send(uenc.serialize(msg, ";"))
             }
+            else {
+                res.type("application/x-www-form-urlencoded")
+                return res.send(uenc.serialize(msg))
+            }
             
-            res.type("application/x-www-form-urlencoded")
-            return res.send(uenc.serialize(msg))
         }
     }
 
