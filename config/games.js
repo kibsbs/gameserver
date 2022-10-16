@@ -41,14 +41,14 @@ module.exports = {
         name: "Just Dance 2016",
         region: "NTSC",
         version: 2016,
-        isAvailable: false,
+        isAvailable: true,
         service: "wdfjd6"
     },
     SJNP: {
         name: "Just Dance 2016",
         region: "PAL",
-        version: 2015,
-        isAvailable: false,
+        version: 2016,
+        isAvailable: true,
         service: "wdfjd6"
     },
     SZ7E: {

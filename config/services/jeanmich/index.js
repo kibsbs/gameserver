@@ -9,16 +9,18 @@ module.exports = {
     maxScore: 13333,
 
     database: {
-        path: `mongodb://localhost:27017`,
+        path: `mongodb://127.0.0.1:27017`,
         db: `dp-jeanmich`
     },
     redis: {
-        host: "185.225.232.253",
+        host: "127.0.0.1",
         port: 6379,
         db: 0
     },
 
     constants: require("./constants"),
     secrets: require("./secrets"),
+
+    games: require("../../games")
 
 }

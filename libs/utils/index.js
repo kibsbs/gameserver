@@ -10,11 +10,11 @@ class Utils {
         return ["dev", "local", "uat"].includes(global.ENV.toLowerCase())
     }
 
-    getServerTime() {
+    getServerTime(e = new Date().valueOf()) {
         
         // To make the server time exactly accurate along with the sniffs we use montreal's timezone
         // as base since original wdf servers were located in montreal
-        const date = new Date().valueOf();
+        const date = e;
         const regionalTime = new Date(date).toLocaleString("en-US", { timeZone: "America/Montreal", });
         const epoch = new Date(regionalTime).getTime() / 1000 + new Date(date).getMilliseconds().toString()
 

@@ -1,3 +1,4 @@
+const nasAuth = require("nas-auth-client")
 
 module.exports = {
 

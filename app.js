@@ -67,7 +67,7 @@ switch(serviceName) {
         clients.push("dbClient", "localization")
         break;
     case "wdf":
-        clients.push("dbClient", "localization")
+        clients.push("redisClient", "dbClient", "localization")
         break;
     case "wdf-2014":
         clients.push("redisClient", "dbClient", "localization")
