@@ -1,5 +1,8 @@
 const wdfUtils = require("wdf-utils")
 
+const playlistLib = require("jd-playlist")
+const session = require("jd-session")
+
 module.exports = {
 
     name: `checkToken`,
@@ -15,7 +18,6 @@ module.exports = {
         const gameVersion = req.game.version
 
         const playlist = new playlists(gameVersion)
-        const session = new sessions(gameVersion)
 
         const themes = playlist.getThemes()
         const durations = playlist.getDurations()

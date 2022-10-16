@@ -4,7 +4,7 @@ const config = global.config || require(`../../config/services/${global.service.
 const port = global.config.port
 
 const utils = require("utils")
-const logger = require("logger")("JeanMich")
+const logger = require("logger")(["JeanMich"])
 global.logger = logger
 
 const express = require("express");
