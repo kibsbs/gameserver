@@ -46,9 +46,22 @@ class Session {
 
     async count(version, sessionId) {
         return await this.db.count({
-            version,
-            sessionId: { $ne: sessionId }
+            version
         })
+    }
+
+    async updateOnlineScore(version, sessionId, newOnlineScore) {
+        const scoreDb = require("models/score")
+
+        await this.db.findOneAndUpdate({ version, sessionId }, {
+            "player.onlinescore": newOnlineScore
+        })
+
+        await scoreDb.findOneAndUpdate({ version, sessionId }, {
+            "player.onlinescore": newOnlineScore
+        })
+        
+        return newOnlineScore
     }
 
 }

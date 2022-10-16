@@ -31,7 +31,18 @@ module.exports = {
             require("wdf-middleware")("wdfjd6", __dirname),
             require("session-client"),
         async (req, res, next) => {
-            return await require(req.funcPath).init(req, res, next)
+
+            try {
+                return await require(req.funcPath).init(req, res, next)
+            }
+            catch(err) {
+                return next({
+                    status: 500,
+                    message: `Error occured: ${err}`,
+                    error: [err]
+                })
+            }
+            
         });
 
         router.get("/lobbies", query(10), async (req, res) => {

@@ -40,8 +40,16 @@ class Scores {
         return await this.db.findOneAndDelete(query)
     }
 
-    async getRanks(version, sessionId) {
-        return await this.db.find({ version }).sort({ totalScore: -1 })
+    async getRank(version, sessionId) {
+        const scores = await this.db.find({ version }).sort({ totalScore: -1 })
+        let rank = scores.findIndex(s => s.sessionId == sessionId)+1
+
+        if (!sessionId || !rank || rank == 0) return -1
+        else return rank
+    }
+
+    async getRanks(version, limit) {
+        return await this.db.find({ version }).sort({ totalScore: -1 }).limit(limit)
     }
 
 }

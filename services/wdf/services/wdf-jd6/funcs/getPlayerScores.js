@@ -15,11 +15,6 @@ module.exports = {
 
     async init(req, res, next) {
 
-        let result = {
-            num: 1,
-            t: utils.getServerTime(),
-            count: await session.count(req.version, req.sessionId)
-        }
         let send_score = req.body.send_score === "1" ? true : false
         let sids = 
                 req.body.sid_list.split(';')
@@ -34,17 +29,15 @@ module.exports = {
             })
         }
 
-        // Send score is false which means player is not sending any score
-        // Gets requested at the beginning of when client joins a lobby
-        if (!send_score) {
-            return res.uenc({
-                
-            });
+        let response = {
+            num: 1,
+            t: utils.getServerTime(),
+            count: await session.count(req.version)
         }
 
         // Client sends a score entry so register it to DB
         // and send lobby players scores excluding requester
-        else if (send_score) {
+        if (send_score) {
 
             // When send_score is true some required body keys must be provided
             const schema = Joi.object().keys({
@@ -89,8 +82,6 @@ module.exports = {
             Object.assign(req.body, value)
 
             const { coachindex, event, lastmove, score, stars, themeindex, total_score } = req.body
-            
-            
 
             // Upsert score of client to db (creates if doesnt exist, updates if exists)
             await scores.db.updateOne({
@@ -108,7 +99,26 @@ module.exports = {
                 totalScore: total_score,
                 player: req.player
             }, {  upsert: true  })
+
+            response = {
+                ...response,
+
+                score, // client score
+                rank: 0, // client rank
+
+                total: 0, // unknown?
+
+                // theme and coach star counts
+                theme0: 0,
+                theme1: 0,
+                coach0: 0,
+                coach1: 0,
+                coach2: 0,
+                coach3: 0
+            }
         }
+
+        // We get all ranks after client sends their score so that it's accurate
 
         let ranks = await scores.getRanks(req.version) // Get all scores by version
 
@@ -122,65 +132,48 @@ module.exports = {
             else return rank
         }
 
-        // Scores of sesionIds from sidlist
-        let lobbyScores = await scores.db.find({
-            sessionId: sids
-        });
+        // If any sid is given get each sids score and add them to response
+        if (sids.length > 0) {
+            // Scores of sesionIds from sidlist
+            let lobbyScores = await scores.db.find({
+                sessionId: sids
+            });
 
-        // Minify results of scores in lobby
-        let minified = [];
-        for (let s of lobbyScores) {
-            minified.push({
-                s: s.sessionId,
-                sc: s.totalScore,
-                r: getRank(s.sessionId),
-                e: s.event,
-                c: s.coachIndex,
-                o: s.player.onlinescore
-            })
-        }
-
-        // To make the game remove players who already left the lobby
-        // 1. loop all sids and check if each sid is in lobby
-        // 2. if one sid isnt in the lobby show its score as -1 and rank as 1
-        // this makes the game remove the player from players
-        sids.forEach(sid => {
-            const sidIsInLobby = lobbyScores.some(s => s.sessionId === sid)
-            if (!sidIsInLobby) {
+            // Minify results of scores in lobby
+            let minified = [];
+            for (let s of lobbyScores) {
                 minified.push({
-                    s: sid,
-                    sc: -1,
-                    r: 1
+                    s: s.sessionId,
+                    sc: s.totalScore,
+                    r: getRank(s.sessionId),
+                    e: s.event,
+                    c: s.coachIndex,
+                    o: s.player.onlinescore
                 })
             }
-        })
 
-        return res.uenc({
+            // To make the game remove players who already left the lobby
+            // 1. loop all sids and check if each sid is in lobby
+            // 2. if one sid isnt in the lobby show its score as -1 and rank as 1
+            // this makes the game remove the player from players
+            sids.forEach(sid => {
+                const sidIsInLobby = lobbyScores.some(s => s.sessionId === sid)
+                if (!sidIsInLobby) {
+                    minified.push({
+                        s: sid,
+                        sc: -1,
+                        r: 1
+                    })
+                }
+            })
+            response = {
+                ...uenc.setIndex(minified, 1, "_"), // score result
+                ...response,
+                num: minified.length + 1
+            }
+        }
 
-            ...uenc.setIndex(minified, 1, "_"), // score result
-
-            num: minified.length + 1, // amount of scores sent (plus the client)
-
-            t: utils.getServerTime(),
-
-            score, // client score
-            rank: getRank(req.sessionId), // client rank
-
-            count: await session.count(req.version, req.sessionId),
-            total: 0, // unknown?
-
-            // theme and coach star counts
-            theme0: 0,
-            theme1: 0,
-            coach0: 0,
-            coach1: 0,
-            coach2: 0,
-            coach3: 0
-
-        })
-
-
-
-
+        response.rank = getRank(req.sessionId)
+        return res.uenc(response)
     }
 }
