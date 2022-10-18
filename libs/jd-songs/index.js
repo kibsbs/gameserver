@@ -46,21 +46,32 @@ class Songs {
 
     async getMapLength(mapName) {
 
-        const songDesc = await this.getByMapName(mapName)
+        const songDesc = await this.getSongDesc(mapName)
         if (!songDesc) throw new Error(`Cannot find songDesc of ${mapName}`)
-
+    
         const musicTrackData = songDesc.musicTrackData
-
-        let finalEndBeat =
-            musicTrackData.markers[parseInt(musicTrackData.endBeat)] / 48;
-
-        // Some maps endBeat does not have a marker so we have to get the latest beat's marker
-        if (!finalEndBeat) finalEndBeat = musicTrackData.markers[musicTrackData.markers.length - 1] / 48;
-
-        let finalStartBeat =
-            musicTrackData.markers[parseInt(Math.abs(musicTrackData.startBeat))] / 48;
-
-        return parseInt(finalEndBeat + finalStartBeat);
+        const markers = musicTrackData.markers
+        
+        let startBeat = Math.abs(musicTrackData.startBeat)
+        let endBeat = musicTrackData.endBeat
+        
+        let startMarker = markers[startBeat]
+        let endMarker
+        
+        if (markers.indexOf(endBeat) === -1) {
+          let gap = markers[markers.length-1] - markers[markers.length-2]
+          let markersLength = markers.length-1
+          let amountToCalculate = endBeat - markersLength
+          let interpedSample = gap * amountToCalculate
+          endMarker = markers[markers.length-1] + interpedSample
+        }
+        else {
+          endMarker = markers[endBeat]
+        }
+    
+        let finalSongLength = (startMarker + endMarker)
+        return ((finalSongLength / 48000) * 1000)
+        
     }
 
 }
