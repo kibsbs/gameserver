@@ -11,6 +11,8 @@ module.exports = {
     database: require("./database")[global.ENV],
     redis: require("./redis")[global.ENV],
 
+    playlist: require("./playlist"),
+
     constants: require("./constants"),
     secrets: require("./secrets"),
     timings: require("./timings"),
