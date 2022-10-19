@@ -1,4 +1,4 @@
-const wdfUtils = require("wdf-utils")
+const utils = require("utils")
 
 const playlistLib = require("jd-playlist")
 const session = require("jd-session")
@@ -9,20 +9,21 @@ module.exports = {
     description: ``,
     version: `1.0.0`,
 
-    async init(req, res, next) {
+    async init(req, res, /* next */) {
 
         const { lang } = req.body
 
-        const timestamp = Date.now()
+        const now = Date.now()
 
-        const gameVersion = req.game.version
-
-        const playlist = new playlists(gameVersion)
+        const playlist = new playlistLib(req.version)
 
         const themes = playlist.getThemes()
         const durations = playlist.getDurations()
 
+        // Current and next song info
         const { current, next } = await playlist.getPlaylist()
+
+        // Current and next theme info
         const themeType = current.theme.themeType
         const nextThemeType = next.theme.themeType
 
@@ -53,8 +54,8 @@ module.exports = {
             start: current.start_song_time,
             end: current.stop_song_time,
 
-            pos: (Date.now() - current.start_song_time) / 1000,
-            left: (current.stop_song_time - Date.now()) / 1000,
+            pos: (now - current.start_song_time) / 1000,
+            left: (current.stop_song_time - now) / 1000,
 
             sessionToWorldResultTime: (durations.world_result_duration) / 1000,
             display_next_song_time: (durations.display_next_song_duration) / 1000,
@@ -97,18 +98,14 @@ module.exports = {
         }
 
         // Times to parse
-        const parsedTimes = [
-            "start", "end",
-            "requestPlaylistTime", "vote_end"
-        ]
-        parsedTimes.forEach(a => {
-            playlistData[a] = utils.getServerTime(playlistData[a])
+        ["start", "end", "requestPlaylistTime", "vote_end"].forEach(t => {
+            playlistData[t] = utils.getServerTime(playlistData[t])
         });
 
         return res.uenc({
             ...playlistData,
             count: await session.count(req.version),
-            t: utils.getServerTime()
+            t: utils.getServerTime(now)
         })
 
     }

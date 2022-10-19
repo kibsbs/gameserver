@@ -3,6 +3,7 @@ module.exports = function(dirName = __dirname) {
         "models/score": dirName + "/models/score.js",
         "models/session": dirName + "/models/session.js",
         "models/lobby": dirName + "/models/lobby.js",
+        "models/song": dirName + "/models/song.js",
         
         "wdf-utils": dirName + "/libs/wdf-utils.js",
         "http-scheme": dirName + "/libs/http-scheme.js",

@@ -36,6 +36,14 @@ class Songs {
         return await this.db.findOne({ uniqueSongId })
     }
 
+    async getRandomMap(filter = {}, size = 1) {
+        const result = await this.db.aggregate([
+          { $match: filter },
+          { $sample: { size } }
+        ])
+        return result[0] ? result[0] : {} 
+    }
+
     async exists(query = {}) {
         return await this.db.exists(query)
     }
@@ -44,9 +52,13 @@ class Songs {
         return await this.db.findOneAndDelete(query)
     }
 
+    /**
+     * @DEPRECATED
+     * @param {*} mapName 
+     * @returns 
+     */
     async getMapLength(mapName) {
-
-        const songDesc = await this.getSongDesc(mapName)
+        const songDesc = await this.getByMapName(mapName)
         if (!songDesc) throw new Error(`Cannot find songDesc of ${mapName}`)
     
         const musicTrackData = songDesc.musicTrackData
@@ -65,13 +77,10 @@ class Songs {
           let interpedSample = gap * amountToCalculate
           endMarker = markers[markers.length-1] + interpedSample
         }
-        else {
-          endMarker = markers[endBeat]
-        }
+        else endMarker = markers[endBeat]
     
         let finalSongLength = (startMarker + endMarker)
         return ((finalSongLength / 48000) * 1000)
-        
     }
 
 }

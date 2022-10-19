@@ -8,7 +8,7 @@ module.exports.local = {
 module.exports.prod = {
 
     jeanmich: {
-        url: "http://127.0.0.1:3000"
+        url: "https://jmcs-wii.danceparty.online"
     }
 
 }
@@ -22,7 +22,7 @@ module.exports.dev = {
 module.exports.qc = {
 
     jeanmich: {
-        url: "http://127.0.0.1:3000"
+        url: "https://jmcs-wii.danceparty.online"
     }
 
 }

@@ -32,7 +32,7 @@ module.exports = (serviceName, dirName) => {
         req.funcPath = funcPath
     
         // If requested func requires a token make sure we assign every necessary thing to req
-        if (req.body.token) {
+        if (funcData.tokenRequired && req.body.token) {
             req.ticket = req.body.token
             req.userId = req.body.token.uid
             req.sessionId = req.body.token.sid

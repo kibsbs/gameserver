@@ -1,27 +1,20 @@
-
 const songs = require("jd-songs");
-const score = require("jd-score");
+const score = require("jd-scores");
 
 class Playlist {
 
   constructor(version) {
     this.version = Number(version)
-    
-    this.communities = global.config.playlist.communities
-    this.durations = global.config.playlist.durations
-    this.themes = global.config.playlist.themes
 
     this.db = require("redis-helper")
+    
+    this.communities = global.config.playlist.communities
+    this.themes = global.config.playlist.themes
+    this.timings = global.config.playlist.timings
   }
-
-  getThemes() {
-    return this.themes
-  }
-
-  getDurations() {
-    return this.durations
-  }
-
+  
+  // ----------------------
+  // Redis Helper functions
   async getLastSong() {
     return await this.db.getLastSong(this.version)
   }
@@ -33,9 +26,19 @@ class Playlist {
   async getNextSong() {
     return await this.db.getNextSong(this.version)
   }
+  // ----------------------
+
+  getThemes() {
+    return this.themes
+  }
+
+  getDurations() {
+    return this.timings
+  }
 
   async getMapLength(mapName) {
-    return await this.songs.getMapLength(mapName);
+    let songdesc = await songs.get({ mapName });
+    return parseInt(songdesc.mapLength)
   }
 
   async isNext() {
@@ -45,33 +48,36 @@ class Playlist {
     else return false
   }
 
-  async getRandomMap(filter = {}) {
-    const map = await this.songs.getRandomMap(filter)
+  async getRandomMap(filter = {}, amount = 1) {
+    try {
+      let randomMap = await songs.getRandomMap({
+        ...filter,
+        jdVersion: this.version
+      }, amount)
 
-    return {
-      map,
-      mapName: map.mapName,
-      songId: map.songId,
-      mapLength: await this.getMapLength(map.mapName)
+      if (!randomMap) throw new Error(`Couldn't fetch random map for ${this.version}`)
+
+      return randomMap
+    }
+    catch(err) {
+      throw new Error(`Error occured while trying to get a random map: \n${err}`)
     }
   }
 
   async getRandomMaps(amount, filter = []) {
-    return await this.songs.getRandomMaps(amount, filter)
+    return await this.getRandomMap(filter, amount)
   }
 
   getRandomTheme() {
-    const id = Object.keys(this.themes)[Math.floor(Math.random() * Object.keys(this.themes).length)];
-
-    return {
-      themeType: Number(id),
-      ...this.themes[id]
-    };
+    let themes = this.themes.filter(t => t.isAvailable) // first filter themes that arent available
+    let randomTheme = themes[Math.floor(Math.random()*themes.length)]
+    return randomTheme;
   }
 
   getRandomCommunity() {
-    const result = this.communities.list[Math.floor(Math.random() * this.communities.list.length)];
-    return result
+    let cms = this.communities.list
+    let randomCm = cms[Math.floor(Math.random()*cms.length)]
+    return randomCm
   }
 
   async getScreenType() {
@@ -93,8 +99,9 @@ class Playlist {
 
   // Playlist queue logic
   async populateQueue() {
-    for (let count = await this.db.getQueueSize(this.version); count < 2; count++)
+    for (let count = await this.db.getQueueSize(this.version); count < 2; count++) {
       await this.db.pushSong(this.version, await this.createPlaylist(count));
+    }
   }
 
   async getPlaylist(update = true) {
@@ -107,9 +114,10 @@ class Playlist {
     }
     
     const current = await this.getCurrentSong();
+    const now = Date.now() / 1000
 
-    if (update && current && current.request_playlist_time < Date.now()) {
-      console.log("POPPED SONG", current, current.request_playlist_time, Date.now())
+    if (update && current && current.request_playlist_time < now) {
+      console.log("POPPED SONG", current, current.request_playlist_time, now)
       await this.db.popSong(this.version);
       await this.scores.eraseScores();
     }
@@ -126,8 +134,8 @@ class Playlist {
 
   async createPlaylist(count) {
 
-    const timestamp = Date.now()
-    const { themeType, themeName } = this.getRandomTheme()
+    const now = Date.now()
+    const { id: themeType, themeName } = this.getRandomTheme()
 
     let mapsFilter = {};
 
@@ -143,7 +151,7 @@ class Playlist {
         break;
     }
 
-    const { map, mapName, mapLength, songId } = await this.getRandomMap(mapsFilter)
+    const { map, mapName, mapLength, uniqueSongId } = await this.getRandomMap(mapsFilter)
     const latest = await this.getLastSong()
     
     const isNext = count == 1 ? true : false
@@ -157,36 +165,36 @@ class Playlist {
       newStepTime = latest.request_playlist_time
     }
     else {
-      newStepTime = timestamp
+      newStepTime = now
     }
 
     // Make sure that the newStepTime is bigger than the timestamp (can happen if the server sleeps for a while)
-    if (newStepTime < timestamp)
-      newStepTime = timestamp
+    if (newStepTime < now)
+      newStepTime = now
 
     // Compute presentation_start_time
     let presentation_start_time = newStepTime + this.computePreSongDuration(themeType)
 
     // Compute start_song_time
-    let start_song_time = presentation_start_time  + this.durations["presentation_duration"]
+    let start_song_time = presentation_start_time  + this.timings["presentation_duration"]
 
     // Compute stop_song_time
-    let stop_song_time = start_song_time + await this.getMapLength(songId)
+    let stop_song_time = start_song_time + await this.getMapLength(mapName)
 
     // Compute recap_start_time
-    let recap_start_time = stop_song_time + this.durations["waiting_recap_duration"]
+    let recap_start_time = stop_song_time + this.timings["waiting_recap_duration"]
             
     // Compute session_result_start_time
     let session_result_start_time = recap_start_time + this.computeThemeResultDuration(themeType)
     
     // Compute session_to_world_result_time
-    let session_to_world_result_time = session_result_start_time + this.durations["session_result_duration"]
+    let session_to_world_result_time = session_result_start_time + this.timings["session_result_duration"]
 
     // Compute world_result_stop_time
-    let world_result_stop_time = session_to_world_result_time + this.durations["world_result_duration"]
+    let world_result_stop_time = session_to_world_result_time + this.timings["world_result_duration"]
           
-    let merge_computation_time = session_to_world_result_time + this.durations["world_result_duration"] / 4
-    let merge_computation_duration_in_ms = this.durations["world_result_duration"] / 2
+    let merge_computation_time = session_to_world_result_time + this.timings["world_result_duration"] / 4
+    let merge_computation_duration_in_ms = this.timings["world_result_duration"] / 2
 
     let playlist_computation_time
     let last_vote_time
@@ -195,19 +203,19 @@ class Playlist {
 
     if (isNext && this.isThemeVote(themeType)) {
       // Compute last_vote_time
-      last_vote_time = world_result_stop_time + this.durations["vote_choice_duration"]
+      last_vote_time = world_result_stop_time + this.timings["vote_choice_duration"]
 
       // Playlist computation time
-      playlist_computation_time = last_vote_time + this.durations["vote_computation_delay"]
+      playlist_computation_time = last_vote_time + this.timings["vote_computation_delay"]
 
       // schedule an playlist update at the end of world recap
-      pre_compute_time = world_result_stop_time - this.durations["playlist_request_delay"] - this.durations["playlist_computation_delay"]
-      second_request_playlist_time = last_vote_time + this.durations["vote_computation_delay"] + this.durations["playlist_computation_delay"]
+      pre_compute_time = world_result_stop_time - this.timings["playlist_request_delay"] - this.timings["playlist_computation_delay"]
+      second_request_playlist_time = last_vote_time + this.timings["vote_computation_delay"] + this.timings["playlist_computation_delay"]
 
     }
     else {
       if (isNext && this.isThemeStarChallenge(themeType)) {
-        last_vote_time = world_result_stop_time + this.durations["star_challenge_intro_duration"]
+        last_vote_time = world_result_stop_time + this.timings["star_challenge_intro_duration"]
       }
         
       else {
@@ -215,16 +223,16 @@ class Playlist {
         last_vote_time = world_result_stop_time
 
         // Compute playlist_computation_time
-        playlist_computation_time = world_result_stop_time - this.durations["playlist_request_delay"] - this.durations["playlist_computation_delay"]
+        playlist_computation_time = world_result_stop_time - this.timings["playlist_request_delay"] - this.timings["playlist_computation_delay"]
       }
     }
 
     // Compute request_playlist_time
-    let request_playlist_time = world_result_stop_time // - this.durations["playlist_request_delay"]
+    let request_playlist_time = world_result_stop_time // - this.timings["playlist_request_delay"]
         
     // Compute unlock_computation_time and request_unlock_time
-    let unlock_computation_time = stop_song_time + this.durations["send_stars_delay"]
-    let request_unlock_time = unlock_computation_time + this.durations["unlock_computation_delay"]
+    let unlock_computation_time = stop_song_time + this.timings["send_stars_delay"]
+    let request_unlock_time = unlock_computation_time + this.timings["unlock_computation_delay"]
 
     let timing = {
       "presentation_start_time": presentation_start_time, 
@@ -250,7 +258,7 @@ class Playlist {
       length: mapLength,
       song: {
         mapName,
-        id: songId
+        id: uniqueSongId
       }
     }
 
@@ -273,7 +281,7 @@ class Playlist {
         let randomVoteSongs = this.getRandomMaps(voteAmount) // Get "voteAmount" amount of random maps 
         query = {
           ...query,
-          votes: randomVoteSongs.map((song, i) => { return { [song.songId]: 0 } })
+          votes: randomVoteSongs.map((song, i) => { return { [song.uniqueSongId]: 0 } })
         }
         break;
 
@@ -285,15 +293,15 @@ class Playlist {
   
   computePreSongDuration(themeType) {
     if (this.isThemeVote(themeType))
-      return this.durations["vote_result_duration"]
+      return this.timings["vote_result_duration"]
     else if (this.isThemeCommunity(themeType)) {
-      return this.durations["community_choice_duration"]
+      return this.timings["community_choice_duration"]
     }
     else if (this.isThemeCoach(themeType)) {
-      return this.durations["coach_choice_duration"]
+      return this.timings["coach_choice_duration"]
     }
     else if (this.isThemeStarChallenge(themeType)) {
-      return this.durations["star_challenge_intro_duration"]
+      return this.timings["star_challenge_intro_duration"]
     }
     else {
       return 0
@@ -302,15 +310,15 @@ class Playlist {
 
   computeThemeResultDuration(themeType) {
     if (this.isThemeAutodance(themeType))
-      return this.durations["autodance_result_duration"]
+      return this.timings["autodance_result_duration"]
     else if (this.isThemeCommunity(themeType)) {
-      return this.durations["community_result_duration"]
+      return this.timings["community_result_duration"]
     }
     else if (this.isThemeCoach(themeType)) {
-      return this.durations["coach_result_duration"]
+      return this.timings["coach_result_duration"]
     }
     else if (this.isThemeStarChallenge(themeType)) {
-      return this.durations["star_challenge_outro_duration"]
+      return this.timings["star_challenge_outro_duration"]
     }
     else {
       return 0

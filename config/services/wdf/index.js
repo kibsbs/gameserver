@@ -1,5 +1,6 @@
 module.exports = {
 
+    env: global.ENV || "local",
     port: 9000,
 
     bypassAuth: false,
@@ -15,7 +16,6 @@ module.exports = {
 
     constants: require("./constants"),
     secrets: require("./secrets"),
-    timings: require("./timings"),
     lobby: require("./lobby"),
     functions: require("./functions"),
 

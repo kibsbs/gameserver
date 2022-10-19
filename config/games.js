@@ -3,7 +3,7 @@ module.exports = {
         name: "Just Dance 2014",
         region: "PAL",
         version: 2014,
-        available: true,
+        available: false,
         stats: {
             stars: 275,
             songsPlayed: 55,
@@ -15,7 +15,7 @@ module.exports = {
         name: "Just Dance 2014",
         region: "NTSC",
         version: 2014,
-        available: true,
+        available: false,
         stats: {
             stars: 275,
             songsPlayed: 55,

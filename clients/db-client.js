@@ -6,7 +6,7 @@ module.exports = async function(config, callback) {
     if (!config.database) throw new Error('DB config is not defined.');
     const url = `${config.database.path}/${config.database.db}`
 
-    logger.info(`Trying to connect to MongoDB...`)
+    global.logger.info(`Trying to connect to MongoDB...`)
 
     mongoose.connect(url, function(err) {
         if (err) {

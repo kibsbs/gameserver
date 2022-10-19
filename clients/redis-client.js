@@ -1,19 +1,25 @@
 
 const redis = require("redis");
 
-module.exports = function(config, callback) {
+module.exports = async function(config, callback) {
 
     if (!config.redis) throw new Error('Redis config is not defined.');
 
     logger.info(`Trying to connect to Redis...`)
 
-    const client = redis.createClient(config.redis.port, config.redis.host, {'detect_buffers': true});
+    
 
-	client.select(config.redis.db, function(err) {
-		if (err) return callback(err);
+    try {
+        const client = redis.createClient(config.redis);
 
-		global.logger.success(`Connected to Redis DB ${config.redis.db}`);
+        await client.connect();
+
+        global.logger.success(`Connected to Redis!`);
         return callback(null, client)
-	});
+    }
+    catch(err) {
+        callback(err)
+    }
 
+    
 }

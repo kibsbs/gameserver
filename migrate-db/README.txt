@@ -1,0 +1,1 @@
+run "node.js script.js" to migrate all required data to mongodb

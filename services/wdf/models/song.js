@@ -41,14 +41,24 @@ const Schema = new mongoose.Schema({
         type: Array,
         default: ["main"]
     },
+    hash: {
+        type: String,
+        default: require("uuid").v4()
+    },
+    mapLength: {
+        type: Number,
+        required: true
+    },
+    /*
+    musicTrackData: {
+        type: Object,
+        required: true
+    },
+    */
     isAvailable: {
         type: Boolean,
         default: true
     },
-    musicTrackData: {
-        type: Object,
-        required: true
-    }
   },
   { timestamps: true, versionKey: false }
 );
