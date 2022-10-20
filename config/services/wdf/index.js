@@ -1,3 +1,7 @@
+/**
+ * WDF Configuration
+ */
+
 module.exports = {
 
     env: global.ENV || "local",

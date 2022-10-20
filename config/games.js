@@ -1,3 +1,7 @@
+/**
+ * List of all games available that can access GS services.
+ */
+
 module.exports = {
     SJOP: {
         name: "Just Dance 2014",

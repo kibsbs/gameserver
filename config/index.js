@@ -1,3 +1,9 @@
+/**
+ * GameServer (GS) Main configuration
+ * 
+ * If you've created a new service, you must added it to "services" object.
+ */
+
 module.exports = {
 
     platforms: ["wii"],

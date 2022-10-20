@@ -1,3 +1,7 @@
+/**
+ * JeanMich Configuration
+ */
+
 module.exports = {
 
     port: 3000,
