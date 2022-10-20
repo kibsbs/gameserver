@@ -1,18 +1,17 @@
 // -------------------------------
 // Register all library aliases
-const moduleAlias = require("module-alias")
-const aliases = require("./aliases")()
-
-moduleAlias.addAliases(aliases)
+require("./libs/aliases").register(__dirname)
 
 // -------------------------------
 
 const async = require("async");
-const path = require("path");
+const path = require("node:path");
 const fs = require("fs");
 
 const project = require("./package.json");
 const config = require("./config");
+const aliases = require("./aliases")
+
 const utils = require("utils");
 const logger = require("logger")(["GS"]);
 global.logger = logger
@@ -85,8 +84,8 @@ reqKeys.forEach((key) => {
 });
 
 // Register service's aliases if they exist
-if (fs.existsSync(srvAliases)) {
-    moduleAlias.addAliases(require(srvAliases)(path.dirname(srvAliases)))
+if (aliases && aliases[serviceName]) {
+    require("./libs/aliases").register(path.resolve(srvPath, ".."), aliases[serviceName])
 }
 
 logger.info(`Clients: ${clients.join(", ")}`)

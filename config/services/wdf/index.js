@@ -9,8 +9,8 @@ module.exports = {
 
     maxScore: 13333,
 
-    database: require("./database")[global.ENV],
-    redis: require("./redis")[global.ENV],
+    database: require("../../secrets/mongodb")[global.ENV],
+    redis: require("../../secrets/redis")[global.ENV],
 
     playlist: require("./playlist"),
 
