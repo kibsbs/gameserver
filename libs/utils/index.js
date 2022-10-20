@@ -12,7 +12,7 @@ class Utils {
     }
 
     getServerTime(epoch = Date.now()) {
-        return epoch / 1000
+        return Number(Number(epoch / 1000).toString().substring(1));
         // return moment().local().valueOf() / 1000
         // return Date.now() / 1000
 

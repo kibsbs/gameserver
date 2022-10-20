@@ -68,8 +68,8 @@ class Playlist {
     return await this.getRandomMap(filter, amount)
   }
 
-  getRandomTheme() {
-    let themes = this.themes.filter(t => t.isAvailable) // first filter themes that arent available
+  getRandomTheme(prevTheme = 0) {
+    let themes = this.themes.filter(t => t.isAvailable && prevTheme !== t.id) // first filter themes that arent available
     let randomTheme = themes[Math.floor(Math.random()*themes.length)]
     return randomTheme;
   }
@@ -135,7 +135,14 @@ class Playlist {
   async createPlaylist(count) {
 
     const now = Date.now()
-    const { id: themeType, themeName } = this.getRandomTheme()
+    const isNext = count == 1 ? true : false
+	
+	// If screen is next make sure it doesnt end up having the same theme as previous screen
+	let previousScreen = await this.getLastSong()
+	if (isNext) previousScreen = await this.getCurrentSong()
+	let previousTheme = previousScreen ? previousScreen.theme.themeType : 0
+
+    const { id: themeType, themeName } = this.getRandomTheme(previousTheme)
 
     let mapsFilter = {};
 
@@ -153,8 +160,6 @@ class Playlist {
 
     const { map, mapName, mapLength, uniqueSongId } = await this.getRandomMap(mapsFilter)
     const latest = await this.getLastSong()
-    
-    const isNext = count == 1 ? true : false
 
     let newStepTime
 

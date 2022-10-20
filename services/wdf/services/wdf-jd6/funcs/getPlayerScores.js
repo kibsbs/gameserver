@@ -103,7 +103,7 @@ module.exports = {
             response = {
                 ...response,
 
-                score, // client score
+                score: total_score, // client score
                 rank: 0, // client rank
 
                 total: 0, // unknown?

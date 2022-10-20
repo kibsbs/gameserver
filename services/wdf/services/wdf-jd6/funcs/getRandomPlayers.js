@@ -35,12 +35,6 @@ module.exports = {
                 }
             })
 
-            // Amount of sessions in clients version excluding client
-            const sessionCount = await session.db.count({
-                version: req.version,
-                sessionId: { $ne: req.sessionId }
-            })
-
             return res.uenc({
                 player_name: req.player.name,
                 
@@ -49,7 +43,7 @@ module.exports = {
                 nr_players: sessions.length,
                 nr_asked: nr_players,
         
-                count: sessionCount
+                count: await session.count(req.version)
             })
 
         });
