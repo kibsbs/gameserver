@@ -15,6 +15,36 @@ const app = express();
 app.set("etag", false);
 app.disable("x-powered-by");
 
+// ---------------------------
+// Load all services that are used by Galaxy
+const services = fs.readdirSync(`./api/services/`)
+
+for (var i in services) {
+  var filename = services[i]
+  var filepath = `${__dirname}/services/${filename}`
+
+  var stats = fs.statSync(filepath)
+  if (!stats.isFile())
+    continue;
+
+  var parts = filename.split(".")
+  var serviceName = parts[0]
+  var version = parts[1]
+
+  // Create a router for versions of service.
+  // Example: /version/service/...
+  var router = express.Router({
+    caseSensitive: true,
+    strict: true
+  })
+
+  var urlPrefix = "/" + serviceName + "/" + version
+
+  require(filepath)(app, router, urlPrefix)
+  app.use(urlPrefix, router)
+}
+// ---------------------------
+
 app.use(require("./middlewares/error-handler"));
 app.get("/health", utils.healthCheck);
 

@@ -10,13 +10,17 @@ module.exports = {
     publicServerMessages: true,
     logServerErrors: true,
 
-    maxScore: 13333,
-
     database: require("../../secrets/mongodb")[global.ENV],
 
-    constants: require("./constants"),
     secrets: require("./secrets"),
+    games: require("../../games"),
 
-    games: require("../../games")
+
+    cdn: {
+        url: "https//cdn.danceparty.online",
+        paths: {
+            covers: `gs/wdf/songs/covers`
+        }
+    },
 
 }
