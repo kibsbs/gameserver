@@ -11,7 +11,7 @@ class NasToken {
      * Define all required keys
      */
     constructor() {
-        this.secret = global.config.secrets.nasToken
+        this.secret = global.config.tokens.nasToken
         this.algorithm = "aes-256-cbc"
         this.vector = Buffer.from(this.secret.vector, "hex")
         this.securityKey = Buffer.from(this.secret.securityKey, "hex")

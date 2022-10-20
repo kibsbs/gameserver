@@ -19,7 +19,7 @@ app.disable("x-powered-by");
 // ---------------------------
 // Load all services
 const services = {
-    "api": "api",
+    //"api": "api", not used anymore (use galaxy api)
     // "wdf": "wdf", // for 2014
     "wdfjd6": "wdf-jd6" // for 2015-2018
 }

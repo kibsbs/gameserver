@@ -13,16 +13,16 @@ module.exports = {
 
     maxScore: 13333,
 
-    database: require("../../secrets/mongodb")[global.ENV],
-    redis: require("../../secrets/redis")[global.ENV],
+    database: require("./database")[global.ENV],
+    redis: require("./redis")[global.ENV],
 
     playlist: require("./playlist"),
 
     constants: require("./constants"),
-    secrets: require("./secrets"),
     lobby: require("./lobby"),
     functions: require("./functions"),
 
+    tokens: require("../../tokens"),
     games: require("../../games"),
 
     ...require("./envs")[global.ENV]

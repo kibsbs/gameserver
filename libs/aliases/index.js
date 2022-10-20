@@ -22,9 +22,9 @@ module.exports.register = (dirName, extraLibs = {}) => {
         for (const libName in extraLibs) {
 
             let libFolder = extraLibs[libName]
-            let fullPath = path.join(dirName, libFolder)
+            if (!fs.existsSync(libFolder)) continue;
 
-            aliases[libName] = fullPath
+            aliases[libName] = libFolder
         }
 
     }

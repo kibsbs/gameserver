@@ -4,22 +4,21 @@
 
 module.exports = {
 
-    port: 3000,
+    port: 5000,
 
     bypassAuth: false,
     publicServerMessages: true,
     logServerErrors: true,
 
-    database: require("../../secrets/mongodb")[global.ENV],
+    database: require("./database")[global.ENV],
 
-    secrets: require("./secrets"),
     games: require("../../games"),
 
 
     cdn: {
         url: "https//cdn.danceparty.online",
         paths: {
-            covers: `gs/wdf/songs/covers`
+            covers: `gs/galaxy/songs/covers`
         }
     },
 

@@ -12,11 +12,12 @@ module.exports = {
 
     maxScore: 13333,
 
-    database: require("../../secrets/mongodb")[global.ENV],
+    database: require("./database")[global.ENV],
 
     constants: require("./constants"),
-    secrets: require("./secrets"),
 
+
+    tokens: require("../../tokens"),
     games: require("../../games")
 
 }

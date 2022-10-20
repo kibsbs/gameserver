@@ -8,6 +8,7 @@ const logger = require("logger")(["Galaxy"])
 global.logger = logger
 
 const express = require("express");
+const async = require("async");
 const fs = require("fs");
 
 const app = express();
@@ -17,7 +18,7 @@ app.disable("x-powered-by");
 
 // ---------------------------
 // Load all services that are used by Galaxy
-const services = fs.readdirSync(`./api/services/`)
+const services = fs.readdirSync(`${__dirname}/services`)
 
 for (var i in services) {
   var filename = services[i]
@@ -40,7 +41,7 @@ for (var i in services) {
 
   var urlPrefix = "/" + serviceName + "/" + version
 
-  require(filepath)(app, router, urlPrefix)
+  require(filepath).init(app, router, urlPrefix)
   app.use(urlPrefix, router)
 }
 // ---------------------------

@@ -33,8 +33,6 @@ module.exports = {
             path: "/services/wii-2014/server.js",
             rdv: false
         }
-    },
-
-    games: require("./games")
+    }
 
 }

@@ -49,7 +49,12 @@ const srvAliases = path.resolve(srvPath, "..", "aliases.js")
 logger.info(`Initiating service "${serviceName}"`)
 
 global.ENV = serviceEnv.toLowerCase() || "local"
-global.config = require(`./config/services/${serviceName}`) // Load service's config
+
+// Load service's config
+global.config = {
+    gs: config,
+    ...require(`./config/services/${serviceName}`)
+}
 global.clients = {}
 global.service = {
     name: serviceName
@@ -93,6 +98,9 @@ reqKeys.forEach((key) => {
 // Register service's aliases if they exist
 if (aliases && aliases[serviceName]) {
     require("./libs/aliases").register(path.resolve(srvPath, ".."), aliases[serviceName])
+}
+else {
+    require("./libs/aliases").register(path.resolve(srvPath, ".."))
 }
 
 logger.info(`Clients: ${clients.join(", ")}`)
