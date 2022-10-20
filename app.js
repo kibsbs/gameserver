@@ -59,24 +59,31 @@ global.service = {
 // 1. Push all clients the service needs to "clients" array
 // 2. Push all required keys that are meant to be in the service's config
 let clients = [];
+let reqKeys = [];
 
 switch(serviceName) {
 
+    case "galaxy":
+        clients.push("dbClient", "localization")
+        reqKeys.push("database")
+        break;
     case "jeanmich":
         clients.push("dbClient", "localization")
+        reqKeys.push("database")
         break;
     case "wdf":
         clients.push("redisClient", "dbClient", "localization")
+        reqKeys.push("database", "redis")
         break;
     case "wdf-2014":
         clients.push("redisClient", "dbClient", "localization")
+        reqKeys.push("database", "redis")
         break;
 
 }
 
 // Check if the required keys are in the service config
 // If at least one isn't the process will stop
-let reqKeys = ["database", "redis"];
 reqKeys.forEach((key) => {
 	if (!global.config.hasOwnProperty(key)) {
 		throw new Error(`ConfigException: Required key "${key}" is missing from ${serviceName} config.`);
