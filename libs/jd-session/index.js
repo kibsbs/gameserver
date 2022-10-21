@@ -50,6 +50,12 @@ class Session {
         })
     }
 
+    async ping(version, sessionId) {
+        return await this.db.findOneAndUpdate({
+            version, sessionId
+        }, { updatedAt: Date.now() })
+    }
+
     async updateOnlineScore(version, sessionId, newOnlineScore) {
         const scoreDb = require("models/score")
 

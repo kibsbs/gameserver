@@ -11,12 +11,8 @@ class Utils {
         return ["dev", "local", "uat"].includes(global.ENV.toLowerCase())
     }
 
-    fixTime(time) {
-        return Math.round(time * 1000) / 1000
-    }
-
-    getServerTime(epoch = Date.now()) {
-        epoch = epoch / 1000
+    getServerTime(epoch = Date.now(), divide = true) {
+        epoch = divide ? epoch / 1000 : epoch
         return epoch.toString().substring(1)
         // return moment().local().valueOf() / 1000
         // return Date.now() / 1000
@@ -30,6 +26,25 @@ class Utils {
         // // console.log(date, " +++ ", regionalTime, " +++ ", epoch)
 
         // return Number(Number(epoch / 1000).toString().substring(1));
+    }
+
+    highPrecisionAdd(...args) {
+        const add = (a, b) => a + b;
+        const input = args.map(v => v.toString().split("."));
+        
+        let integerPart = input.map(v => BigInt(v[0])).reduce(add);
+        
+        const fractionalPartString = input.map(v => v[1] ?? "0");
+        const precision = Math.max(...fractionalPartString.map(s => s.length));
+        let fractionalPart = fractionalPartString.map(s => BigInt(s.padEnd(precision, "0"))).reduce(add);
+        
+        const overflowConstant = 10n ** BigInt(precision);
+        if (fractionalPart >= overflowConstant) {
+            fractionalPart -= overflowConstant;
+            integerPart++;
+        }
+        
+        return fractionalPart === 0n ? String(integerPart) : `${integerPart}.${fractionalPart}`;
     }
 }
 

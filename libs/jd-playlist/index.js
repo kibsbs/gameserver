@@ -1,5 +1,9 @@
-const songs = require("jd-songs")
+
 const fs = require("fs")
+
+const time = require("time")
+const utils = require("utils")
+const songs = require("jd-songs")
 
 function isEmpty(obj) {
     return obj == null || Object.keys(obj).length === 0
@@ -8,7 +12,7 @@ let playlist = {}
 let history = []
 
 function schedule(time, fn) {
-    let timeout = time - Date.now()
+    let timeout = time - (Date.now()/1000)
     // console.log("Scheduled work for", time, timeout)
     return setTimeout(fn, timeout);
 }
@@ -81,7 +85,7 @@ class Playlist {
 
     async createScreen(type) {
 
-        let now = Date.now()
+        let now = Date.now() / 1000
         let newStepTime = 0
 
         let isNext
@@ -143,8 +147,8 @@ class Playlist {
                 newStepTime = current.timing.requestPlaylistTime
             }
             // By default use "current" worldResultEnd base
-            else if (current.timing.requestPlaylistTime) {
-                newStepTime = current.timing.requestPlaylistTime
+            else if (current.timing.worldResultEnd) {
+                newStepTime = current.timing.worldResultEnd
             }
 
             isNext = true
@@ -161,7 +165,7 @@ class Playlist {
             themeName: theme.name,
 
             mapName: song.mapName,
-            mapLength: song.mapLength,
+            mapLength: time.round(song.mapLength / 1000),
             uniqueSongId: song.uniqueSongId,
         }
 
@@ -198,23 +202,16 @@ class Playlist {
         }
 
         // Schedule the next rotation
-        schedule(screen.timing.requestPlaylistTime - 1500, async () => {
-            console.log("\n")
-            console.log("!!!! SONG ENDED songEnd:", screen.timing.songEnd, "now:", Date.now())
-            console.log("Current playlist:")
-            console.log(this.p)
-            console.log("\n!!! Rotating...\n")
-            await this.rotateScreens()
-            console.log("Rotated Current playlist:")
-            console.log(this.p)
-
-            // const res = await require("axios")({
-            //     method: "POST",
-            //     url: `http://localhost:9000/wdfjd6?d=getPlayListPos`,
-            //     data: "lang=0&token=VoF3fJM0S5N%2FA4T7Dn1X3D847zwGZW3pdgbwsywjEFSPbXmulW6elIF3ZI9Ap5RU9RBjiA60fg4Z679WCDLaXn5jjVtxofnmtM1zS1QbWJ4%3D"
-            // })
-            // console.log(res.data)
-        });
+        // schedule(screen.timing.playlistComputation, async () => {
+        //     console.log("\n")
+        //     console.log("!!!! SONG ENDED songEnd:", screen.timing.songEnd, "now:", Date.now())
+        //     console.log("Current playlist:")
+        //     console.log(this.p)
+        //     console.log("\n!!! Rotating...\n")
+        //     await this.rotateScreens()
+        //     console.log("Rotated Current playlist:")
+        //     console.log(this.p)
+        // });
 
         return screen
     }
@@ -229,8 +226,8 @@ class Playlist {
         // We round the mapLength and keep only the last 3 digits
         // 163176.29166666666 -> 163176.291 (YouNeverCan)
         // 198100.6875 -> 198100.687 (UnderTheSea)
-        let mapLength = parseInt(screen.mapLength)
-        let songEnd = songStart + mapLength
+        let mapLength = screen.mapLength
+        let songEnd = time.round(songStart + mapLength)
 
         let recapStart = songEnd + this.timings["waiting_recap_duration"]
         let sessionResultStart = recapStart + this.computeThemeResultDuration(themeType)
@@ -264,12 +261,12 @@ class Playlist {
                 lastVote = worldResultEnd
 
                 // Compute playlist_computation_time
-                playlistComputation = worldResultEnd// - this.timings["playlist_request_delay"] - this.timings["playlist_computation_delay"]
+                playlistComputation = worldResultEnd - this.timings["playlist_request_delay"] - this.timings["playlist_computation_delay"]
             }
         }
 
         // Compute request_playlist_time
-        let requestPlaylistTime = worldResultEnd// - this.timings["playlist_request_delay"]
+        let requestPlaylistTime = worldResultEnd // - this.timings["playlist_request_delay"]
 
         // Compute unlock_computation_time and request_unlock_time
         let unlockComputation = songEnd + this.timings["send_stars_delay"]

@@ -23,6 +23,10 @@ module.exports = async (req, res, next) => {
     })
     else {
 
+        if (req.funcData.pingSession) {
+            await session.ping(version, sessionId)
+        }
+
         req.session = result
         req.player = result.player
         req.lobbyId = result.lobbyId

@@ -1,4 +1,5 @@
 const utils = require("utils")
+const time = require("time")
 
 const playlists = require("jd-playlist")
 const session = require("jd-session")
@@ -13,7 +14,7 @@ module.exports = {
 
         const { lang } = req.body
 
-        let now = Date.now()
+        let now = Date.now() / 1000
 
         const playlist = new playlists(req.version)
 
@@ -28,27 +29,26 @@ module.exports = {
             nextmode: next.themeType,
         }
 
-        now += now - current.timing.newStepTime
-
-        let pos = (now - current.timing.songStart) / 1000
-        let left = (current.timing.songEnd - now) / 1000
+        let pos = time.round(now - current.timing.songStart)
+        let left = time.round(current.timing.songEnd - now)
 
         let timingData = {
             start: current.timing.songStart,
             end: current.timing.songEnd,
+
             pos,
             left,
 
-            sessionToWorldResultTime: (timings.world_result_duration) / 1000,
-            display_next_song_time: (timings.display_next_song_duration) / 1000,
-            session_recap_time: (timings.session_result_duration) / 1000,
+            sessionToWorldResultTime: (timings.world_result_duration),
+            display_next_song_time: (timings.display_next_song_duration),
+            session_recap_time: (timings.session_result_duration),
 
             theme_choice_duration: 0,
             theme_result_duration: 0,
             coach_choice_duration: 0,
             coach_result_duration: 0,
 
-            rankwait: (timings.waiting_recap_duration) / 1000
+            rankwait: (timings.waiting_recap_duration)
         }
 
         let voteData = {
@@ -86,26 +86,26 @@ module.exports = {
             case 1:
                 playlistData.community1name = current.community1name
                 playlistData.community2name = current.community2name
-                playlistData.theme_choice_duration = (timings.community_choice_duration) / 1000
+                playlistData.theme_choice_duration = (timings.community_choice_duration)
                 playlistData.theme_result_duration = (timings.community_result_duration) / 1000
                 break;
             case 2:
                 break;
             case 3:
-                playlistData.coach_choice_duration = (timings.coach_choice_duration) / 1000
-                playlistData.coach_result_duration = (timings.coach_result_duration) / 1000
+                playlistData.coach_choice_duration = (timings.coach_choice_duration)
+                playlistData.coach_result_duration = (timings.coach_result_duration)
                 break;
         }
 
         // Times to parse
         ["start", "end", "requestPlaylistTime", "vote_end"].forEach(t => {
-            playlistData[t] = utils.getServerTime(playlistData[t])
+            playlistData[t] = utils.getServerTime(playlistData[t], false)
         });
 
         return res.uenc({
             ...playlistData,
             count: await session.count(req.version),
-            t: utils.getServerTime(now)
+            t: utils.getServerTime(now, false)
         })
 
     }

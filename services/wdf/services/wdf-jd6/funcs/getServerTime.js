@@ -9,7 +9,7 @@ module.exports = {
     async init(req, res, next) {
         return res.uenc({
             t: utils.getServerTime(),
-            sendscore_interval: global.config.playlist.timings.sendscore_interval / 1000
+            sendscore_interval: global.config.playlist.timings.sendscore_interval
         })
     }
 }
