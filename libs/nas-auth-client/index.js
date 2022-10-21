@@ -18,7 +18,7 @@ function isQC(payload) {
 }
 
 function isTestToken(token = "") {
-    return config.secrets.testTokens.includes(token.toLowerCase())
+    return global.config.tokens.testTokens.includes(token.toLowerCase())
 }
 
 function nasAuthPermit(req, res, next) {

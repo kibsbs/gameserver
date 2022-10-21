@@ -19,7 +19,7 @@ app.disable("x-powered-by");
 // ---------------------------
 // Load all services
 const services = {
-    //"api": "api", not used anymore (use galaxy api)
+    "api": "api",
     // "wdf": "wdf", // for 2014
     "wdfjd6": "wdf-jd6" // for 2015-2018
 }
@@ -39,6 +39,7 @@ for (var serviceName in services) {
         caseSensitive: true, 
         strict: true 
     });
+    serviceRouter.use(express.json());
     serviceRouter.use(express.urlencoded({
         extended: true
     }));

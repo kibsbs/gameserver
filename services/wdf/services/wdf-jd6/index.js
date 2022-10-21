@@ -38,7 +38,7 @@ module.exports = {
             catch(err) {
                 return next({
                     status: 500,
-                    message: `Error occured: ${err}`,
+                    message: `${err}`,
                     error: [err]
                 })
             }

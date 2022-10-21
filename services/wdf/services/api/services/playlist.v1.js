@@ -26,7 +26,7 @@ module.exports = {
                 })
 
             try {
-                return res.json(await playlist.getPlaylist())
+                return res.json(await playlist.getScreens())
             }
             catch(err) {
                 return next({
@@ -59,6 +59,31 @@ module.exports = {
             }
         });
         
+        router.get("/themes", async (req, res, next) => {
+            let communities = global.config.playlist.communities
+            return res.json(communities)
+        });
 
+        router.put("/themes", async (req, res, next) => {
+            
+            let communities = global.config.playlist.communities
+            let newTheme = req.body.theme
+
+            if (!newTheme || newTheme.length !== 2) return next({
+                status: 400,
+                message: `Theme array must have only 2 theme names!`
+            })
+
+            communities.list.push(newTheme)
+            communities.locs[newTheme[0]] = {
+                en: newTheme[0]
+            }
+            communities.locs[newTheme[1]] = {
+                en: newTheme[1]
+            }
+
+            fs.writeFileSync("./config/services/wdf/playlist/communities.json" ,JSON.stringify(communities,null,2))
+            return res.sendStatus(200)
+        });
     }
 }

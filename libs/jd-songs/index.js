@@ -36,7 +36,7 @@ class Songs {
         return await this.db.findOne({ uniqueSongId })
     }
 
-    async getRandomMap(filter = {}, size = 1) {
+    async getRandomSong(filter = {}, size = 1) {
         const result = await this.db.aggregate([
           { $match: filter },
           { $sample: { size } }

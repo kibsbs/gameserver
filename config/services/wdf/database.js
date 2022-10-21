@@ -1,7 +1,7 @@
 module.exports = {
 
     local: {
-        path: `mongodb+srv://wii-dance:i505SX7DQdx9KGFX@danceparty.szczw3m.mongodb.net/dp-wdf?retryWrites=true&w=majority`,
+        path: `mongodb://185.225.232.253:27017/dp-wdf`,
         db: `dp-wdf`,
         options: {}
     },

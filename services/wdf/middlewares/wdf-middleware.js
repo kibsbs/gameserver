@@ -39,6 +39,10 @@ module.exports = (serviceName, dirName) => {
             req.gameId = req.body.token.gid
             req.game = games.getById(req.gameId)
             req.version = req.game.version
+            
+            if (req.headers["x-override-version"]) {
+                req.version = Number(req.headers["x-override-version"])
+            }
         }
     
         return next();

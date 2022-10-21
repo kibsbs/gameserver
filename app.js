@@ -57,7 +57,7 @@ global.config = {
 }
 global.clients = {}
 global.service = {
-    name: serviceName
+    name: serviceName,
 }
 
 // Each service will have it's own clients and required config keys 

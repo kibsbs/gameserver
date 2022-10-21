@@ -1,6 +1,6 @@
 const utils = require("utils")
 
-const playlistLib = require("jd-playlist")
+const playlists = require("jd-playlist")
 const session = require("jd-session")
 
 module.exports = {
@@ -13,19 +13,43 @@ module.exports = {
 
         const { lang } = req.body
 
-        const now = Date.now()
+        let now = Date.now()
 
-        const playlist = new playlistLib(req.version)
+        const playlist = new playlists(req.version)
 
         const themes = playlist.getThemes()
-        const durations = playlist.getDurations()
+        const timings = playlist.getTimings()
 
         // Current and next song info
-        const { current, next } = await playlist.getPlaylist()
+        const { previous, current, next } = await playlist.getScreens()
 
-        // Current and next theme info
-        const themeType = current.theme.themeType
-        const nextThemeType = next.theme.themeType
+        let modeData = {
+            mode: current.themeType,
+            nextmode: next.themeType,
+        }
+
+        now += now - current.timing.newStepTime
+
+        let pos = (now - current.timing.songStart) / 1000
+        let left = (current.timing.songEnd - now) / 1000
+
+        let timingData = {
+            start: current.timing.songStart,
+            end: current.timing.songEnd,
+            pos,
+            left,
+
+            sessionToWorldResultTime: (timings.world_result_duration) / 1000,
+            display_next_song_time: (timings.display_next_song_duration) / 1000,
+            session_recap_time: (timings.session_result_duration) / 1000,
+
+            theme_choice_duration: 0,
+            theme_result_duration: 0,
+            coach_choice_duration: 0,
+            coach_result_duration: 0,
+
+            rankwait: (timings.waiting_recap_duration) / 1000
+        }
 
         let voteData = {
             vote1: 0,
@@ -38,35 +62,11 @@ module.exports = {
             vote3_song: 0,
             vote4_song: 0,
             votenumchoices: 0,
-            vote_end: current.last_vote_time,
+            vote_end: current.timing.lastVote,
             next1: 0,
             next2: 0,
             next3: 0,
             next4: 0
-        }
-
-        let modeData = {
-            mode: themeType,
-            nextmode: nextThemeType,
-        }
-
-        let timingData = {
-            start: current.start_song_time,
-            end: current.stop_song_time,
-
-            pos: (now - current.start_song_time) / 1000,
-            left: (current.stop_song_time - now) / 1000,
-
-            sessionToWorldResultTime: (durations.world_result_duration) / 1000,
-            display_next_song_time: (durations.display_next_song_duration) / 1000,
-            session_recap_time: (durations.session_result_duration) / 1000,
-
-            theme_choice_duration: 0,
-            theme_result_duration: 0,
-            coach_choice_duration: 0,
-            coach_result_duration: 0,
-
-            rankwait: (durations.waiting_recap_duration) / 1000
         }
 
         let playlistData = {
@@ -74,26 +74,26 @@ module.exports = {
             ...timingData,
             ...voteData,
 
-            unique_song_id: current.song.id,
-            nextsong: next.song.id,
+            unique_song_id: current.uniqueSongId,
+            nextsong: next.uniqueSongId,
 
-            requestPlaylistTime: current.request_playlist_time,
+            requestPlaylistTime: current.timing.requestPlaylistTime,
             interlude: "yes"
         }
 
         // Depending on theme type, set extra information.
-        switch (themeType) {
+        switch (current.themeType) {
             case 1:
                 playlistData.community1name = current.community1name
                 playlistData.community2name = current.community2name
-                playlistData.theme_choice_duration = (durations.community_choice_duration) / 1000
-                playlistData.theme_result_duration = (durations.community_result_duration) / 1000
+                playlistData.theme_choice_duration = (timings.community_choice_duration) / 1000
+                playlistData.theme_result_duration = (timings.community_result_duration) / 1000
                 break;
             case 2:
                 break;
             case 3:
-                playlistData.coach_choice_duration = (durations.coach_choice_duration) / 1000
-                playlistData.coach_result_duration = (durations.coach_result_duration) / 1000
+                playlistData.coach_choice_duration = (timings.coach_choice_duration) / 1000
+                playlistData.coach_result_duration = (timings.coach_result_duration) / 1000
                 break;
         }
 

@@ -11,8 +11,13 @@ class Utils {
         return ["dev", "local", "uat"].includes(global.ENV.toLowerCase())
     }
 
+    fixTime(time) {
+        return Math.round(time * 1000) / 1000
+    }
+
     getServerTime(epoch = Date.now()) {
-        return Number(Number(epoch / 1000).toString().substring(1));
+        epoch = epoch / 1000
+        return epoch.toString().substring(1)
         // return moment().local().valueOf() / 1000
         // return Date.now() / 1000
 

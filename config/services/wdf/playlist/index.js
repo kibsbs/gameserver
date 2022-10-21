@@ -1,30 +1,27 @@
 module.exports = {
 
-    communities: {
-        list: require("./communities/list.json"),
-        locs: require("./communities/locs.json")
-    },
+    communities: require("./communities.json"),
     timings: require("./timings"),
     themes: [
         {},
         {
             id: 1,
-            themeName: "community",
+            name: "community",
             isAvailable: true
         },
         {
             id: 2,
-            themeName: "vote",
+            name: "vote",
             isAvailable: false
         },
         {
             id: 3,
-            themeName: "coach",
+            name: "coach",
             isAvailable: true
         },
         {
             id: 4,
-            themeName: "starChallenge",
+            name: "starChallenge",
             isAvailable: false
         }
     ]
