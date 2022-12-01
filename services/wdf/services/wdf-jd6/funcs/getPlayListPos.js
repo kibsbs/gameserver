@@ -14,7 +14,7 @@ module.exports = {
 
         const { lang } = req.body
 
-        let now = Date.now() / 1000
+        let now = time.secondsDouble()
 
         const playlist = new playlists(req.version)
 
@@ -29,8 +29,10 @@ module.exports = {
             nextmode: next.themeType,
         }
 
-        let pos = time.round(now - current.timing.songStart)
-        let left = time.round(current.timing.songEnd - now)
+        now += (now - current.timing.newStepTime)
+
+        let pos = time.round(now - current.timing.songStart) // "pos" indicates the position of the playlist
+        let left = time.round(current.timing.songEnd - now) // "left" shows how many seconds are left until a map ends
 
         let timingData = {
             start: current.timing.songStart,
@@ -39,16 +41,17 @@ module.exports = {
             pos,
             left,
 
-            sessionToWorldResultTime: (timings.world_result_duration),
-            display_next_song_time: (timings.display_next_song_duration),
-            session_recap_time: (timings.session_result_duration),
+            sessionToWorldResultTime: timings.world_result_duration, // Duration from map end till world result screen
+            display_next_song_time: timings.display_next_song_duration, // The duration of "next song" popup on right side
+            session_recap_time: timings.session_result_duration, // Duration of lobby/party recap time
 
+            // Theme durations
             theme_choice_duration: 0,
             theme_result_duration: 0,
             coach_choice_duration: 0,
             coach_result_duration: 0,
 
-            rankwait: (timings.waiting_recap_duration)
+            rankwait: timings.waiting_recap_duration // Duration of waiting for recap results
         }
 
         let voteData = {
@@ -77,7 +80,7 @@ module.exports = {
             unique_song_id: current.uniqueSongId,
             nextsong: next.uniqueSongId,
 
-            requestPlaylistTime: current.timing.requestPlaylistTime,
+            requestPlaylistTime: current.timing.requestPlaylistTime-10,
             interlude: "yes"
         }
 
@@ -86,14 +89,14 @@ module.exports = {
             case 1:
                 playlistData.community1name = current.community1name
                 playlistData.community2name = current.community2name
-                playlistData.theme_choice_duration = (timings.community_choice_duration)
-                playlistData.theme_result_duration = (timings.community_result_duration) / 1000
+                playlistData.theme_choice_duration = timings.community_choice_duration
+                playlistData.theme_result_duration = timings.community_result_duration
                 break;
             case 2:
                 break;
             case 3:
-                playlistData.coach_choice_duration = (timings.coach_choice_duration)
-                playlistData.coach_result_duration = (timings.coach_result_duration)
+                playlistData.coach_choice_duration = timings.coach_choice_duration
+                playlistData.coach_result_duration = timings.coach_result_duration
                 break;
         }
 
@@ -102,11 +105,12 @@ module.exports = {
             playlistData[t] = utils.getServerTime(playlistData[t], false)
         });
 
+        console.log("PLAYLISTPOS NOW", now, time.round(now))
+
         return res.uenc({
             ...playlistData,
             count: await session.count(req.version),
-            t: utils.getServerTime(now, false)
+            t: utils.getServerTime(time.round(now), false)
         })
-
     }
 }

@@ -11,9 +11,10 @@ function isEmpty(obj) {
 let playlist = {}
 let history = []
 
-function schedule(time, fn) {
-    let timeout = time - (Date.now()/1000)
-    // console.log("Scheduled work for", time, timeout)
+function schedule(epoch, fn) {
+    let now = time.secondsDouble()
+    let timeout = (epoch - now) * 1000
+    console.log("Scheduled work for", now, epoch, timeout)
     return setTimeout(fn, timeout);
 }
 
@@ -85,7 +86,7 @@ class Playlist {
 
     async createScreen(type) {
 
-        let now = Date.now() / 1000
+        let now = time.secondsDouble()
         let newStepTime = 0
 
         let isNext
@@ -202,16 +203,16 @@ class Playlist {
         }
 
         // Schedule the next rotation
-        // schedule(screen.timing.playlistComputation, async () => {
-        //     console.log("\n")
-        //     console.log("!!!! SONG ENDED songEnd:", screen.timing.songEnd, "now:", Date.now())
-        //     console.log("Current playlist:")
-        //     console.log(this.p)
-        //     console.log("\n!!! Rotating...\n")
-        //     await this.rotateScreens()
-        //     console.log("Rotated Current playlist:")
-        //     console.log(this.p)
-        // });
+        schedule(screen.timing.playlistComputation, async () => {
+            console.log("\n")
+            console.log("!!!! SONG ENDED songEnd:", screen.timing.songEnd, "now:", Date.now())
+            console.log("Current playlist:")
+            console.log(this.p)
+            console.log("\n!!! Rotating...\n")
+            await this.rotateScreens()
+            console.log("Rotated Current playlist:")
+            console.log(this.p)
+        });
 
         return screen
     }
