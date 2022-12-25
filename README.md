@@ -50,6 +50,7 @@ Options:
   -h, --help                   display help for command
 ```
 `node app.js --service jeanmich --env local` will start JMCS in local enviroment.
+
 `node app.js --service wdf --env local` will start WDF in local enviroment.
 
 ## Contribute
