@@ -1,9 +1,9 @@
 module.exports = {
 
     nasToken: {
-        nasServer: `https://nas0.glitch.me`,
-        vector: `0f8956991a8b7bfef66ee64cc32ab8a0`,
-        securityKey: `45c50e91d16ec5860f539ffd046ea77ddf5dcf17edd271ae85b9de950b7136eb`
+        nasServer: process.env.NAS_SERVER,
+        vector: process.env.NAS_VECTOR,
+        securityKey: process.env.NAS_KEY
     },
 
     testTokens: [
