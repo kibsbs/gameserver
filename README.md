@@ -2,6 +2,7 @@
 # Gameserver
 
 DanceParty Gameserver is a CLI command that handles services like JMCS and WDF.
+**GAMESERVER IS CURRENTLY UNDER EARLY ALPHA, WHICH MEANS A LOT OF STUFF YOU SEE RIGHT NOW WILL CHANGE... A LOT.**
 
 ## Services
 
