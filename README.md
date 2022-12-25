@@ -18,7 +18,7 @@ DanceParty Gameserver is a CLI command that handles services like JMCS and WDF.
 - **Galaxy**
 
     Galaxy handles all serves and stores all song informations for JMCS and WDF.
-    It is not an official service, we made it for Gameserver.
+    It is not an official service, we made it internally for Gameserver.
 
 
 ### Requirements
@@ -51,7 +51,7 @@ Options:
 ```
 `node app.js --service jeanmich --env local` will start JMCS in local enviroment.
 
-`node app.js --service wdf --env local` will start WDF in local enviroment.
+`node app.js --service wdf --env dev` will start WDF in dev enviroment.
 
 ## Contribute
 Currently we don't accept any contribution due to the current state of Gameserver.
