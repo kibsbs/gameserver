@@ -1,7 +1,7 @@
 
 # Gameserver
 
-DanceParty Gameserver is a CLI command that handles services like JMCS and WDF.
+DanceParty Gameserver is a central server that handles services like JMCS, WDF and Galaxy.
 
 **GAMESERVER IS CURRENTLY UNDER EARLY ALPHA, WHICH MEANS A LOT OF STUFF YOU SEE RIGHT NOW WILL CHANGE... A LOT.**
 
