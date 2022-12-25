@@ -17,7 +17,7 @@ DanceParty Gameserver is a CLI command that handles services like JMCS and WDF.
 
 - **Galaxy**
 
-    Galaxy handles all serves and stores all song informations for JMCS and WDF.
+    Galaxy handles, serves and stores songs database for JMCS and WDF.
     It is not an official service, we made it internally for Gameserver.
 
 
