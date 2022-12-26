@@ -1,38 +1,31 @@
-/**
- * GameServer (GS) Main configuration
- * 
- * If you've created a new service, you must added it to "services" object.
- */
+// Fetched from Dolphin Emulator. Used by JMCS, WDF and DLC store 
+// for client's country/region and localization.
 
-module.exports = {
+module.exports.ENV = process.env.ENV || "local";
 
-    platforms: ["wii"],
+module.exports.LANGS = ["JA", "EN", "DE", "FR", "ES", "IT", "NL", "ZH", "ZH", "KO"];
+module.exports.LANG_IDS = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"];
+module.exports.REGIONS = ["NTSC_J", "NTSC", "PAL", "NTSC_K"];
+module.exports.REGION_IDS = ["00", "01", "02", "03"];
 
-    langs: ["JA", "EN", "DE", "FR", "ES", "IT", "NL", "ZH", "ZH", "KO"],
-    langIds: ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"],
-    regions: ["NTSC_J", "NTSC", "PAL", "NTSC_K"],
-    regionIds: ["00", "01", "02", "03"],
+// Set database config by service and env
+module.exports.DATABASE = require("./database")[global.service.id][global.env];
 
-    services: {
-
-        galaxy: {
-            path: "/services/galaxy/server.js",
-        },
-
-        jeanmich: {
-            path: "/services/jeanmich/server.js",
-            rdv: false
-        },
-
-        wdf: {
-            path: "/services/wdf/server.js",
-            rdv: false
-        },
-        
-        "wdf-2014": {
-            path: "/services/wii-2014/server.js",
-            rdv: false
-        }
+// Services
+module.exports.SERVICES = {
+    galaxy: {
+        id: "galaxy",
+        name: "Galaxy",
+        path: "/services/galaxy/server.js",
+    },
+    jmcs: {
+        id: "jmcs",
+        name: "JMCS",
+        path: "/services/jmcs/server.js"
+    },
+    wdf: {
+        id: "wdf",
+        name: "World Dance Floor (WDF)",
+        path: "/services/wdf/server.js"
     }
-
-}
+};

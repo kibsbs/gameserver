@@ -12,14 +12,13 @@ module.exports = {
 
     database: require("./database")[global.ENV],
 
-    games: require("../../games"),
-
 
     cdn: {
         url: "https//cdn.danceparty.online",
         paths: {
             covers: `gs/galaxy/songs/covers`
         }
-    },
+    }
+
 
 }
