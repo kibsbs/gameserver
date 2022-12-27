@@ -24,28 +24,28 @@ async.waterfall(
             return cb(null, args);
         },
         (args, cb) => {
+            // Load Gameserver configuration
             dotenv.config(); // Resolve env file
-            // Set ENV and PORT from args OR env file OR set default values
-            global.ENV = args.env || process.env.ENV || "local";
-            global.PORT = args.port || process.env.PORT || 5000;
-            // Load configuration and pass .env file
+
             require("./lib/load-config").gs((err, conf) => {
                 if (err) return cb(err);
-                config = conf; // set gs config
-                // -
-                // Set service, path and base
-                service = config.SERVICES[args.service];
-                service.path = path.resolve(__dirname, service.path);
-                service.base = path.resolve(__dirname, path.dirname(service.path));
-                // -
-                return cb();
+                config = conf;
+                return cb(null, args);
             });
         },
-        (cb) => {
-            // Load service configuration
+        (args, cb) => {
+
+            // Set service information
+            service = config.SERVICES[args.service];
+            service.path = path.resolve(__dirname, service.path);
+            service.base = path.resolve(__dirname, path.dirname(service.path));
+
+            // Load service's configuration
             require("./lib/load-config").service(service, (err, conf) => {
                 if (err) return cb(err);
                 serviceConfig = conf;
+                global.ENV = args.env || process.env.ENV || "local";
+                global.PORT = args.port || serviceConfig.PORT || 5000;
                 return cb();
             });
         },
@@ -72,13 +72,14 @@ async.waterfall(
 
             logger.wait(`Starting service ${service.name}...`);
 
+            // - Set globals
             global.service = service;
             global.secrets = config.secrets;
             // Service
             global.config = serviceConfig;
             global.config.service = global.service;
-            //
             global.gs = config;
+            // -
             
             const app = require(script);
             return cb(null, app)

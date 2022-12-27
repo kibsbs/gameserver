@@ -42,9 +42,4 @@ module.exports.service = (service, cb) => {
     const serviceConfig = require(path.resolve(service.base, "config.js"));
 
     return cb(null, serviceConfig);
-  
-    const gsVal = gs.validate(gsConfig);
-    if (gsVal.error) return cb(`Couldn't verify Service config: ${gsVal.error}`);
-
-    return gsVal.value;
 };
