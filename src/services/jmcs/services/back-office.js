@@ -8,7 +8,15 @@ module.exports = {
     async init(app, router) {
 
         router.get("/getConfig", (req, res) => {
-            return res.json(global.config)
+            // Remove any secret key
+            let config = gs.config;
+            delete config.SECRETS;
+            delete config.DATABASE;
+            
+            return res.json({
+                gs: config,
+                jmcs: global.config
+            });
         });
 
     }

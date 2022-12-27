@@ -1,5 +1,3 @@
-const nasAuth = require("nas-auth-client")
-
 module.exports = {
 
     name: `ConstantProvider`,

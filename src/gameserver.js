@@ -2,6 +2,9 @@
  * GAMESERVER
  */
 
+// Register aliases
+require("./aliases")();
+
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
@@ -69,16 +72,21 @@ async.waterfall(
 
             logger.wait(`Starting service ${service.name}...`);
 
+            global.service = service;
+            global.secrets = config.secrets;
+            // Service
+            global.config = serviceConfig;
+            global.config.service = global.service;
+            //
+            global.gs = config;
+            
             const app = require(script);
             return cb(null, app)
         },
         (app, cb) => {
             // Start the service
-            global.service = service;
-            global.config = serviceConfig;
-            global.gs = config;
             http.createServer(app).listen(global.PORT);
-            logger.success(`Started service ${service.name} successfully!\n${global.gs.BASE_URL}`);
+            logger.success(`Started service ${service.name} on port ${global.PORT} successfully!`);
             return cb();
         }
     ],
