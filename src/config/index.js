@@ -4,6 +4,7 @@
  */
 
 // module.exports.ENV = global.env || "local";
+module.exports.BASE_URL = process.env.BASE_URL || "http://localhost:" + global.PORT;
 module.exports.ENVS = ["local", "test", "docker", "prod", "dev", "uat", "qc"];
 module.exports.DEFAULT_PORT = 5000;
 module.exports.DEFAULT_ENV = "local";
@@ -53,7 +54,7 @@ module.exports.MAX_LOBBY_PLAYERS = 8;
 
 
 // Languages and regions from Wii
-// It's used by JMCS, WDF and DLC Store for localization
+// It"s used by JMCS, WDF and DLC Store for localization
 module.exports.LANGS = [
     { id: "00", lang: "JA" },
     { id: "01", lang: "EN" },

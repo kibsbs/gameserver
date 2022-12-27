@@ -2,19 +2,11 @@
  * GAMESERVER
  */
 
-// -------------------------------
-
-require("dotenv").config() // Load env config
-//require("./lib/aliases").register(__dirname) // Register library aliases
-
-// -------------------------------
-
-const async = require("async");
-const path = require("node:path");
 const fs = require("fs");
-
-const project = require("../package.json");
-
+const path = require("path");
+const http = require("http");
+const async = require("async");
+const dotenv = require("dotenv");
 const logger = require("signale");
 
 let config;
@@ -24,22 +16,30 @@ let serviceConfig;
 async.waterfall(
     [
         (cb) => {
-            // Load configuration
+            // Start CLI progress
+            const args = require("./cli")();
+            return cb(null, args);
+        },
+        (args, cb) => {
+            dotenv.config(); // Resolve env file
+            // Set ENV and PORT from args OR env file OR set default values
+            global.ENV = args.env || process.env.ENV || "local";
+            global.PORT = args.port || process.env.PORT || 5000;
+            // Load configuration and pass .env file
             require("./lib/load-config").gs((err, conf) => {
                 if (err) return cb(err);
-                config = conf;
+                config = conf; // set gs config
+                // -
+                // Set service, path and base
+                service = config.SERVICES[args.service];
+                service.path = path.resolve(__dirname, service.path);
+                service.base = path.resolve(__dirname, path.dirname(service.path));
+                // -
                 return cb();
             });
         },
         (cb) => {
-            // Start CLI progress
-            const args = require("./cli")(config);
-            return cb(null, args);
-        },
-        (args, cb) => {
-            // Set service from args and set it's config
-            service = config.SERVICES[args.service];
-            service.base = path.resolve(__dirname, path.dirname(service.path))
+            // Load service configuration
             require("./lib/load-config").service(service, (err, conf) => {
                 if (err) return cb(err);
                 serviceConfig = conf;
@@ -48,18 +48,18 @@ async.waterfall(
         },
         (cb) => {
             // Initate clients before proceeding
-            logger.wait("Initalizing clients...")
+            logger.wait("Initalizing clients...");
 
             // Database
             if (service.clients.includes("db")) {
-                let connectionUri = config.DATABASE[service.id]["local"]
-                require("./clients/db-client")(connectionUri, (err, ok) => {
+                let connectionUri = config.DATABASE[service.id]["local"];
+                require("./lib/clients/db-client")(connectionUri, (err, ok) => {
                     if (err) return cb(err);
                     logger.success("Connected to Database client!");
                 });
             }
 
-            logger.success("Initalized all clients!")
+            logger.success("Initalized all clients!");
             return cb();
         },
         (cb) => {
@@ -69,7 +69,17 @@ async.waterfall(
 
             logger.wait(`Starting service ${service.name}...`);
 
-            require(script)
+            const app = require(script);
+            return cb(null, app)
+        },
+        (app, cb) => {
+            // Start the service
+            global.service = service;
+            global.config = serviceConfig;
+            global.gs = config;
+            http.createServer(app).listen(global.PORT);
+            logger.success(`Started service ${service.name} successfully!\n${global.gs.BASE_URL}`);
+            return cb();
         }
     ],
     function (err, status) {

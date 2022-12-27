@@ -1,4 +1,4 @@
-const path = require("path")
+const path = require("path");
 const { getModelPath } = require("db-helper")
 
 function joinService(srvName, libs = {}) {

@@ -1,14 +1,13 @@
 const yargs = require("yargs/yargs")
 const { hideBin } = require("yargs/helpers")
 
-module.exports = (config) => {
+module.exports = () => {
     return yargs(hideBin(process.argv))
     .command('serve <service>', 'Initalize a service', (yargs) => {
         return yargs
           .positional('service', {
             describe: 'Service name',
-            demandOption: true,
-            choices: Object.keys(config.SERVICES)
+            demandOption: true
           })
       }, (argv) => {
         return argv
@@ -16,8 +15,7 @@ module.exports = (config) => {
     .option("env", {
         alias: "e",
         type: "string",
-        description: `Service enviroment`,
-        choices: config.ENVS
+        description: `Service enviroment`
     })
     .option("port", {
         alias: "p",

@@ -3,7 +3,7 @@ class Serializer {
     constructor() {}
 
     client(req, res, next) {
-        return require("./client")(req, res, next)
+        return require("./uenc-client")(req, res, next)
     }
 
     serialize(data = {}, joinBy = "&") {

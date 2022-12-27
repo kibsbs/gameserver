@@ -30,7 +30,7 @@ const gs = Joi
     }).unknown(true);
 
 module.exports.gs = (cb) => {
-    const gsConfig = require("../config")
+    const gsConfig = require("../config");
   
     const gsVal = gs.validate(gsConfig);
     if (gsVal.error) return cb(`Couldn't verify Gameserver config: ${gsVal.error}`);
