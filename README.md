@@ -1,5 +1,6 @@
 
 # Gameserver
+[![](https://dcbadge.vercel.app/api/server/msKfjrqfCm)](https://discord.gg/msKfjrqfCm)
 
 DanceParty Gameserver is a central server that handles services like JMCS, WDF and Galaxy.
 
