@@ -1,6 +1,11 @@
+/**
+ * GAMESERVER
+ */
+
 // -------------------------------
-// Register all library aliases
-require("./libs/aliases").register(__dirname)
+
+require("dotenv").config() // Load env config
+require("./libs/aliases").register(__dirname) // Register library aliases
 
 // -------------------------------
 
@@ -8,9 +13,9 @@ const async = require("async");
 const path = require("node:path");
 const fs = require("fs");
 
-const project = require("./package.json");
+const project = require("../package.json");
 const config = require("./config");
-const aliases = require("./aliases")
+const aliases = require("../aliases")
 
 const utils = require("utils");
 const logger = require("logger")(["GS"]);
