@@ -5,6 +5,8 @@
 
 // module.exports.ENV = global.env || "local";
 module.exports.ENVS = ["local", "test", "docker", "prod", "dev", "uat", "qc"];
+module.exports.DEFAULT_PORT = 5000;
+module.exports.DEFAULT_ENV = "local";
 
 module.exports.GAMES = require("./games");
 module.exports.SECRETS = require("./secrets");
@@ -13,17 +15,20 @@ module.exports.SERVICES = {
     galaxy: {
         id: "galaxy",
         name: "Galaxy",
-        path: "/services/galaxy/server.js",
+        path: "services/galaxy/server.js",
+        clients: ["db"]
     },
     jmcs: {
         id: "jmcs",
         name: "JMCS",
-        path: "/services/jmcs/server.js"
+        path: "services/jmcs/server.js",
+        clients: ["db"]
     },
     wdf: {
         id: "wdf",
         name: "World Dance Floor (WDF)",
-        path: "/services/wdf/server.js"
+        path: "services/wdf/server.js",
+        clients: ["db"]
     }
 };
 
