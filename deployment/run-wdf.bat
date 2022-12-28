@@ -1,1 +1,0 @@
-node app.js --service wdf --env local

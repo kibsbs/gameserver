@@ -16,6 +16,15 @@ let config;
 let service;
 let serviceConfig;
 
+// We use waterfall to run functions in order, here's an explanation (will be better in time)
+// 1. Start the CLI and wait for client's arguments, get the selected service
+// 2. Load .env and gameserver's configuration
+// 3. Set service's information
+// 4. Load service's configuration 
+// and set ENV either from arguments, .env file or set default value
+// do the same for PORT, from args, service's config or default value
+// 5. Initalize any client the service requires
+// 6. Start the service and define configs under global for easy access
 async.waterfall(
     [
         (cb) => {
@@ -91,7 +100,7 @@ async.waterfall(
             return cb();
         }
     ],
-    function (err, status) {
+    function (err) {
         if (err) throw new Error(err);
     }
 );

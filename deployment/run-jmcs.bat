@@ -1,1 +1,0 @@
-node app.js --service jeanmich --env local

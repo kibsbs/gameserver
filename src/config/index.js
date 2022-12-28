@@ -13,15 +13,20 @@ module.exports.GAMES = require("./games");
 module.exports.SECRETS = require("./secrets");
 module.exports.DATABASE = require("./database"); // Database loaded here but service and env are configured in service config
 module.exports.SERVICES = {
+
+    // --- Internal services
     galaxy: {
         id: "galaxy",
         name: "Galaxy",
         path: "services/galaxy/server.js",
         clients: ["db"]
     },
+    // ---
+
+    // --- Legacy services
     jmcs: {
         id: "jmcs",
-        name: "JMCS",
+        name: "JMCS (Legacy)",
         path: "services/jmcs/server.js",
         clients: ["db"]
     },
@@ -31,6 +36,8 @@ module.exports.SERVICES = {
         path: "services/wdf/server.js",
         clients: ["db"]
     }
+    // ---
+
 };
 
 // --------------------
