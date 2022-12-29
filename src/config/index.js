@@ -3,7 +3,6 @@
  * These configs are used by all services.
  */
 
-// module.exports.ENV = global.env || "local";
 module.exports.BASE_URL = process.env.BASE_URL || "http://localhost:" + global.PORT;
 module.exports.ENVS = ["local", "test", "docker", "prod", "dev", "uat", "qc"];
 module.exports.DEFAULT_PORT = 5000;
@@ -18,7 +17,7 @@ module.exports.SERVICES = {
     galaxy: {
         id: "galaxy",
         name: "Galaxy",
-        path: "services/galaxy/server.js",
+        path: "services/galaxy/service.js",
         clients: ["db"]
     },
     // ---
@@ -26,14 +25,14 @@ module.exports.SERVICES = {
     // --- Legacy services
     jmcs: {
         id: "jmcs",
-        name: "JMCS (Legacy)",
-        path: "services/jmcs/server.js",
+        name: "JMCS",
+        path: "services/jmcs/service.js",
         clients: ["db"]
     },
     wdf: {
         id: "wdf",
-        name: "World Dance Floor (WDF)",
-        path: "services/wdf/server.js",
+        name: "WDF",
+        path: "services/wdf/service.js",
         clients: ["db"]
     }
     // ---
@@ -46,6 +45,10 @@ module.exports.SERVICES = {
 module.exports.BYPASS_AUTH = false; // Bypasses authorization on API
 module.exports.PUBLIC_ERROR_MESSAGES = true; // Shows server errors in response
 module.exports.LOG_SERVER_ERRORS = true; // Logs server errors
+module.exports.ALLOW_TEST_TOKENS = require("utils").isDev();
+
+// Headers
+module.exports.HEADER_FORCE_JSON = "X-Force-Json";
 // --------------------
 
 // --------------------

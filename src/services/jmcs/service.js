@@ -1,19 +1,36 @@
+/**
+ * JMCS service
+ */
+
 const express = require("express");
+const path = require("path");
+const fs = require("fs");
 const app = express();
 
-const fs = require("fs");
-const path = require("path");
+const logger = require("logger");
+const morganMiddleware = require("morgan-middleware");
+const uenc = require("uenc");
 
-// All services that are used by JMCS
+global.logger = logger;
+
+// Middlewares
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + "/static"));
+app.use(morganMiddleware);
+app.use(express.json());
+app.use(uenc.client);
+
+// All sub-services that are used by JMCS
 const services = {
     "BackOffice": "back-office",
-    // "ConstantProvider": "constant-provider",
+    "ConstantProvider": "constant-provider",
     // "DancerCard": "dancer-card",
     // "HighScores": "high-scores",
     // "Leaderboard": "leaderboard",
-    // "Mashup": "mashup",
-    // "StarChallenge": "star-challenge"
-}
+    "Mashup": "mashup",
+    "StarChallenge": "star-challenge",
+    "Status": "status"
+};
 
 // Loop through services and load them
 for (var serviceName in services) {

@@ -6,8 +6,12 @@ module.exports = {
 
     async init(app, router) {
 
-        router.post("/getConstants", nasAuth.require, (req, res) => {
-            return res.json(global.config.constants)
+        /**
+         * getConstants is used by the game to set any online configuration
+         */
+        router.post("/getConstants", (req, res) => {
+            global.logger.info("Checking the API status: Everything is OK");
+            return res.json(global.config.CONSTANTS);
         });
 
     }

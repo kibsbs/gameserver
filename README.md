@@ -30,7 +30,7 @@ DanceParty Gameserver is a central server that handles services like JMCS, WDF a
 ```
 git clone https://github.com/DancePartyOnline/gameserver.git
 cd gameserver
-npm i
+npm install
 pm2 start ecosystem.json
 ```
 Using the code block above in your terminal will clone the server, 
@@ -40,20 +40,22 @@ install all modules and start **JMCS** and **WDF** with PM2.
 If you don't want to run the server with PM2 or want to run specific service,
 you can always use the command line.
 ```
-Usage: DanceParty GS [options]
+gameserver.js <command>
 
-Initiate DanceParty GS services
+Commands:
+  gameserver.js serve <service>  Initalize a service
 
 Options:
-  -V, --version                output the version number
-  -s, --service <serviceName>  service name to initiate
-  -e, --env <envName>          enviroment for the service (default: "LOCAL")
-  -h, --help                   display help for command
-```
-`node app.js --service jeanmich --env local` will start JMCS in local enviroment.
+      --help     Show help                                             [boolean]
+      --version  Show version number                                   [boolean]
+  -e, --env      Service enviroment                                     [string]
+  -p, --port     Port to bind on                                        [number]
 
-`node app.js --service wdf --env dev` will start WDF in dev enviroment.
+Not enough non-option arguments: got 0, need at least 1
+```
+`node src\gameserver.js serve jmcs --env local` will start JMCS in local enviroment.
+
+`node src\gameserver.js serve wdf --env dev --port 5000` will start WDF in dev enviroment and bind on port 5000.
 
 ## Contribute
 Currently we don't accept any contribution due to the current state of Gameserver.
-

@@ -1,1 +1,3 @@
-// For any service related aliases
+/**
+ * Service aliases
+ */

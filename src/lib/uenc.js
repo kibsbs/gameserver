@@ -1,44 +1,66 @@
-class Serializer {
-
+class Uenc {
     constructor() {}
 
-    client(req, res, next) {
-        return require("./uenc-client")(req, res, next)
+    client = require("./uenc-client")
+
+    /**
+     * Serializes given data for JMCS and WDF.
+     * JMCS uses classic urlParams like "name=Hello&score=12450"
+     * WDF uses urlParams but with semicolons like "song=Problem;total=50"
+     * If you want to, you can also set the index resulting in "name0=Jennie;score0=130;name1=Rose;score1=450"
+     * @param {(string|Array)} data Object or array to serialize
+     * @param {Boolean} setIndex If you want to set index of each key in data
+     * @param {Number} offset If setIndex is set, you can set the index's offset
+     * @returns {String}
+     */
+    serialize(data, setIndex = false, offset = 0, indexSep = "") {
+        let seperator = global.service.id === "wdf" ? ";" : "&";
+        let result = [];
+
+        // If given data is an array
+        // - If setIndex is true, it will indexify each data in array and turn to an object
+        // - If not, it will flatten the array to an object
+        if (Array.isArray(data)) {
+            if (setIndex) data = this.setIndex(data, offset, indexSep);
+            else data = this.flatArray(data);
+        };
+
+        // Transform data to url encoded format
+        // URLSearchParams was used before but it was encoding data keys which would cause in a crash 
+        Object.entries(data).map(([k, v]) => { 
+            v = encodeURIComponent(v); // Only encode value
+            result.push(`${k}=${v}`);
+        });
+        
+        return result.join(seperator);
     }
 
-    serialize(data = {}, joinBy = "&") {
-        return Object.entries(data).map(([k, v]) => `${k}=${v}`).join(joinBy)
-    }
+    deserialize(data) {}
 
-    serializeWdf(data = [], index = false, indexOffset = 0) {
-        // each entry in an array [{user: "Hello"}, {user:"testname"}]
-        // will have indexes like this user0=Hello&user1=Hello
-        let result = []
+    /**
+     * Sets index of given data's keys
+     * @param {Array} data Data to "indexify"
+     * @param {Number} offset Index offset
+     * @param {String} sep Seperator 
+     * @returns 
+     */
+    setIndex(data = [ data ], offset = 0, sep = "") {
+        let result = {};
         data.forEach((obj, i) => {
-            result.push(Object.entries(obj).map(([k, v]) => `${k}${i+indexOffset}=${v}`).join(";"))
-        })
-        return result.join(";")
+            i += offset;
+            Object.entries(obj).map(([k, v]) => { result[`${k}${sep}${i}`] = v; });
+            i = 0;
+        });
+        return result;
     }
 
-    unserialize(string = "hello=true") {
-        string = string.includes(";") ? string.split(";") : string.split("&")
-        let obj = {}
-        string.map(a => obj[a.split("=")[0]] = a.split("=")[1])
-        return obj
-    }
-
-    setIndex(data = [ data ], indexOffset = 0, seperator = "") {
-        let result = {}
+    flatArray(data) {
+        let result = {};
         data.forEach((obj, i) => {
-            i += indexOffset
-            Object.entries(obj).map(([k, v]) => {
-                result[`${k}${seperator}${i}`] = v
-            })
-            i = 0
-        })
-        return result
+            Object.entries(obj).map(([k, v]) => { result[k] = v; });
+        });
+        return result;
     }
+};
 
-}
-
-module.exports = new Serializer();
+module.exports = new Uenc();

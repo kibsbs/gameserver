@@ -25,6 +25,7 @@ let serviceConfig;
 // do the same for PORT, from args, service's config or default value
 // 5. Initalize any client the service requires
 // 6. Start the service and define configs under global for easy access
+// It's all confusing at the moment, which will be improved in future
 async.waterfall(
     [
         (cb) => {
@@ -43,7 +44,6 @@ async.waterfall(
             });
         },
         (args, cb) => {
-
             // Set service information
             service = config.SERVICES[args.service];
             service.path = path.resolve(__dirname, service.path);
@@ -53,10 +53,14 @@ async.waterfall(
             require("./lib/load-config").service(service, (err, conf) => {
                 if (err) return cb(err);
                 serviceConfig = conf;
-                global.ENV = args.env || process.env.ENV || "local";
-                global.PORT = args.port || serviceConfig.PORT || 5000;
                 return cb();
             });
+        },
+        (cb) => {
+            // Set ENV and PORT
+            global.ENV = args.env || process.env.ENV || "local";
+            global.PORT = args.port || serviceConfig.PORT || 5000;
+            return cb();
         },
         (cb) => {
             // Initate clients before proceeding
@@ -89,6 +93,7 @@ async.waterfall(
             global.config.service = global.service;
             global.gs = config;
             // -
+            global.project = require("../package.json");
             
             const app = require(script);
             return cb(null, app)

@@ -1,7 +1,3 @@
-
-
-const nasAuth = require("nas-auth-client")
-
 module.exports = {
 
     name: `StarChallenge`,
@@ -10,8 +6,7 @@ module.exports = {
 
     async init(app, router) {
 
-
-        router.post("/getCommonData", nasAuth.require, (req, res) => {
+        router.post("/getCommonData", (req, res) => {
             const commonData = {
                 avatar: 0,
                 country: 0,
@@ -27,7 +22,6 @@ module.exports = {
             }
             return res.uenc(commonData)
         });
-
+        
     }
-    
-}
+};
