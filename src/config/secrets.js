@@ -1,8 +1,9 @@
 // Used for signing/verifying NAS tokens.
 module.exports.NAS_TOKEN = {
-    nasServer: process.env.NAS_SERVER,
-    vector: process.env.NAS_VECTOR,
-    securityKey: process.env.NAS_KEY
+    server: process.env.NAS_SERVER,
+    iv: process.env.NAS_IV,
+    key: process.env.NAS_KEY,
+    algorithm: "aes-256-cbc"
 };
 
 // Keys which are allowed to access the API.

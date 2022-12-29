@@ -1,4 +1,5 @@
 const utils = require("utils");
+const nas = require("nas-token-client");
 
 module.exports = {
 
@@ -10,7 +11,7 @@ module.exports = {
 
         router.get("/health", utils.healthCheck);
 
-        router.get("/getStatus", (req, res) => {
+        router.get("/getStatus", nas.require, (req, res) => {
             return res.json({
                 service: global.service.name,
                 gameserver: {

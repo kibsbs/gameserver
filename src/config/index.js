@@ -42,24 +42,32 @@ module.exports.SERVICES = {
 // --------------------
 // Server configuration
 // --------------------
+
 module.exports.BYPASS_AUTH = false; // Bypasses authorization on API
 module.exports.PUBLIC_ERROR_MESSAGES = true; // Shows server errors in response
 module.exports.LOG_SERVER_ERRORS = true; // Logs server errors
-module.exports.ALLOW_TEST_TOKENS = require("utils").isDev();
+
+module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after creation
 
 // Headers
 module.exports.HEADER_FORCE_JSON = "X-Force-Json";
+module.exports.TOKEN_KEY = "token";
+
 // --------------------
+
+
 
 // --------------------
 // Game configuration
 // --------------------
+
 module.exports.MAX_SCORE = 13333;
 // TODO: JD17 has 6 (superstar), JD18 has 7 stars (superstar & megastar)
 // so we need to add a way to change max stars depending on game
 // (probably make a function in utils with game as param?)
 module.exports.MAX_STARS = 5;
 module.exports.MAX_LOBBY_PLAYERS = 8;
+
 // --------------------
 
 

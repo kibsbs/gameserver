@@ -53,10 +53,10 @@ async.waterfall(
             require("./lib/load-config").service(service, (err, conf) => {
                 if (err) return cb(err);
                 serviceConfig = conf;
-                return cb();
+                return cb(null, args);
             });
         },
-        (cb) => {
+        (args, cb) => {
             // Set ENV and PORT
             global.ENV = args.env || process.env.ENV || "local";
             global.PORT = args.port || serviceConfig.PORT || 5000;
@@ -87,7 +87,7 @@ async.waterfall(
 
             // - Set globals
             global.service = service;
-            global.secrets = config.secrets;
+            global.secrets = config.SECRETS;
             // Service
             global.config = serviceConfig;
             global.config.service = global.service;
