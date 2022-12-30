@@ -51,7 +51,6 @@ class NasToken {
     }
 
     encrypt(payload = {}) {
-        console.log(this.validatePayload)
         try {
             payload = this.validatePayload(payload);
             payload = JSON.stringify(payload);

@@ -26,3 +26,10 @@ module.exports.errorHandler = (err, req, res, next) => {
     else
         return res.sendStatus(data.status);
 };
+
+module.exports.notFound = (req, res, next) => {
+    let isDev = utils.isDev();
+    
+    if (isDev) return next();
+    else return res.status(404).send();
+};

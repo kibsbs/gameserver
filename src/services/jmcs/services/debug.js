@@ -23,10 +23,10 @@ module.exports = {
                 uid: "0",
                 sid: "0",
                 loc: 01,
-                rgn: 01
+                rgn: 01,
+                exp: Date.now()
             })
-            console.log(token)
-            return res.send((token))
+            return res.send({ token: encodeURIComponent(token) })
         });
 
     }

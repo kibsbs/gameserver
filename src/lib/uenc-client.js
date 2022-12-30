@@ -6,6 +6,12 @@ module.exports = (req, res, next) => {
     
     res.uenc = (data, setIndex = false, offset = 0) => {
         if (forceJson) return res.json(data);
+
+        if (global.service.id == "jmcs")
+            res.set("Content-Type", "application/x-www-form-urlencoded");
+        else if (global.service.id == "wdf")
+            res.set("Content-Type", "text/html");
+        
         return res.send(uenc.serialize(data, setIndex, offset));
     };
     

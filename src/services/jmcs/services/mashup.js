@@ -1,4 +1,4 @@
-
+const nas = require("nas-token-client");
 
 module.exports = {
 
@@ -20,7 +20,7 @@ module.exports = {
             }
         }];
 
-        router.post("/getCurrentMap", (req, res) => {
+        router.post("/getCurrentMap", nas.require, (req, res) => {
             let map = testMaps[0];
             return res.uenc({
                 mapName: map.mapName,
@@ -28,7 +28,7 @@ module.exports = {
             })
         });
 
-        router.post("/getMetadata", (req, res) => {
+        router.post("/getMetadata", nas.require, (req, res) => {
             let map = testMaps[0];
 
             let metadatas = [];

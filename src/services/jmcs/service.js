@@ -7,12 +7,10 @@ const path = require("path");
 const fs = require("fs");
 const app = express();
 
-const logger = require("logger");
 const morganMiddleware = require("morgan-middleware");
-const uenc = require("uenc");
 const mids = require("http-middleware");
-
-global.logger = logger;
+const logger = require("logger");
+const uenc = require("uenc");
 
 // Middlewares
 app.use(express.static(__dirname + "/static"));
@@ -20,6 +18,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morganMiddleware);
 app.use(uenc.client);
+app.disable("x-powered-by");
+app.disable("etag");
+app.use((req, res, next) => {
+    res.set("Connection", "close");
+    return next();
+});
+
+global.logger = logger;
 
 // All sub-services that are used by JMCS
 const services = {
@@ -52,5 +58,6 @@ for (var serviceName in services) {
 }
 
 app.use(mids.errorHandler);
+app.use(mids.notFound);
 
 module.exports = app;
