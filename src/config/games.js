@@ -4,15 +4,18 @@
 // {
 //     name: "Just Dance 2014", Full name of the game
 //     available: true, If the game is allowed to access services
-//     regions: [{ 
-//         region: PAL, Region ID
-//         gameId: "SJOP", Game ID
-//         available: true If region is allowed to access services
-//     }, { 
-//         region: NTSC,
-//         gameId: "SJOE",
-//         available: true
-//     }],
+//     Region games
+//     regions: {
+//            Region ID
+//            SJOP: {
+//                region: PAL,
+//                available: true You can also enable/disable certain regions
+//            },
+//            SJOE: {
+//                region: NTSC,
+//                available: true
+//            }
+//     },
 //     We keep the game's star count, amount of songs and unlocksCount here to detect any cheating
 //     stats: { 
 //         totalStars: 275, Amount of all that can be earned in game
@@ -24,89 +27,94 @@
 const PAL = "PAL";
 const NTSC = "NTSC";
 
-module.exports = {
-    2014: {
-        name: "Just Dance 2014",
-        available: true,
-        regions: [{ 
+module.exports = [{
+    name: "Just Dance 2014",
+    version: 2014,
+    available: true,
+    regions: {
+        SJOP: {
             region: PAL,
-            gameId: "SJOP",
             available: true
-        }, { 
+        },
+        SJOE: {
             region: NTSC,
-            gameId: "SJOE",
             available: true
-        }],
-        stats: {
-            totalStars: 275,
-            songsCount: 55,
-            unlocksCount: 24
         }
     },
-    2015: {
-        name: "Just Dance 2015",
-        available: true,
-        regions: [{ 
-            region: PAL,
-            gameId: "SE3P",
-            available: true
-        }, { 
-            region: NTSC,
-            gameId: "SE3E",
-            available: true
-        }],
-        stats: {}
-    },
-    2016: {
-        name: "Just Dance 2016",
-        available: true,
-        regions: [{ 
-            region: PAL,
-            gameId: "SJNP",
-            available: true
-        }, { 
-            region: NTSC,
-            gameId: "SJNE",
-            available: true
-        }],
-        stats: {}
-    },
-    2017: {
-        name: "Just Dance 2017",
-        available: true,
-        regions: [{ 
-            region: PAL,
-            gameId: "SZ7P",
-            available: true
-        }, { 
-            region: NTSC,
-            gameId: "SZ7E",
-            available: true
-        }],
-        stats: {
-            totalStars: 275,
-            songsCount: 55,
-            unlocksCount: 24
-        }
-    },
-    2018: {
-        name: "Just Dance 2018",
-        available: true,
-        regions: [{ 
-            region: PAL,
-            gameId: "SE8P",
-            available: true
-        }, { 
-            region: NTSC,
-            gameId: "SE8E",
-            available: true
-        }],
-        stats: {
-            totalStars: 275,
-            songsCount: 55,
-            unlocksCount: 24
-        }
+    stats: {
+        totalStars: 275,
+        songsCount: 55,
+        unlocksCount: 24
     }
+}, {
+    name: "Just Dance 2015",
+    version: 2015,
+    available: true,
+    regions: {
+        SE3P: {
+            region: PAL,
+            available: true
+        },
+        SE3E: {
+            region: NTSC,
+            available: true
+        }
+    },
+    stats: {}
+}, {
+    name: "Just Dance 2016",
+    version: 2016,
+    available: true,
+    regions: {
+        SJNP: {
+            region: PAL,
+            available: true
+        },
+        SJNE: {
+            region: NTSC,
+            available: true
+        }
+    },
+    stats: {}
+}, {
+    name: "Just Dance 2017",
+    version: 2017,
+    available: true,
+    regions: {
+        SZ7P: {
+            region: PAL,
+            available: true
+        },
+        SZ7E: {
+            region: NTSC,
+            available: true
+        }
+    },
+    stats: {
+        totalStars: 275,
+        songsCount: 55,
+        unlocksCount: 24
+    }
+}, {
+    name: "Just Dance 2018",
+    version: 2018,
+    available: true,
+    regions: {
+        SE8P: {
+            region: PAL,
+            available: true
+        },
+        SE8E: {
+            region: NTSC,
+            available: true
+        }
+    },
+    stats: {
+        totalStars: 275,
+        songsCount: 55,
+        unlocksCount: 24
+    }
+}
     // You can add mods here!
     // ...
-};
+]
