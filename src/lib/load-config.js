@@ -21,7 +21,7 @@ const region = Joi.object().keys({
 const gs = Joi
     .object()
     .keys({
-        GAMES: Joi.object().required(),
+        GAMES: Joi.array().required(),
         SECRETS: Joi.object().required(),
         DATABASE: Joi.object().required(),
         SERVICES: Joi.object().pattern(/^/, service).required(),

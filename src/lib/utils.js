@@ -16,7 +16,7 @@ class Utils {
      * @returns {Boolean}
      */
     isDev() {
-        return ["dev", "local", "uat", "docker"].includes(global.ENV.toLowerCase())
+        return ["dev", "local", "uat", "docker"].includes(global.ENV.toLowerCase());
     }
 
     /**
@@ -24,7 +24,7 @@ class Utils {
      * @returns {Number}
      */
     serverTime() {
-        return (Date.now() / 1000)
+        return (Date.now() / 1000);
     }
 }
 

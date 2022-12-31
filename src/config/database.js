@@ -7,7 +7,7 @@ module.exports = {
         dev: ""
     },
     jmcs: {
-        local: "mongodb://localhost:27017/dp-jmcs-local",
+        local: "mongodb://127.0.0.1:27017/dp-jmcs-local",
         prod: "",
         dev: ""
     },

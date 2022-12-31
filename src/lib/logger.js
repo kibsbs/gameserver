@@ -3,20 +3,22 @@ const utils = require("utils");
 const path = require("path");
 const fs = require("fs");
 
-const logFolder = path.resolve(__dirname, "../logs", global.service.id);
+const logFolder = path.resolve(__dirname, "../logs", (global.service?.id || "gs"));
 
 const levels = {
     error: 0,
     warn: 1,
     info: 2,
-    http: 3,
-    debug: 4,
-    cheat: 5
+    success: 3,
+    http: 4,
+    debug: 5,
+    cheat: 6
 };
 const COLORS = {
     error: "red",
     warn: "yellow",
-    info: "green",
+    info: "cyan",
+    success: "green",
     http: "magenta",
     debug: "white",
     cheat: "redBG"
@@ -25,7 +27,7 @@ const COLORS = {
 fs.mkdirSync(logFolder, { recursive: true }); // Create log folder if it doesn't exist
 winston.addColors(COLORS); // Add colors
 
-const level = global.gs.LOG_LEVEL || global.config.LOG_LEVEL || process.env.LOG_LEVEL || (utils.isDev() ? "debug" : "warn");
+const level = global.gs?.LOG_LEVEL || global.config?.LOG_LEVEL || process.env.LOG_LEVEL || (utils.isDev() ? "debug" : "warn") || "debug";
 
 const format = winston.format.combine(
     winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), // Date format

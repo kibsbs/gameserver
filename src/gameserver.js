@@ -5,12 +5,14 @@
 // Register aliases
 require("./aliases")();
 
+global.ENV = "local";
+
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
 const async = require("async");
 const dotenv = require("dotenv");
-const logger = require("signale");
+const logger = require("logger");
 
 let config;
 let service;
@@ -64,7 +66,7 @@ async.waterfall(
         },
         (cb) => {
             // Initate clients before proceeding
-            logger.wait("Initalizing clients...");
+            logger.info("Initalizing clients...");
 
             // Database
             if (service.clients.includes("db")) {
@@ -83,7 +85,7 @@ async.waterfall(
             const base = service.base;
             const script = service.path;
 
-            logger.wait(`Starting service ${service.name}...`);
+            logger.info(`Starting service ${service.name}...`);
 
             // - Set globals
             global.service = service;

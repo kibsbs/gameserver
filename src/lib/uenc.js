@@ -54,6 +54,11 @@ class Uenc {
         return result;
     }
 
+    /**
+     * Turns array of objects to an object
+     * @param {*} data 
+     * @returns 
+     */
     flatArray(data) {
         let result = {};
         data.forEach((obj, i) => {

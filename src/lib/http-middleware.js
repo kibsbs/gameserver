@@ -18,8 +18,8 @@ module.exports.errorHandler = (err, req, res, next) => {
     data.message = err.message || "Unknown error occured.";
     if (err.error) data.error = err.error;
     
-    data.requestId = uuid.v4()
-    data.serverTime = new Date(utils.serverTime() * 1000)
+    data.requestId = uuid.v4();
+    data.serverTime = new Date(utils.serverTime() * 1000);
 
     if (global.gs.PUBLIC_ERROR_MESSAGES)
         return res.status(data.status).json(data);
@@ -28,8 +28,6 @@ module.exports.errorHandler = (err, req, res, next) => {
 };
 
 module.exports.notFound = (req, res, next) => {
-    let isDev = utils.isDev();
-    
-    if (isDev) return next();
+    if (utils.isDev()) return next();
     else return res.status(404).send();
 };
