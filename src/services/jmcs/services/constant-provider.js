@@ -1,3 +1,5 @@
+const nas = require("nas-token-client");
+
 module.exports = {
 
     name: `ConstantProvider`,
@@ -7,10 +9,9 @@ module.exports = {
     async init(app, router) {
 
         /**
-         * getConstants is used by the game to set any online configuration
+         * getConstants is used by the game to set JDWall configuration
          */
-        router.post("/getConstants", (req, res) => {
-            global.logger.info("Checking the API status: Everything is OK");
+        router.post("/getConstants", nas.require, (req, res) => {
             return res.json(global.config.CONSTANTS);
         });
 

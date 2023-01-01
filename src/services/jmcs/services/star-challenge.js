@@ -1,3 +1,5 @@
+const nas = require("nas-token-client");
+
 module.exports = {
 
     name: `StarChallenge`,
@@ -6,7 +8,7 @@ module.exports = {
 
     async init(app, router) {
 
-        router.post("/getCommonData", (req, res) => {
+        router.post("/getCommonData", nas.require, (req, res) => {
             const commonData = {
                 avatar: 0,
                 country: 0,

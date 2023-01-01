@@ -1,6 +1,18 @@
 class Utils {
     constructor() {}
 
+    getConfig() {
+        let config = {
+            gs: global.gs,
+            service: global.config
+        };
+
+        config.gs.DATABASE = "PROTECTED";
+        config.gs.SECRETS = "PROTECTED";
+
+        return config;
+    }
+
     /**
      * Health check middleware
      * @param {*} req 
@@ -16,7 +28,8 @@ class Utils {
      * @returns {Boolean}
      */
     isDev() {
-        return ["dev", "local", "uat", "docker"].includes(global.ENV.toLowerCase());
+        let env = global.ENV || "test";
+        return ["dev", "local", "uat", "docker", "test"].includes(env.toLowerCase());
     }
 
     /**

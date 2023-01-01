@@ -9,8 +9,8 @@ const payloadSchema = Joi
         uid: Joi.string().required(), // User ID
         gid: Joi.string().required(), // Game ID
         sid: Joi.string().required(), // NAS Session ID
-        loc: Joi.number().required(), // Language
-        rgn: Joi.number().required() // Region
+        loc: Joi.string().required(), // Language
+        rgn: Joi.string().required() // Region
     })
     .unknown(false);
 

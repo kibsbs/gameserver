@@ -11,22 +11,25 @@ module.exports = {
 
         router.post("/decryptToken", (req, res) => {
             let token = req.body.token;
-            console.log(token);
-            let payload = nasToken.decrypt("jd5CUcAsJt2Gzn1xWysGTVLpiFnu91K3T1+i4X59T3WqKmzVqL9DUnRGKS52VHCaeHfGOhmTFwUlqLtwz+4X9ygNmX7Gycib9MLkdPH2b6TpiHnsSNXXVJwg1yZndMmQ");
-            return res.send(payload);
+            let payload = nasToken.decrypt(token);
+            global.logger.info(`Decrypted token ${token}`);
+
+            return res.send({ payload });
         });
 
         router.get("/testToken", (req, res) => {
             let token = nasToken.encrypt({
+                exp: Date.now(),
                 gid: "SE3E",
                 env: global.ENV,
                 uid: "0",
                 sid: "0",
-                loc: 01,
-                rgn: 01,
-                exp: Date.now()
-            })
-            return res.send({ token: encodeURIComponent(token) })
+                loc: "01",
+                rgn: "01"
+            });
+            global.logger.info(`Generated test token ${token}`);
+            
+            return res.send({ token: encodeURIComponent(token) });
         });
 
     }

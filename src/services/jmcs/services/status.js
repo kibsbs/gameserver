@@ -11,7 +11,7 @@ module.exports = {
 
         router.get("/health", utils.healthCheck);
 
-        router.get("/getStatus", nas.require, (req, res) => {
+        router.get("/getStatus", (req, res) => {
             return res.json({
                 service: global.service.name,
                 gameserver: {

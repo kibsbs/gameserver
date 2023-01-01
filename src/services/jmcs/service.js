@@ -32,7 +32,7 @@ const services = {
     "BackOffice": "back-office",
     "ConstantProvider": "constant-provider",
     "Debug": "debug",
-    // "DancerCard": "dancer-card",
+    "DancerCard": "dancercard",
     // "HighScores": "high-scores",
     // "Leaderboard": "leaderboard",
     "Mashup": "mashup",

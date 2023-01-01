@@ -21,10 +21,12 @@ module.exports.errorHandler = (err, req, res, next) => {
     data.requestId = uuid.v4();
     data.serverTime = new Date(utils.serverTime() * 1000);
 
-    if (global.gs.PUBLIC_ERROR_MESSAGES)
+    if (err.error) global.logger.error(err.error);
+
+    if (global.gs.SHOW_RESPONSE_MESSAGES)
         return res.status(data.status).json(data);
     else
-        return res.sendStatus(data.status);
+        return res.status(data.status).send();
 };
 
 module.exports.notFound = (req, res, next) => {

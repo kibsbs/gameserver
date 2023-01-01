@@ -44,7 +44,7 @@ module.exports.SERVICES = {
 // --------------------
 
 module.exports.BYPASS_AUTH = false; // Bypasses authorization on API
-module.exports.PUBLIC_ERROR_MESSAGES = true; // Shows server errors in response
+module.exports.SHOW_RESPONSE_MESSAGES = true; // Shows direct server responds
 module.exports.LOG_SERVER_ERRORS = true; // Logs server errors
 
 module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after creation
