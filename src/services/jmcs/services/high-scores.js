@@ -49,17 +49,13 @@ module.exports = {
         };
 
         router.post("/uploadMyScore",
-            nas.require,
             parseMultiPart,
             parseScoreData,
+            nas.require,
             dcClient,
         async (req, res) => {
             
-            const { coachId, gameMode, songId, totalScore, partialScores } = req.body
-
-            console.log(coachId, gameMode, songId, totalScore, partialScores)
-
-            return res.send("ok")
+            const { coachId, gameMode, songId, totalScore, partialScores } = req.body;
             
             const profile = req.profile
             const profileId = profile.profileId
@@ -77,14 +73,13 @@ module.exports = {
                 gameId,
                 score: realScore,
                 totalScore, 
-                partialScores,
-                profile
+                partialScores
             });
 
             if (utils.isDev())
-                return res.status(201).json(newScore)
+                return res.status(200).json(newScore);
 
-            return res.status(201).send()
+            return res.status(200).send();
         });
 
         router.post("/lookForOpponentHighScores", nas.require, async (req, res, next) => {
