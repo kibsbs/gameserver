@@ -25,7 +25,7 @@ class NasToken {
 
     validatePayload(payload) {
         const { value, error } = payloadSchema.validate(payload);
-        if (error) throw new Error(`Can't validate token payload ${error}`);
+        if (error) throw new Error(`Can't validate token payload: ${error}`);
         return value;
     }
 

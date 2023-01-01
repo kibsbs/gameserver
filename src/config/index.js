@@ -62,6 +62,10 @@ module.exports.TOKEN_KEY = "token";
 // --------------------
 
 module.exports.MAX_SCORE = 13333;
+// 1-1000 for 2014
+// 1-5000 for 2015 >>
+module.exports.MIN_WDF_LEVEL = 1;
+module.exports.MAX_WDF_LEVEL = 5000;
 // TODO: JD17 has 6 (superstar), JD18 has 7 stars (superstar & megastar)
 // so we need to add a way to change max stars depending on game
 // (probably make a function in utils with game as param?)

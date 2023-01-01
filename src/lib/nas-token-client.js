@@ -1,5 +1,6 @@
 const nasToken = require("nas-token");
 const utils = require("utils");
+const games = require("games");
 
 // Used if token is not required but should be set in request
 module.exports.permit = (req, res, next) => {
@@ -12,6 +13,7 @@ module.exports.permit = (req, res, next) => {
         let payload = nasToken.decrypt(token);
         
         req.token = payload;
+        req.game = games.getGameById(payload.gid);
         req.uid = payload.uid;
         req.sid = payload.sid;
         req.gid = payload.gid;

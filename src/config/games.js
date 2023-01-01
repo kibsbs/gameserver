@@ -27,6 +27,7 @@
 const PAL = "PAL";
 const NTSC = "NTSC";
 
+// 2014 support is disabled at the moment
 module.exports = [{
     name: "Just Dance 2014",
     version: 2014,
@@ -60,7 +61,11 @@ module.exports = [{
             isAvailable: true
         }
     },
-    stats: {}
+    stats: {
+        totalStars: 465,
+        songsCount: 93,
+        unlocksCount: 27
+    }
 }, {
     name: "Just Dance 2016",
     version: 2016,
@@ -75,7 +80,11 @@ module.exports = [{
             isAvailable: true
         }
     },
-    stats: {}
+    stats: {
+        totalStars: 280,
+        songsCount: 56,
+        unlocksCount: 32
+    }
 }, {
     name: "Just Dance 2017",
     version: 2017,
@@ -110,9 +119,9 @@ module.exports = [{
         }
     },
     stats: {
-        totalStars: 275,
-        songsCount: 55,
-        unlocksCount: 24
+        totalStars: 420,
+        songsCount: 60,
+        unlocksCount: 12
     }
 }
     // You can add mods here!

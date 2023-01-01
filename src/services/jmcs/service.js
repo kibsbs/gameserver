@@ -33,7 +33,7 @@ const services = {
     "ConstantProvider": "constant-provider",
     "Debug": "debug",
     "DancerCard": "dancercard",
-    // "HighScores": "high-scores",
+    "HighScores": "high-scores",
     // "Leaderboard": "leaderboard",
     "Mashup": "mashup",
     "StarChallenge": "star-challenge",

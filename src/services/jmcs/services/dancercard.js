@@ -1,3 +1,4 @@
+const Joi = require("joi");
 const uuid = require("uuid");
 const utils = require("utils");
 const nas = require("nas-token-client");
@@ -12,24 +13,58 @@ module.exports = {
 
         const dancercard = require("dancercard");
         
+        /**
+         * This middleware validates any new or to be updated dancercard's stats
+         * so that we can avoid people from trying to go out of game's limits.
+         */
+        async function validateStats(req, res, next) {
+            if (!req.game || !req.game.stats) 
+                return next({
+                    status: 400,
+                    message: `A game must be assigned to validate stats!`
+                });
+            
+            let stats = req.game.stats;
+
+            const statsSchema = Joi.object({
+                songsPlayed: Joi.number().min(0).max(stats.songsCount).required(),
+                stars: Joi.number().min(0).max(stats.totalStars).required(),
+                unlocks: Joi.number().min(0).max(stats.unlocksCount).required(),
+                wdfRank: Joi.number().min(global.gs.MIN_WDF_LEVEL).max(global.gs.MAX_WDF_LEVEL).required()
+            }).unknown(true);
+
+            try {
+                await statsSchema.validateAsync(req.body);
+                return next();
+            }
+            catch(err) {
+                // POSSIBLE CHEAT?
+                return next({
+                    status: 400,
+                    message: `Can't validate Dancercard stats!`,
+                    error: err.message
+                });
+            }
+        };
+        
         router.post("/RequestDancerProfile", nas.dev, async (req, res) => {
             let id = req.query.profileId;
             let profile = await dancercard.get({ profileId: id });
 
-            res.send({ profile });
+            return res.send({ profile });
         });
 
         router.post("/RequestDancerProfiles", nas.dev, async (req, res, next) => {
             let ids = req.query.profileIds || "";
             let profiles = await dancercard.getMany({ profileId: (ids.split(",") || []) });
 
-            res.send({ profiles });
+            return res.send({ profiles });
         });
 
         /**
          * UploadDancerProfile upserts given profile data in body to database.
          */
-        router.post("/UploadDancerProfile", nas.require, async (req, res, next) => {
+        router.post("/UploadDancerProfile", nas.require, validateStats, async (req, res, next) => {
             
             // First step is to check whether client's account exists.
             const {

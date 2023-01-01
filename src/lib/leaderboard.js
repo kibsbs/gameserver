@@ -1,19 +1,16 @@
 const Joi = require("joi");
-const mongoose = require("mongoose");
 
-class DancerCard {
+class Leaderboard {
     constructor() {
-        this.db = require("./models/dancercard");
-        this.schema = Joi.object({
-            profileId: Joi.string().guid().required(),
+        this.db = require("./models/scores");
+        this.schema = Joi.object().keys({
+            profileId: Joi.string().required(),
             userId: Joi.string().required(),
-            avatar: Joi.number().min(0).max(9999).required(),
-            country: Joi.number().min(0).max(9999).default(9627).required(),
-            name: Joi.string().trim().required(),
-            songsPlayed: Joi.number().required(),
-            stars: Joi.number().required(),
-            unlocks: Joi.number().required(),
-            wdfRank: Joi.number().required()
+            coachId: Joi.number().required(),
+            gameMode: Joi.number().required(),
+            songId: Joi.number().required(),
+            score: Joi.number().required(),
+            partialScores: Joi.binary().required()
         });
     }
 
@@ -76,6 +73,4 @@ class DancerCard {
     async exists(filter) {
         return await this.db.exists(filter) ? true : false;
     }
-};
-
-module.exports = new DancerCard();
+}

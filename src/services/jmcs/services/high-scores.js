@@ -1,10 +1,12 @@
 
 
 const Joi = require("joi")
-const parseMultiPart = require('express-parse-multipart');
+const parseMultiPart = require("express-parse-multipart");
 
-const nasAuth = require("nas-auth-client");
 const utils = require("utils");
+const nas = require("nas-token-client");
+const leaderboard = require("leaderboard");
+const dcClient = require("dancercard-client");
 
 module.exports = {
 
@@ -14,19 +16,7 @@ module.exports = {
 
     async init(app, router) {
 
-        const scores = require("jd-scores")
-        const dancerCardClient = require("jd-dancercard").client
-
-        const scoreData = Joi.object().keys({
-            coachId: Joi.number().default(1).min(1).max(4).required(),
-            gameMode: Joi.number().default(0).min(0).max(5).required(),
-            songId: Joi.number().required(),
-            totalScore: Joi.number().min(0).max(1).default(0).required(),
-            partialScores: Joi.binary().required()
-        });
-
         function parseScoreData(req, res, next) {
-
             let body = {}
             // Parse the form-data body
             if (!req.formData)
@@ -59,13 +49,17 @@ module.exports = {
         };
 
         router.post("/uploadMyScore",
-            parseMultiPart, 
+            nas.require,
+            parseMultiPart,
             parseScoreData,
-            nasAuth.require,
-            dancerCardClient,
+            dcClient,
         async (req, res) => {
             
             const { coachId, gameMode, songId, totalScore, partialScores } = req.body
+
+            console.log(coachId, gameMode, songId, totalScore, partialScores)
+
+            return res.send("ok")
             
             const profile = req.profile
             const profileId = profile.profileId
@@ -93,7 +87,7 @@ module.exports = {
             return res.status(201).send()
         });
 
-        router.post("/lookForOpponentHighScores", nasAuth.require, async (req, res, next) => {
+        router.post("/lookForOpponentHighScores", nas.require, async (req, res, next) => {
 
             const { gameMode, minimalScore, songId } = req.body
 
