@@ -71,6 +71,7 @@ module.exports.MAX_WDF_LEVEL = 5000;
 // (probably make a function in utils with game as param?)
 module.exports.MAX_STARS = 5;
 module.exports.MAX_LOBBY_PLAYERS = 8;
+module.exports.MAX_LEADERBOARD_SIZE = 3;
 
 // --------------------
 

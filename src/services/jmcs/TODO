@@ -1,1 +1,2 @@
 - In dancer card when player profile gets updated make sure they don't hijack by verifying with game stats from config
+- Look for the meaning of "gameMode" from uploadMyScore

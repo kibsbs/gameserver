@@ -34,7 +34,7 @@ const services = {
     "Debug": "debug",
     "DancerCard": "dancercard",
     "HighScores": "high-scores",
-    // "Leaderboard": "leaderboard",
+    "Leaderboard": "leaderboard",
     "Mashup": "mashup",
     "StarChallenge": "star-challenge",
     "Status": "status"

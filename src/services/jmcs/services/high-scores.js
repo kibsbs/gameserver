@@ -3,9 +3,12 @@
 const Joi = require("joi")
 const parseMultiPart = require("express-parse-multipart");
 
-const utils = require("utils");
 const nas = require("nas-token-client");
+const utils = require("utils");
+
 const leaderboard = require("leaderboard");
+
+const gameClient = require("games-client");
 const dcClient = require("dancercard-client");
 
 module.exports = {
@@ -16,63 +19,63 @@ module.exports = {
 
     async init(app, router) {
 
+        /**
+         * After parsing multi part body
+         * it will set all values to an object but keep partialScores as a buffer
+         */
         function parseScoreData(req, res, next) {
-            let body = {}
+            let body = {};
             // Parse the form-data body
             if (!req.formData)
                 return next({
                     status: 400,
                     message: `Missing form data`
-                })
+                });
 
             // Keep partialScores a buffer
             req.formData.map(a => {
-                if (a.name !== "partialScores") body[a.name] = Buffer.from(body[a.name] = a.data).toString()
-                else body[a.name] = a.data
-            })
+                if (a.name !== "partialScores") body[a.name] = Buffer.from(body[a.name] = a.data).toString();
+                else body[a.name] = a.data;
+            });
 
-            req.body = body
-            return next()
+            req.body = body;
+            return next();
         };
 
-        async function getChallengeScores(songId, minimalScore, gameMode = 0) {
-
-            // Get all scores matching songId and gameMode
-            // and with minimalScore higher than player's minimalScore.
-            const query = {
-                $and: [ { songId }, { gameMode } ],
-                totalScore: { $gt: minimalScore }
-            }
-            const scores = await scores.getMany(query, 5)
-            
-            return scores
-        };
-
+        /**
+         * Used when a map ends, saves client's map score to database 
+         * for leaderboards and opponents
+         * - Parse multi part body to an object
+         * - Fetch client's dancercard & game for profileId and gameId
+         * - Save score from body to database
+         */
         router.post("/uploadMyScore",
             parseMultiPart,
             parseScoreData,
             nas.require,
             dcClient,
+            gameClient,
         async (req, res) => {
             
             const { coachId, gameMode, songId, totalScore, partialScores } = req.body;
             
-            const profile = req.profile
-            const profileId = profile.profileId
-            const gameId = req.gid
+            // totalScore multiplied by maxScore will result in the actual score
+            const realScore = parseInt(totalScore * global.gs.MAX_SCORE);
 
-            // totalScore multiplied by maxScore will result in the actual score.
-            const realScore = parseInt(totalScore * global.config.maxScore);
-
-            // Create a new score.
-            const newScore = await scores.new({
-                profileId,
-                coachId, 
-                gameMode, 
+            // Create a new score
+            const newScore = await leaderboard.newScore({
+                profileId: req.pid,
+                userId: req.uid,
+                userCountry: req.profile.country,
+                coachId,
+                gameMode,
+                game: {
+                    id: req.gid,
+                    version: req.game.version
+                },
                 songId,
-                gameId,
                 score: realScore,
-                totalScore, 
+                totalScore,
                 partialScores
             });
 
@@ -82,33 +85,19 @@ module.exports = {
             return res.status(200).send();
         });
 
+        /**
+         * Used by the game to fetch online opponents
+         */
         router.post("/lookForOpponentHighScores", nas.require, async (req, res, next) => {
-
-            const { gameMode, minimalScore, songId } = req.body
-
-            let scores = await getChallengeScores(songId, minimalScore, gameMode)
-            let mappedScores = scores.map((p, i) => {
-                return {
-                    avatar: p.profile.avatar,
-                    name: p.profile.name,
-                    country: p.profile.country,
-                    score: p.totalScore
-                }
-            });
-            mappedScores = serialize.setIndexes(mappedScores);
-
-            return res.send(
-                serialize({
-                    ...mappedScores,
-                    count: scores.length
-                })
-            )
-
+            const { gameMode, minimalScore, songId } = req.body;
+            return res.sendStatus(502);
         });
 
-
+        /**
+         * Unknown, found in source code: TBD
+         */
         router.post("/lookForSpecificHighScore", (req, res, next) => {
-            res.sendStatus(502)
+            return res.sendStatus(502);
         });
 
     }

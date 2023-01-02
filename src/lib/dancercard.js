@@ -21,7 +21,7 @@ class DancerCard {
         try {
             const value = await this.schema.validateAsync(data);
             const entry = new this.db(value);
-            await entry.save();
+            return await entry.save();
         }
         catch (err) {
             throw new Error(`Can't create Dancercard: ${err}`);

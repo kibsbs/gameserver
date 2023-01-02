@@ -82,7 +82,7 @@ module.exports = {
             if (!profileExists) {
                 try {
                     const profileId = uuid.v4();
-                    const newProfile = await dancercard.new({
+                    const profileEntry = await dancercard.new({
                         profileId, userId, 
                         avatar, country, name,
                         songsPlayed, stars, unlocks, wdfRank
@@ -90,7 +90,7 @@ module.exports = {
                     global.logger.info(`Created Dancercard of '${name}' from '${country}' / UserId: ${userId}`);
                     
                     if (utils.isDev())
-                        return res.send(newProfile);
+                        return res.status(200).json(profileEntry);
                 
                     return res.status(200).send();
                 }

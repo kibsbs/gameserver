@@ -1,3 +1,4 @@
+const { Binary } = require("bson");
 const mongoose = require("mongoose");
 const uuid = require("uuid");
 
@@ -5,41 +6,42 @@ const Schema = new mongoose.Schema(
   {
     profileId: {
       type: String,
-      unique: true,
       required: true
     },
     userId: {
       type: String,
-      unique: true,
       required: true
     },
-    avatar: {
+    userCountry: {
       type: Number,
       required: true
     },
-    country: {
+    coachId: {
       type: Number,
       required: true
     },
-    name: {
+    gameMode: {
+      type: Number,
+      required: true
+    },
+    game: {
+      type: Object,
+      required: true
+    },
+    songId: {
       type: String,
-      trim: true,
       required: true
     },
-    songsPlayed: {
+    score: {
       type: Number,
       required: true
     },
-    stars: {
+    totalScore: {
       type: Number,
       required: true
     },
-    unlocks: {
-      type: Number,
-      required: true
-    },
-    wdfRank: {
-      type: Number,
+    partialScores: {
+      type: Buffer,
       required: true
     }
   },

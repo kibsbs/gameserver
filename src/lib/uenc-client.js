@@ -1,11 +1,14 @@
+const utils = require("utils");
+
 module.exports = (req, res, next) => {
+
     const uenc = require("uenc");
 
-    // If force json header is present or if the request is for testing, it will send response in JSON
-    const forceJson = req.headers.hasOwnProperty(global.gs.HEADER_FORCE_JSON) || req.isTest;
+    // If isJson is true request will be sent in JSON (for testing purposes)
+    const isJson = (utils.isDev() && req.query.hasOwnProperty("json"));
     
     res.uenc = (data, setIndex = false, offset = 0) => {
-        if (forceJson) return res.json(data);
+        if (isJson) return res.json(data);
 
         if (global.service.id == "jmcs")
             res.set("Content-Type", "application/x-www-form-urlencoded");
