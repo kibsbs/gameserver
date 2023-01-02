@@ -4,7 +4,7 @@
  */
 
 module.exports.BASE_URL = process.env.BASE_URL || "http://localhost:" + global.PORT;
-module.exports.ENVS = ["local", "test", "docker", "prod", "dev", "uat", "qc"];
+module.exports.ENVS = ["local", "test", "docker", "prod", "dev", "uat", "qc", "beta"];
 module.exports.DEFAULT_PORT = 5000;
 module.exports.DEFAULT_ENV = "local";
 

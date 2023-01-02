@@ -1,19 +1,19 @@
 const nas = require("nas-token-client");
 const leaderboard = require("leaderboard");
-const uenc = require("uenc")
-
-const gameClient = require("games-client");
+const uenc = require("uenc");
 
 module.exports = {
 
     name: `Leaderboard`,
-    description: `Provides all Mash-Up data such as online maps and metadata.`,
+    description: `Serves global and regional leaderboard data for maps`,
     version: `1.0.0`,
 
     async init(app, router) {
-
         
-        router.post("/getWorldWideLeaderBoard", nas.require, gameClient, async (req, res, next) => {
+        /**
+         * Used for Worldwide Leaderboard for a song
+         */
+        router.post("/getWorldWideLeaderBoard", nas.require, async (req, res, next) => {
             
             const { songId } = req.body;
             const gameId = req.gid;
@@ -28,19 +28,22 @@ module.exports = {
 
         });
 
-        router.post("/getCountryLeaderBoard",
-            nas.require,
-        async (req, res, next) => {
+        /**
+         * Used for Country Leaderboard for a song
+         */
+        router.post("/getCountryLeaderBoard", nas.require, async (req, res, next) => {
+
+            const { songId, country } = req.body;
+            const gameId = req.gid;
+
+            const entries = await leaderboard.getBoard(songId, gameId, Number(country));
 
             return res.uenc({
-                ...mappedBoard,
-                count: leaderboard.length,
+                ...uenc.setIndex(entries),
+                count: entries.length,
                 startingRank: 1
-            })
+            });
 
         });
-
-
     }
-    
 }

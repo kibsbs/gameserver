@@ -70,7 +70,7 @@ async.waterfall(
 
             // Database
             if (service.clients.includes("db")) {
-                let connectionUri = config.DATABASE[service.id]["local"];
+                let connectionUri = config.DATABASE[service.id][global.ENV];
                 require("./lib/clients/db-client")(connectionUri, (err, ok) => {
                     if (err) return cb(err);
                     logger.success("Connected to Database client!");
@@ -103,7 +103,7 @@ async.waterfall(
         (app, cb) => {
             // Start the service
             http.createServer(app).listen(global.PORT);
-            logger.success(`Started service ${service.name} on port ${global.PORT} successfully!`);
+            logger.success(`Service ${service.name} is listening on port ${global.PORT} in '${global.ENV}' enviroment successfully!`);
             return cb();
         }
     ],

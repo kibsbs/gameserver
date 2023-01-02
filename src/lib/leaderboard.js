@@ -72,16 +72,15 @@ class Leaderboard {
     async createBoard(songId, gameId, country) {
 
         // Filter by songId and gameId and country if provided (for regional boards)
-        let filter = [];
-        if (country) filter.push({ "userCountry": country });
+        let match = {
+            songId: { $eq: songId },
+            userCountry: { $eq: country },
+            "game.id": { $eq: gameId },
+        };
 
         // Get data from db and sort by score
         const result = await this.db.aggregate([
-            { $match: {
-                songId: { $eq: songId },
-                "game.id": { $eq: gameId }
-            }
-            },
+            { $match: match },
             { $group: { _id: "$profileId", root: { $first: "$$ROOT"  } } },
             { $sort: { "root.totalScore": -1 } },
             { $limit: this.maxResult }

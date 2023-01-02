@@ -9,6 +9,15 @@ module.exports = {
 
     async init(app, router) {
 
+        router.use((req, res, next) => {
+            if (utils.isDev()) return next();
+            else return res.sendStatus(403);
+        })
+
+        router.get("/getConfig", (req, res) => {
+            return res.send(utils.getConfig())
+        });
+
         router.post("/decryptToken", (req, res) => {
             let token = req.body.token;
             let payload = nasToken.decrypt(token);

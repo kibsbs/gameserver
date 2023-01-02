@@ -13,12 +13,10 @@ module.exports = () => {
         return argv
     })
     .option("env", {
-        alias: "e",
         type: "string",
         description: `Service enviroment`
     })
     .option("port", {
-        alias: "p",
         type: "number",
         description: "Port to bind on"
     })
