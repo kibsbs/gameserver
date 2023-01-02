@@ -31,9 +31,10 @@ global.logger = logger;
 const services = fs.readdirSync(path.resolve(__dirname, "services")).filter(f => !f.startsWith("_"));
 
 // Loop through services and load them
-for (var file in services) {
-
-    let scriptPath = path.resolve(__dirname, "services", services[file]);
+for (let i = 0; i < services.length; i++) {
+    const file = services[i];
+    
+    let scriptPath = path.resolve(__dirname, "services", file);
     let serviceName = file.split(".")[0];
 
     if (!fs.statSync(scriptPath).isFile()) continue;
