@@ -28,22 +28,13 @@ app.use((req, res, next) => {
 global.logger = logger;
 
 // All sub-services that are used by JMCS
-const services = {
-    "BackOffice": "back-office",
-    "ConstantProvider": "constant-provider",
-    "Debug": "debug",
-    "DancerCard": "dancercard",
-    "HighScores": "high-scores",
-    "Leaderboard": "leaderboard",
-    "Mashup": "mashup",
-    "StarChallenge": "star-challenge",
-    "Status": "status"
-};
+const services = fs.readdirSync(path.resolve(__dirname, "services")).filter(f => !f.startsWith("_"));
 
 // Loop through services and load them
-for (var serviceName in services) {
+for (var file in services) {
 
-    let scriptPath = path.resolve(__dirname, "services", services[serviceName] + ".js");
+    let scriptPath = path.resolve(__dirname, "services", services[file]);
+    let serviceName = file.split(".")[0];
 
     if (!fs.statSync(scriptPath).isFile()) continue;
 
