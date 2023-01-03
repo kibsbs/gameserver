@@ -1,1 +1,0 @@
-node ../src/gameserver.js serve jmcs --env local --port 3000

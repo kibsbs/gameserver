@@ -60,7 +60,7 @@ async.waterfall(
         },
         (args, cb) => {
             // Set ENV and PORT
-            global.ENV = args.env || process.env.ENV || "local";
+            global.ENV = args.env || process.env.ENV || serviceConfig.ENV || "local";
             global.PORT = args.port || process.env.PORT || serviceConfig.PORT || 5000;
             return cb();
         },

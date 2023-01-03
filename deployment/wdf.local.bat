@@ -1,1 +1,0 @@
-node ../src/gameserver.js serve wdf --env local --port 9000

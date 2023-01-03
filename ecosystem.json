@@ -1,13 +1,13 @@
 [{
 	"name": "JMCS",
 	"script": "src/gameserver.js",
-	"args": "jmcs --env local --port 3000",
+	"args": "serve jmcs --port 3000",
 	"exec_mode": "fork_mode",
 	"instances": 1
 }, {
 	"name": "WDF",
 	"script": "src/gameserver.js",
-	"args": "wdf --env local --port 9000",
+	"args": "serve wdf --port 9000",
 	"exec_mode": "fork_mode",
 	"instances": 1
 }]
