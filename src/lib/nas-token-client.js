@@ -11,14 +11,22 @@ module.exports.permit = (req, res, next) => {
     
     try {
         let payload = nasToken.decrypt(token);
+        let { gid, sid, uid, rgn, loc } = payload;
+
+        // Check if client's game is available to play
+        if (!games.isGameAvailable(gid))
+            return next({
+                status: 401,
+                message: `${gid} is disabled on this server!`
+            });
         
         req.token = payload;
-        req.game = games.getGameById(payload.gid);
-        req.uid = payload.uid;
-        req.sid = payload.sid;
-        req.gid = payload.gid;
-        req.rgn = payload.rgn;
-        req.loc = payload.loc;
+        req.game = games.getGameById(gid);
+        req.uid = uid;
+        req.sid = sid;
+        req.gid = gid;
+        req.rgn = rgn;
+        req.loc = loc;
 
         req.isDev = utils.isDev() ? true : false;
         req.isTest = utils.isDev() ? true : false;
