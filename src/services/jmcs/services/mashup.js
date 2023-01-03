@@ -24,8 +24,9 @@ module.exports = {
             let map = testMaps[0];
             return res.uenc({
                 mapName: map.mapName,
+                version: map.sku.version,
                 url: map.sku.url
-            })
+            });
         });
 
         router.post("/getMetadata", nas.require, (req, res) => {
@@ -34,11 +35,14 @@ module.exports = {
             let metadatas = [];
             metadatas.push({
                 name: map.mapName,
-                id: 1,
+                id: 0,
                 version: map.sku.version,
                 md5: map.sku.md5,
+                zipStatus: 1,
+                zipVersion: 1,
+                coverflow: 1,
                 url: map.sku.url
-            })
+            });
 
             return res.uenc(metadatas, true);
         });

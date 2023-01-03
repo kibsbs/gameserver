@@ -9,6 +9,7 @@ const utils = require("utils");
 const leaderboard = require("leaderboard");
 
 const gameClient = require("games-client");
+const songClient = require("songs-client");
 const dcClient = require("dancercard-client");
 
 module.exports = {
@@ -55,6 +56,7 @@ module.exports = {
             nas.require,
             dcClient,
             gameClient,
+            songClient,
         async (req, res) => {
             
             const { coachId, gameMode, songId, totalScore, partialScores } = req.body;
@@ -89,8 +91,13 @@ module.exports = {
          * Used by the game to fetch online opponents
          */
         router.post("/lookForOpponentHighScores", nas.require, async (req, res, next) => {
-            const { gameMode, minimalScore, songId } = req.body;
             return res.sendStatus(502);
+            const { gameMode, minimalScore, songId } = req.body;
+            return res.uenc({
+                playerId0: "23ad6744b6c7",
+                coachId0: 0,
+                totalScore0: 0.556543
+            })
         });
 
         /**
@@ -99,6 +106,14 @@ module.exports = {
         router.post("/lookForSpecificHighScore", (req, res, next) => {
             return res.sendStatus(502);
         });
+
+        router.post("/getPartialScores", (req, res, next) => {
+            return res.sendStatus(502);
+            let scores = ["DQoBcABVVVfT85vnV1lT85vlVXVT8tjn///+//L////1"]
+            return res.send(
+                scores.map(s => Buffer.from(s, "base64")).join("\n")
+            );
+        })
 
     }
 }

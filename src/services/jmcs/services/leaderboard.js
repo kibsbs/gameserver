@@ -2,6 +2,9 @@ const nas = require("nas-token-client");
 const leaderboard = require("leaderboard");
 const uenc = require("uenc");
 
+const gameClient = require("games-client");
+const songClient = require("songs-client");
+
 module.exports = {
 
     name: `Leaderboard`,
@@ -13,11 +16,15 @@ module.exports = {
         /**
          * Used for Worldwide Leaderboard for a song
          */
-        router.post("/getWorldWideLeaderBoard", nas.require, async (req, res, next) => {
+        router.post("/getWorldWideLeaderBoard", 
+            nas.require, 
+            gameClient, 
+            songClient,
+        async (req, res, next) => {
             
             const { songId } = req.body;
-            const gameId = req.gid;
-
+            const gameId = req.game.id;
+            
             const entries = await leaderboard.getBoard(songId, gameId);
 
             return res.uenc({
@@ -31,10 +38,14 @@ module.exports = {
         /**
          * Used for Country Leaderboard for a song
          */
-        router.post("/getCountryLeaderBoard", nas.require, async (req, res, next) => {
+        router.post("/getCountryLeaderBoard", 
+            nas.require, 
+            gameClient, 
+            songClient,
+        async (req, res, next) => {
 
             const { songId, country } = req.body;
-            const gameId = req.gid;
+            const gameId = req.game.id;
 
             const entries = await leaderboard.getBoard(songId, gameId, Number(country));
 

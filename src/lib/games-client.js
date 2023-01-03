@@ -18,5 +18,6 @@ module.exports = async (req, res, next) => {
         });
 
     req.game = game;
+    req.game.id = req.gid;
     return next();
 }

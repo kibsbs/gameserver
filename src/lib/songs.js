@@ -47,35 +47,33 @@ class Songs {
         }
     }
 
-    async update(toUpdate, data) {
-        try {
-            return await this.db.findOneAndUpdate(toUpdate, data);
-        }
-        catch (err) {
-            throw new Error(`Can't update Song with ${JSON.stringify(toUpdate)} // ${JSON.stringify(data)}: ${err}`);
-        }
+    async exists(idOrMapName) {
+        return await this.db.exists({
+            $or: [{ mapName: idOrMapName }, { songId: idOrMapName }]
+        }) ? true : false;
     }
 
-    async delete(filter) {
-        try {
-            return await this.db.deleteOne(filter);
-        }
-        catch (err) {
-            throw new Error(`Can't delete Song with ${JSON.stringify(filter)}: ${err}`);
-        }
-    }
-
-    async deleteMany(filter) {
-        try {
-            return await this.db.deleteMany(filter);
-        }
-        catch (err) {
-            throw new Error(`Can't delete many Songs with ${JSON.stringify(filter)}: ${err}`);
-        }
-    }
-
-    async exists(filter) {
-        return await this.db.exists(filter) ? true : false;
+    /**
+     * Returns random amount of maps
+     * @param {Number} version Version of maps
+     * @param {Number} amount Amount of random maps
+     * @param {Array} excludeMaps Maps to not include
+     * @param {Object} filters Filtering randomize
+     * @returns {Array}
+     */
+    async random(version, amount = 1, excludeMaps = [], filters = {}) {
+        return await this.db.aggregate([
+            {
+                $match: {
+                    version,
+                    mapName: { $nin: excludeMaps },
+                    songId: { $nin: excludeMaps },
+                    ...filters
+                }
+            }, {
+                $sample: { size: amount }
+            }
+        ]);
     }
 };
 

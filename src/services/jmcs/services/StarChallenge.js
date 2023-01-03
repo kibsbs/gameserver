@@ -9,6 +9,7 @@ module.exports = {
     async init(app, router) {
 
         router.post("/getCommonData", nas.require, (req, res) => {
+            return res.send("");
             const commonData = {
                 avatar: 0,
                 country: 0,

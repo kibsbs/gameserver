@@ -74,9 +74,9 @@ class Leaderboard {
         // Filter by songId and gameId and country if provided (for regional boards)
         let match = {
             songId: { $eq: songId },
-            userCountry: { $eq: country },
             "game.id": { $eq: gameId },
         };
+        if (country) match.userCountry = { $eq: country };
 
         // Get data from db and sort by score
         const result = await this.db.aggregate([
@@ -85,7 +85,7 @@ class Leaderboard {
             { $sort: { "root.totalScore": -1 } },
             { $limit: this.maxResult }
         ]);
-
+        
         return result || [];
     }
 
