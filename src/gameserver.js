@@ -61,7 +61,7 @@ async.waterfall(
         (args, cb) => {
             // Set ENV and PORT
             global.ENV = args.env || process.env.ENV || "local";
-            global.PORT = args.port || serviceConfig.PORT || 5000;
+            global.PORT = args.port || process.env.PORT || serviceConfig.PORT || 5000;
             return cb();
         },
         (cb) => {
@@ -70,7 +70,7 @@ async.waterfall(
 
             // Database
             if (service.clients.includes("db")) {
-                let connectionUri = config.DATABASE[service.id][global.ENV];
+                let connectionUri = process.env.DB_URI || config.DATABASE[service.id][global.ENV];
                 require("./lib/clients/db-client")(connectionUri, (err, ok) => {
                     if (err) return cb(err);
                     logger.success("Connected to Database client!");
