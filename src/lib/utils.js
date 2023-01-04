@@ -3,12 +3,12 @@ class Utils {
 
     getConfig() {
         let config = {
-            gs: global.gs,
-            service: global.config
+            gsConf: global.gs,
+            srvConf: global.config
         };
 
-        config.gs.DATABASE = "PROTECTED";
-        config.gs.SECRETS = "PROTECTED";
+        config.gsConf.DATABASE = "PROTECTED";
+        config.gsConf.SECRETS = "PROTECTED";
 
         return config;
     }

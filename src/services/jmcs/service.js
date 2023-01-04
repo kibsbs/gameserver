@@ -20,15 +20,19 @@ global.httpSchema = require("./http-schema");
 app.use(express.static(__dirname + "/static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.use(morganMiddleware);
 app.use(uenc.client);
+app.use(validate);
+
+app.set("trust proxy", "loopback");
 app.disable("x-powered-by");
 app.disable("etag");
+
 app.use((req, res, next) => {
     res.set("Connection", "close");
     return next();
 });
-app.use(validate);
 
 // All sub-services that are used by JMCS
 const services = fs.readdirSync(path.resolve(__dirname, "services")).filter(f => !f.startsWith("_"));

@@ -1,73 +1,50 @@
-
-const env = global.ENV || "DEV"
-const config = global.config || require(`../../config/services/${global.service.name}`);
-const port = global.config.port
-
-const utils = require("utils")
-const logger = require("logger")(["WDF"])
-global.logger = logger
+/**
+ * JMCS service
+ */
 
 const express = require("express");
-const async = require("async");
+const path = require("path");
 const fs = require("fs");
-
 const app = express();
 
-app.set("etag", false);
+const morganMiddleware = require("morgan-middleware");
+const validate = require("http-validate");
+const mids = require("http-middleware");
+const logger = require("logger");
+const uenc = require("uenc");
+
+global.logger = logger;
+global.httpSchema = require("./http-schema");
+
+// Middlewares
+app.use(express.static(__dirname + "/static"));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+app.use(morganMiddleware);
+app.use(uenc.client);
+app.use(validate);
+
+app.set("trust proxy", "loopback");
 app.disable("x-powered-by");
+app.disable("etag");
 
-// ---------------------------
-// Load all services
-const services = {
-    "api": "api",
-    // "wdf": "wdf", // for 2014
-    "wdfjd6": "wdf-jd6" // for 2015-2018
-}
+app.use((req, res, next) => {
+    res.set("Connection", "close");
+    return next();
+});
 
-logger.info(`Running services: ${Object.keys(services).join(", ")}`)
+app.use((req, res, next) => {
+    res.set("Connection", "close");
+    return next();
+});
 
-for (var serviceName in services) {
+// app.use("/api", require("./services/api/service"));
+// app.post("/wdf", require("./services/api/service"));
 
-    var path = `${__dirname}/services/${services[serviceName]}/index.js`
+app.post("/wdfjd6", require("./load-funcs")("wdf-legacy"));
 
-    var stats = fs.statSync(path)
-    if (!stats.isFile()) continue;
+app.use(mids.errorHandler);
+app.use(mids.notFound);
 
-    var urlPrefix = `/${serviceName}`
-
-    var serviceRouter = express.Router({ 
-        caseSensitive: true, 
-        strict: true 
-    });
-    serviceRouter.use(express.json());
-    serviceRouter.use(express.urlencoded({
-        extended: true
-    }));
-
-    require(path).init(app, serviceRouter, {
-        serviceName
-    })
-
-    // To make access serialization while sending responses easier
-    // We use uenc"s client that adds res.uenc and res.wdf for serialized respones
-    app.use(require("uenc").client)
-    
-    app.use(urlPrefix, serviceRouter)
-}
-// ---------------------------
-
-app.use(require("./middlewares/error-handler"));
-app.get("/health", utils.healthCheck);
-
-function main(done) {
-	async.parallel([
-		function(callback) {
-            app.listen(port, () => {
-                logger.info(`Service is listening on port: ${port}`)
-                callback();
-            })
-		}
-	], done);
-}
-
-module.exports = { main };
+module.exports = app;

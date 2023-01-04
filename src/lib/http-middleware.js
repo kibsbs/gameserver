@@ -21,7 +21,14 @@ module.exports.errorHandler = (err, req, res, next) => {
     data.requestId = uuid.v4();
     data.serverTime = new Date(utils.serverTime() * 1000);
 
-    if (err.error) global.logger.error(err.error);
+    if (err.error) {
+        global.logger.error({
+            path: req.originalUrl,
+            ip: req.ip,
+            body: JSON.stringify(req.body || {}),
+            error: err.error
+        });
+    }
 
     if (global.gs.SHOW_RESPONSE_MESSAGES)
         return res.status(data.status).json(data);

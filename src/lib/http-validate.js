@@ -14,15 +14,27 @@ module.exports = async (req, res, next) => {
     if (!schemas) return next();
 
     let path = req.path;
-    let schema = accessVariableNestedProp(schemas, path.slice(1).split("/"));
+    let schema;
+    if (global.service.isWdf) {
+        let wdfName = path.split("/")[1];
+        let queryKey = req.query.d;
+        schema = schemas[wdfName][queryKey];
+    }
+    else {
+        schema = accessVariableNestedProp(schemas, path.slice(1).split("/"));
+    }
     if (!schema) return next();
 
     let keys = ["body", "query"];
     keys.forEach(k => {
+    
         let keySchema = schema[k];
         if (keySchema) {
+
             keySchema = Joi.object().keys(keySchema).unknown(true);
+
             let { value, error } = keySchema.validate(req[k]);
+
             if (error)
                 return next({
                     status: 400,

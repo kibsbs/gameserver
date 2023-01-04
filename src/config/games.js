@@ -50,7 +50,7 @@ module.exports = [{
 }, {
     name: "Just Dance 2015",
     version: 2015,
-    isAvailable: false,
+    isAvailable: true,
     regions: {
         SE3P: {
             region: PAL,

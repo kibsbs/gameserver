@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const fs = require("fs");
 const path = require("path");
 
 const service = Joi.object().keys({
@@ -6,6 +7,7 @@ const service = Joi.object().keys({
     name: Joi.string().required(),
     path: Joi.string().required(),
     clients: Joi.array().required(),
+    isWdf: Joi.boolean().default(false)
 });
 
 const lang = Joi.object().keys({
@@ -39,7 +41,11 @@ module.exports.gs = (cb) => {
 };
 
 module.exports.service = (service, cb) => {
-    const serviceConfig = require(path.resolve(service.base, "config.js"));
+    const confPath = path.resolve(service.base, "config.js");
+    
+    if (!fs.existsSync(confPath)) 
+        return cb("Service doesn't have a config file, please create one!");
 
+    const serviceConfig = require(confPath);
     return cb(null, serviceConfig);
 };
