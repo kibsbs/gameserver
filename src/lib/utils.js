@@ -37,7 +37,7 @@ class Utils {
      * @returns {Number}
      */
     serverTime() {
-        return (Date.now() / 1000);
+        return Date.now();
     }
 }
 

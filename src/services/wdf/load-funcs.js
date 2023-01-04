@@ -87,11 +87,11 @@ module.exports = (wdfName) => {
 
         if (funcs.hasOwnProperty(func)) {
             let funcData = funcs[func];
-            middleware = [...funcData.mid, funcScript];
+            middleware = [...funcData.mid || [], funcScript];
             req.func = {
                 id: funcData.id,
                 name: func
-            }
+            };
         }
             
         else return next();

@@ -12,8 +12,14 @@ module.exports = (req, res, next) => {
 
         if (global.service.id == "jmcs")
             res.set("Content-Type", "application/x-www-form-urlencoded");
-        else if (global.service.id == "wdf")
+        else if (global.service.id == "wdf") {
             res.set("Content-Type", "text/html");
+            data = {
+                method_id: req.func.id || 0,
+                ...data,
+                stat: 1
+            };
+        };
         
         return res.send(uenc.serialize(data, setIndex, offset));
     };

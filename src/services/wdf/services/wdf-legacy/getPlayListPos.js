@@ -12,11 +12,11 @@ module.exports = {
 
     async init(req, res, /* next */) {
 
-        const { lang } = req.body
+        const { lang } = req.body;
 
-        let now = time.secondsDouble()
+        let now = time.secondsDouble();
 
-        const playlist = new playlists(req.version)
+        const playlist = new playlists(req.version);
 
         const themes = playlist.getThemes()
         const timings = playlist.getTimings()
