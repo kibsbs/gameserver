@@ -1,4 +1,5 @@
 const session = require("wdf-session");
+const cache = require("cache");
 
 module.exports = {
     name: `checkToken`,

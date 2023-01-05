@@ -1,8 +1,7 @@
-const utils = require("utils")
+const utils = require("wdf-utils")
 const time = require("time")
 
-const playlists = require("jd-playlist")
-const session = require("jd-session")
+const Playlist = require("wdf-playlist");
 
 module.exports = {
 
@@ -14,36 +13,32 @@ module.exports = {
 
         const { lang } = req.body;
 
-        let now = time.secondsDouble();
+        const now = time.milliseconds();
 
-        const playlist = new playlists(req.version);
+        const playlist = new Playlist(req.game.version);
 
-        const themes = playlist.getThemes()
-        const timings = playlist.getTimings()
+        const durations = playlist.durations;
 
-        // Current and next song info
-        const { previous, current, next } = await playlist.getScreens()
+        const { prev, cur, next } = await playlist.getScreens();
+
+        let pos = (now - cur.timing.start_song_time) / 1000; // "pos" indicates the position of the playlist
+        let left = (cur.timing.stop_song_time - now) / 1000; // "left" shows how many seconds are left until a map ends
 
         let modeData = {
-            mode: current.themeType,
-            nextmode: next.themeType,
-        }
-
-        now += (now - current.timing.newStepTime)
-
-        let pos = time.round(now - current.timing.songStart) // "pos" indicates the position of the playlist
-        let left = time.round(current.timing.songEnd - now) // "left" shows how many seconds are left until a map ends
+            mode: cur.theme.id,
+            nextmode: next.theme.id,
+        };
 
         let timingData = {
-            start: current.timing.songStart,
-            end: current.timing.songEnd,
+            start: cur.timing.start_song_time,
+            end: cur.timing.stop_song_time,
 
             pos,
             left,
 
-            sessionToWorldResultTime: timings.world_result_duration, // Duration from map end till world result screen
-            display_next_song_time: timings.display_next_song_duration, // The duration of "next song" popup on right side
-            session_recap_time: timings.session_result_duration, // Duration of lobby/party recap time
+            sessionToWorldResultTime: durations.world_result_duration / 1000, // Duration from map end till world result screen
+            display_next_song_time: durations.display_next_song_duration / 1000, // The duration of "next song" popup on right side
+            session_recap_time: durations.session_result_duration / 1000, // Duration of lobby/party recap time
 
             // Theme durations
             theme_choice_duration: 0,
@@ -51,8 +46,8 @@ module.exports = {
             coach_choice_duration: 0,
             coach_result_duration: 0,
 
-            rankwait: timings.waiting_recap_duration // Duration of waiting for recap results
-        }
+            rankwait: durations.waiting_recap_duration / 1000 // Duration of waiting for recap results
+        };
 
         let voteData = {
             vote1: 0,
@@ -65,52 +60,50 @@ module.exports = {
             vote3_song: 0,
             vote4_song: 0,
             votenumchoices: 0,
-            vote_end: current.timing.lastVote,
+            vote_end: cur.timing.last_vote_time,
             next1: 0,
             next2: 0,
             next3: 0,
             next4: 0
-        }
+        };
 
         let playlistData = {
             ...modeData,
             ...timingData,
             ...voteData,
 
-            unique_song_id: current.uniqueSongId,
-            nextsong: next.uniqueSongId,
+            unique_song_id: cur.map.songId,
+            nextsong: next.map.songId,
 
-            requestPlaylistTime: current.timing.requestPlaylistTime-10,
+            requestPlaylistTime: cur.timing.request_playlist_time,
             interlude: "yes"
-        }
+        };
 
         // Depending on theme type, set extra information.
-        switch (current.themeType) {
+        switch (cur.theme.id) {
             case 1:
-                playlistData.community1name = current.community1name
-                playlistData.community2name = current.community2name
-                playlistData.theme_choice_duration = timings.community_choice_duration
-                playlistData.theme_result_duration = timings.community_result_duration
+                playlistData.community1name = cur.theme.communities[0];
+                playlistData.community2name = cur.theme.communities[1];
+                playlistData.theme_choice_duration = durations.community_choice_duration / 1000;
+                playlistData.theme_result_duration = durations.community_result_duration / 1000;
                 break;
             case 2:
                 break;
             case 3:
-                playlistData.coach_choice_duration = timings.coach_choice_duration
-                playlistData.coach_result_duration = timings.coach_result_duration
+                playlistData.coach_choice_duration = durations.coach_choice_duration / 1000;
+                playlistData.coach_result_duration = durations.coach_result_duration / 1000;
                 break;
         }
 
         // Times to parse
         ["start", "end", "requestPlaylistTime", "vote_end"].forEach(t => {
-            playlistData[t] = utils.getServerTime(playlistData[t], false)
+            playlistData[t] = utils.serverTime(playlistData[t]);
         });
-
-        console.log("PLAYLISTPOS NOW", now, time.round(now))
 
         return res.uenc({
             ...playlistData,
-            count: await session.count(req.version),
-            t: utils.getServerTime(time.round(now), false)
-        })
+            count: 0,
+            t: utils.serverTime(now)
+        });
     }
 }

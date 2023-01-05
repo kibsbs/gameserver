@@ -1,7 +1,6 @@
-const utils = require("utils")
+const utils = require("wdf-utils");
 
-const lobby = require("jd-lobby")
-const session = require("jd-session")
+const session = require("wdf-session");
 
 module.exports = {
 
@@ -10,48 +9,20 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
+        const { avatar, name, onlinescore, pays } = req.body;
 
-        const { avatar, name, onlinescore, pays } = req.body
+        let id = req.uid || req.pid;
+        let canConnect = await session.canUserConnect(id);
 
-        if (await session.exists({ sessionId: req.sessionId })) {
-            await session.delete({ sessionId: req.sessionId })
-            // global.logger.info(`${req.sessionId} ${name} already had a previous session, removing their session...`)
-        }
+        if (!canConnect) return next({
+            status: 401,
+            message: `User is not allowed to create connection to WDF!`
+        });
 
-        // Get amount of players from player's country by gameId
-        const playersInCountry = await session.db.count({ pays, gameId: req.gameId })
-
-        // Join player into an available lobby
-        const playerLobby = await lobby.join(req.sessionId, req.version)
-
-        // Create a new session for player
-        try {
-            await session.new({
-                version: req.version,
-                sessionId: req.sessionId,
-                lobbyId: playerLobby.lobbyId,
-                player: {
-                    avatar,
-                    name,
-                    onlinescore,
-                    country: pays
-                }
-            });
-            global.logger.success(`${name} connected WDF of ${req.gameId} and joined lobby ${playerLobby.lobbyId}`)
-            return res.uenc({
-                sid: req.sessionId,
-                players_in_country: playersInCountry,
-                t: utils.getServerTime()
-            })
-        }
-        catch(err) {
-            global.logger.error(`Error while trying to create session for ${name}:\n${err}`)
-            return next({
-                status: 500,
-                message: `Error occured while trying to create a session for ${req.sessionId}`,
-                error: [err]
-            });
-        }
-
+        return res.uenc({
+            sid: req.sid,
+            players_in_country: 0,
+            t: utils.serverTime()
+        });
     }
 }

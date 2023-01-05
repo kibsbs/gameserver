@@ -76,7 +76,12 @@ async.waterfall(
                     logger.success("Connected to Database client!");
                 });
             }
-
+            if (service.clients.includes("memcached")) {
+                require("./lib/clients/memcached-client")((err, ok) => {
+                    if (err) return cb(err);
+                    logger.success("Connected to Memcached client!");
+                });
+            };
             logger.success("Initalized all clients!");
             return cb();
         },

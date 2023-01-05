@@ -35,7 +35,8 @@ const conf = {
             mid: [nasClient.require, gameClient]
         },
         getPlayListPos: {
-            id: 1444
+            id: 1444,
+            mid: [nasClient.require, gameClient]
         },
         getRandomPlayers: {
             id: 1665,

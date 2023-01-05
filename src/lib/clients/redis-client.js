@@ -1,4 +1,7 @@
+const { createClient } = require('redis');
 
-const redis = require("redis");
 
-module.exports = async function(config, callback) {};
+module.exports = function(config, callback) {
+
+    const client = createClient();
+};

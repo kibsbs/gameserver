@@ -29,7 +29,7 @@ module.exports = {
         router.get("/testToken", (req, res) => {
             let token = nasToken.encrypt({
                 exp: Date.now(),
-                gid: "SE3E",
+                gid: req.query.gameId || "SE3E",
                 env: global.ENV,
                 uid: "0",
                 sid: "0",

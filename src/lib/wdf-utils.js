@@ -3,8 +3,8 @@
 class WDFUtils {
     constructor() {}
 
-    serverTime() {
-        return Date.now() / 1000;
+    serverTime(now = Date.now()) {
+        return (now - 1000000000000) / 1000;
     }
 
     formatTime() {}

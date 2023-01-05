@@ -1,6 +1,10 @@
 class Utils {
     constructor() {}
 
+    random(arr = []) {
+        return arr[Math.floor((Math.random() * arr.length))];
+    }
+
     getConfig() {
         let config = {
             gsConf: global.gs,

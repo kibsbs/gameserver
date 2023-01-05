@@ -8,7 +8,7 @@ module.exports = {
     async init(req, res, next) {
         return res.uenc({
             t: time.secondsDouble(),
-            sendscore_interval: global.config.TIMES.SEND_SCORE_INTERVAL
+            sendscore_interval: global.config.TIMES.send_stars_delay
         });
     }
 }

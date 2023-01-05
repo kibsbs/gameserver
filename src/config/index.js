@@ -33,7 +33,7 @@ module.exports.SERVICES = {
         id: "wdf",
         name: "WDF",
         path: "services/wdf/service.js",
-        clients: ["db"],
+        clients: ["db", "memcached"],
         isWdf: true
     }
     // ---
