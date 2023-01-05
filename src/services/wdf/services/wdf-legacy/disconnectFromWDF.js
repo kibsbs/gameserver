@@ -1,7 +1,5 @@
-const utils = require("utils")
-
-const lobby = require("jd-lobby")
-const session = require("jd-session")
+const utils = require("utils");
+const session = require("wdf-session");
 
 module.exports = {
 
@@ -10,12 +8,9 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
-
         // We wont use sid from body can be used for hijacking
-        // IDEA: would it be ok to detect if sid and token sid doesnt match and ban player? (means they are hijacking)
-        const { sid } = req.body
-
-        // Remove player session and leave player's lobby
+        // TODO: would it be ok to detect if sid and token sid doesnt match and ban player? (means they are hijacking)
+        const { sid } = req.body;
         try {
             await session.delete({ sessionId: req.sessionId })
             await lobby.leave(req.sessionId, req.version)

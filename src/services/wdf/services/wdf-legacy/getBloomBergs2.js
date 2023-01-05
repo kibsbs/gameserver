@@ -1,4 +1,6 @@
-const wdfUtils = require("wdf-utils")
+const wdfUtils = require("wdf-utils");
+
+const Session = require("wdf-session");
 
 module.exports = {
 
@@ -7,6 +9,10 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
-       return res.uenc()
+
+        const session = new Session(2016);
+        let av = await session.findAvailableLobby();
+        console.log(av)
+        return res.uenc()
     }
 }

@@ -8,8 +8,7 @@ module.exports = {
 
     async init(req, res, next) {
     
-        let id = req.uid || req.pid;
-        let canConnect = await session.canUserConnect(id);
+        let canConnect = await session.canUserConnect(req.uid);
 
         if (!canConnect) return next({
             status: 401,

@@ -10,6 +10,7 @@ module.exports = {
     presentation_duration: 7000,
   
     send_stars_delay: 5000,
+    session_ping_interval: 30 * 1000, // 30 seconds
   
     session_result_duration: 20000,
   

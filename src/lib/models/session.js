@@ -4,15 +4,19 @@ const uuid = require("uuid");
 
 const Schema = new mongoose.Schema(
   {
-    profileId: {
-      type: String,
-      required: true
-    },
+    // profileId: {
+    //   type: String,
+    //   required: true
+    // },
     userId: {
       type: String,
       required: true
     },
     sessionId: {
+      type: String,
+      required: true
+    },
+    lobbyId: {
       type: String,
       required: true
     },
