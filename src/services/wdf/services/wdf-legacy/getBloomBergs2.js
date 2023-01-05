@@ -9,10 +9,6 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
-
-        const session = new Session(2016);
-        let av = await session.findAvailableLobby();
-        console.log(av)
         return res.uenc()
     }
 }

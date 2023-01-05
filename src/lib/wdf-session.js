@@ -18,7 +18,7 @@ class Session {
             lobbyId: Joi.string().guid().required(),
             game: Joi.object({
                 id: Joi.string().required(),
-                "game.version": Joi.number().required()
+                version: Joi.number().required()
             }).required(),
             profile: Joi.object({
                 avatar: Joi.number().required(),
@@ -39,7 +39,7 @@ class Session {
             },
             {
                 $match: {
-                    [`sessions.${this.maxLobbyPlayers - 1}`]: {
+                    [`sessions.${this.maxLobbyPlayers-1}`]: {
                         $exists: false
                     }
                 }
@@ -56,8 +56,15 @@ class Session {
      */
     async newSession(data) {
         try {
+            let sessionId = data.sessionId;
+
+            // Join user to a lobby
+            const lobbyId = await this.joinLobby(sessionId);
+            data.lobbyId = lobbyId;
+
             const value = await this.schema.validateAsync(data);
             const entry = new this.db(value);
+
             return await entry.save();
         }
         catch (err) {
@@ -174,13 +181,17 @@ class Session {
             {
                 $match: { "game.version": this.version }
             },
-            ...this.pipeline
+            ...this.pipeline,
+            // Sort by highest session so that player joins the most crowded lobby
+            {   
+                $sort: {"sessions":1} 
+            }
         ]);
         if (result && result[0]) return result[0];
         else return null;
     }
 
-    async joinLobby() {
+    async joinLobby(sessionId) {
         let lobbyId;
         let availableLobby = await this.findAvailableLobby();
         

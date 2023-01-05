@@ -1,6 +1,6 @@
 const utils = require("wdf-utils");
 
-const session = require("wdf-session");
+const Session = require("wdf-session");
 
 module.exports = {
 
@@ -9,7 +9,9 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
+
         const { avatar, name, onlinescore, pays } = req.body;
+        const session = new Session(req.game.version);
 
         // Check if user is allowed to connect to WDF
         const canConnect = await session.canUserConnect(req.uid);
@@ -24,13 +26,11 @@ module.exports = {
 
         // If client already has a session, delete it
         if (sessionExists) {
-            global.logger.info(`${req.game.id} // ${name} joined WDF with an existing session, recreating session...`);
-            await session.delete(req.sid);
-        }
-        else global.logger.info(`${req.game.id} // ${name} joined WDF!`);
+            await session.deleteSession(req.sid);
+        };
 
         // New session
-        await session.new({
+        const sessionData = await session.newSession({
             userId: req.uid,
             sessionId: req.sid,
             game: {
@@ -44,6 +44,8 @@ module.exports = {
                 country: pays 
             }
         });
+
+        global.logger.info(`${req.game.id} // ${name} joined WDF to lobby ${sessionData.lobbyId}`);
 
         return res.uenc({
             sid: req.sid,

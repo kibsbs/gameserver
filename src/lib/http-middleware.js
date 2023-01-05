@@ -19,7 +19,7 @@ module.exports.errorHandler = (err, req, res, next) => {
     if (err.error) data.error = err.error;
     
     data.requestId = uuid.v4();
-    data.serverTime = new Date(utils.serverTime() * 1000);
+    data.serverTime = new Date();
 
     if (err.error) {
         global.logger.error({

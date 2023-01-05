@@ -6,6 +6,7 @@ const nasClient = require("nas-token-client");
 const gameClient = require("games-client");
 const dancercardClient = require("dancercard-client");
 const songClient = require("songs-client");
+const sessionClient = require("wdf-session-client");
 
 const conf = {
     "wdf-jd5": {},
@@ -20,7 +21,7 @@ const conf = {
         },
         disconnectFromWDF: {
             id: 1695,
-            mid: [nasClient.require, gameClient]
+            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
         },
         getBloomBergs2: {
             id: 1374,
@@ -28,11 +29,11 @@ const conf = {
         },
         getMyRank: {
             id: 914,
-            mid: [nasClient.require, gameClient]
+            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
         },
         getPlayerScores: {
             id: 1564,
-            mid: [nasClient.require, gameClient]
+            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
         },
         getPlayListPos: {
             id: 1444,
@@ -40,11 +41,11 @@ const conf = {
         },
         getRandomPlayers: {
             id: 1665,
-            mid: [nasClient.require, gameClient]
+            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
         },
         getRandomPlayersWMap: {
             id: 2038,
-            mid: [nasClient.require, gameClient]
+            mid: [nasClient.require, gameClient, sessionClient.session]
         },
         getServerTime: {
             id: 1350

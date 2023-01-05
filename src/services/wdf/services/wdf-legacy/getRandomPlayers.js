@@ -1,6 +1,3 @@
-const uenc = require("uenc")
-
-const session = require("jd-session")
 
 module.exports = {
 

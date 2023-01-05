@@ -135,6 +135,8 @@ class Playlist {
         };
         let map = await this.randomMap(1, ignoredSongs, mapFilter);
         map = map[0];
+        if (!map) 
+            throw new Error(`Playlist couldn't find a map to create screen for, is the song database empty?`);
     
         // Set baseTime depending on theme type
         if (isNext && cur && cur.timing.request_playlist_time && isThemeVote(theme.id)) {
@@ -191,6 +193,7 @@ class Playlist {
         // Post-song
         let stop_song_time = start_song_time + mapLength;
         stop_song_time = Number((stop_song_time).toFixed(3));
+        
         let recap_start_time = stop_song_time + (durations["waiting_recap_duration"] * 1);
         let session_result_start_time = recap_start_time + this.computeThemeResultDuration(themeType);
         let session_to_world_result_time = session_result_start_time + durations["session_result_duration"];
