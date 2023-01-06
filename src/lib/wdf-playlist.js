@@ -156,7 +156,7 @@ class Playlist {
         
         // Schedule the next rotation
         let rotationTime = screen.timing.request_playlist_time;
-        let resetScoreTime = screen.timing.request_playlist_time;
+        let resetScoreTime = screen.timing.world_result_stop_time;
 
         // Rotate playlist 
         scheduler.newJob("Rotate playlist", rotationTime, async () => {
