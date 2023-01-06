@@ -8,8 +8,6 @@ module.exports = (req, res, next) => {
     const isJson = (utils.isDev() && req.query.hasOwnProperty("json"));
     
     res.uenc = (data = {}, setIndex = false, offset = 0) => {
-        if (isJson) return res.json(data);
-
         if (global.service.id == "jmcs")
             res.set("Content-Type", "application/x-www-form-urlencoded");
         else if (global.service.id == "wdf") {
@@ -21,6 +19,10 @@ module.exports = (req, res, next) => {
             };
         };
         
+        if (isJson) {
+            res.set("Content-Type", "application/json");
+            return res.json(data);
+        }
         return res.send(uenc.serialize(data, setIndex, offset));
     };
     

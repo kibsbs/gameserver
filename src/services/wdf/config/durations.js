@@ -7,7 +7,9 @@ module.exports = {
   
     playlist_computation_delay: 3000,
     playlist_request_delay: 5000,
-    presentation_duration: 7000,
+    presentation_duration: 10000,
+
+    display_next_song_duration: 10000,
   
     send_stars_delay: 5000,
     session_ping_interval: 30 * 1000, // 30 seconds
@@ -24,5 +26,5 @@ module.exports = {
     vote_result_duration: 10000,
   
     waiting_recap_duration: 2000,
-    world_result_duration: 22000
+    world_result_duration: 30000
 };

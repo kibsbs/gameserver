@@ -1,4 +1,4 @@
-const session = require("wdf-session");
+const Session = require("wdf-session");
 const cache = require("cache");
 
 module.exports = {
@@ -7,7 +7,8 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
-    
+
+        const session = new Session(req.game.version);
         let canConnect = await session.canUserConnect(req.uid);
 
         if (!canConnect) return next({

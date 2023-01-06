@@ -1,11 +1,10 @@
 const Joi = require("joi")
 
 const uenc = require("uenc")
-const utils = require("utils")
+const utils = require("wdf-utils");
 
-const session = require("jd-session")
-const scores = require("jd-scores")
-const lobby = require("jd-lobby")
+const Session = require("wdf-session");
+const Scores = require("wdf-score");
 
 module.exports = {
 
@@ -15,46 +14,37 @@ module.exports = {
 
     async init(req, res, next) {
 
-        let { onlinescore, sid, song_id, star_score } = req.body
+        const { onlinescore, sid, song_id, star_score } = req.body;
 
-        const updatedScore = await session.updateOnlineScore(req.version, req.sessionId, onlinescore)
+        const session = new Session(req.game.version);
+        const scores = new Scores(req.game.version);
 
-        let ranks = await scores.getRanks(req.version, 10) // Get all scores by version
+        // User's leveled up their WDF level, update it
+        if (onlinescore !== req.profile.rank)
+            await scores.updateScore(req.sid, { "profile.rank": onlinescore });
 
-        // Finds rank of given sessionId
-        // basically index of given sessionid in ranks array is their rank
-        // (there is probably a better way in mongo to do the rank system)
-        function getRank(sessionId) {
-            let rank = ranks.findIndex(s => s.sessionId == sessionId) + 1
+        const userRank = await scores.getRank(req.sid);
 
-            if (rank == 0) return -1
-            else return rank
-        }
-
-        let entries = ranks.map(s => {
+        // Get top 10 scores
+        const topTen = await scores.getRanks(10);
+        const mappedScores = topTen.map(s => {
             return {
                 score: s.totalScore,
-                name: s.player.name,
-                pays: s.player.country,
-                rank: getRank(s.sessionId),
-                avatar: s.player.avatar,
-                onlinescore: s.player.onlinescore
+                name: s.profile.name,
+                pays: s.profile.country,
+                avatar: s.profile.avatar,
+                sid: s.sessionId
             }
-        })
+        });
 
         return res.uenc({
 
-            onlinescore_updated: updatedScore,
-
-            ...uenc.setIndex(entries),
-
-            count: await session.count(req.version),
-            total: 0,
-
-            myrank: getRank(req.sessionId),
-
-            song_id,
-
+            onlinescore_updated: onlinescore,
+            ...uenc.setIndex(mappedScores),
+            count: await session.sessionCount(),
+            total: await scores.scoreCount(),
+            myrank: userRank,
+            song_id: song_id,
             // theme and coach star counts
             theme0: 0,
             theme1: 0,
@@ -62,14 +52,11 @@ module.exports = {
             coach1: 0,
             coach2: 0,
             coach3: 0,
-            
+            //
             nb_winners: 0,
-
             star_score,
-
-            numscores: entries.length,
-
-            t: utils.getServerTime()
+            numscores: mappedScores.length,
+            t: utils.serverTime()
 
         })
 

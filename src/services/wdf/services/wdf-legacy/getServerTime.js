@@ -1,4 +1,4 @@
-const time = require("time");
+const utils = require("wdf-utils");
 
 module.exports = {
     name: `getServerTime`,
@@ -7,8 +7,8 @@ module.exports = {
 
     async init(req, res, next) {
         return res.uenc({
-            t: time.secondsDouble(),
-            sendscore_interval: global.config.TIMES.send_stars_delay
+            t: utils.serverTime(),
+            sendscore_interval: global.config.DURATIONS.send_stars_delay / 1000
         });
     }
 }

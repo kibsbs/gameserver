@@ -2,6 +2,7 @@ const utils = require("wdf-utils")
 const time = require("time")
 
 const Playlist = require("wdf-playlist");
+const Session = require("wdf-session");
 
 module.exports = {
 
@@ -16,6 +17,7 @@ module.exports = {
         const now = time.milliseconds();
 
         const playlist = new Playlist(req.game.version);
+        const session = new Session(req.game.version);
 
         const durations = playlist.durations;
 
@@ -102,7 +104,7 @@ module.exports = {
 
         return res.uenc({
             ...playlistData,
-            count: 0,
+            count: await session.sessionCount(),
             t: utils.serverTime(now)
         });
     }

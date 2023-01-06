@@ -6,6 +6,7 @@ module.exports = (url, cb) => {
         if (!url) throw new Error(`Database did not receive any connection url!`)
         mongoose.set('strictQuery', false);
         mongoose.connect(url, {});
+        global.dbClient = mongoose.connection.getClient();
         return cb();
     }
     catch(err) {

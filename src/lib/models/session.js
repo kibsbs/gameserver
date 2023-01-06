@@ -29,7 +29,7 @@ const Schema = new mongoose.Schema(
       required: true
     }
   },
-  { timestamps: true, versionKey: false }
+  { versionKey: false, timestamps: true }
 );
 
 module.exports = mongoose.model("Session", Schema);

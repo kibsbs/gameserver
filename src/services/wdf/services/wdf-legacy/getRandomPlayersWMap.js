@@ -1,6 +1,5 @@
-const uenc = require("uenc")
-
-const session = require("jd-session")
+const Session = require("wdf-session");
+const uenc = require("uenc");
 
 module.exports = {
 
@@ -10,58 +9,30 @@ module.exports = {
 
     async init(req, res, next) {
 
-        const { nr_players, player_sid, sid_list } = req.body
+        const { nr_players, player_sid, sid_list } = req.body;
 
-        // Get all sessions from requester's game excluding requester's session
-        session.db.aggregate([
-            {
-                $match: { sessionId: { $ne: req.sessionId }}
-            },
-            { 
-                $sample: { 
-                    size: nr_players 
-                } 
+        const session = new Session(req.game.version);
+
+        // Fetch random sessions, but exclude player's sid from list
+        const sessions = await session.randomSession(nr_players, req.sid);
+        const sessionsMap = sessions.map(p => {
+            return {
+                sid: p.sessionId,
+                name: p.profile.name,
+                pays: p.profile.country,
+                avatar: p.profile.avatar,
+                onlinescore: p.profile.rank,
             }
-        ], async function (err, sessions) {
-            
-            if (err) {
-                return next({
-                    status: 500,
-                    message: `Error occured: ${err}`
-                })
-            }
-
-            // Map session result to shortcut
-            sessions = sessions.map(p => {
-                return {
-                    sid: p.sessionId,
-                    name: p.player.name,
-                    pays: p.player.country,
-                    avatar: p.player.avatar,
-                    onlinescore: p.player.onlinescore,
-                }
-            })
-
-            // Amount of sessions in clients version excluding client
-            const sessionCount = await session.db.count({
-                version: req.version,
-                sessionId: { $ne: req.sessionId }
-            })
-
-            return res.uenc({
-                player_name: req.player.name,
-                
-                ...uenc.setIndex(sessions),
-        
-                nr_players: sessions.length,
-                nr_asked: nr_players,
-        
-                count: sessionCount
-            })
-
         });
 
+        return res.uenc({
+            player_name: req.profile.name,
 
+            ...uenc.setIndex(sessionsMap),
 
+            nr_players: sessions.length,
+            nr_asked: nr_players,
+            count: await session.sessionCount()
+        });
     }
 }

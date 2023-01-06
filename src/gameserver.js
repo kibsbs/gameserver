@@ -5,6 +5,7 @@
 // Register aliases
 require("./aliases")();
 
+// see TODO #1
 global.ENV = "local";
 
 const fs = require("fs");

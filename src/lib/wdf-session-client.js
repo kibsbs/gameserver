@@ -39,6 +39,10 @@ module.exports.session = async (req, res, next) => {
         message: `Player does not have a session!`
     });
 
+    // Ping session to avoid it from getting removed
+    await session.pingSession(sid);
+
     req.session = userSession;
+    req.profile = userSession.profile;
     return next();
 };

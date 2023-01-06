@@ -32,7 +32,7 @@ class Utils {
      * @returns {Boolean}
      */
     isDev() {
-        let env = global.ENV || "local";
+        let env = global.ENV;
         return ["dev", "local", "uat", "docker", "test", "beta"].includes(env.toLowerCase());
     }
 

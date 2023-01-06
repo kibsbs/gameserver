@@ -18,7 +18,9 @@ module.exports = async (req, res, next) => {
     if (global.service.isWdf) {
         let wdfName = path.split("/")[1];
         let queryKey = req.query.d;
-        schema = schemas[wdfName][queryKey];
+        if (schemas[wdfName] && schemas[wdfName][queryKey])
+            schema = schemas[wdfName][queryKey];
+        else return next();
     }
     else {
         schema = accessVariableNestedProp(schemas, path.slice(1).split("/"));

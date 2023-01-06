@@ -1,12 +1,10 @@
-const scheduler = require('cron');
-const fs = require("fs");
-
 const cache = require("cache");
 const utils = require("utils");
 const games = require("games");
 const songs = require("songs");
 const time = require("time");
-const { x } = require('joi');
+const scheduler = require("scheduler");
+const scores = require("wdf-score");
 
 const isThemeAutodance = (id) => id == 0;
 const isThemeCommunity = (id) => id == 1;
@@ -28,12 +26,6 @@ class Playlist {
             cur: `playlist:${this.version}:cur`,
             next: `playlist:${this.version}:next`,
         };
-    }
-
-    schedule(time, fn) {
-        global.logger.info("SCHEDULED " + time)
-        const job = new scheduler.CronJob(new Date(time), fn);
-	    return job.start();
     }
 
     randomTheme(exclude = []) {
@@ -63,9 +55,10 @@ class Playlist {
         // so that they can be created again
         if (
             (playlist.cur && now > playlist.cur.timing.request_playlist_time) || 
-            (playlist.next && now > playlist.next.timing.base_time)
+            (playlist.next && now > playlist.next.timing.request_playlist_time)
         ) {
             global.logger.info(`Server was slept, reseting playlist...`)
+            playlist.prev = null;
             playlist.cur = null;
             playlist.next = null;
         }
@@ -162,19 +155,18 @@ class Playlist {
         screen.timingProgramming = times.timingProgramming;
         
         // Schedule the next rotation
-        let rotationTime = (screen.timing.playlist_computation_time);
-        console.log(rotationTime)
-        this.schedule(rotationTime, async () => {
+        let rotationTime = screen.timing.stop_song_time - 18000;
+        let resetScoreTime = screen.timing.request_playlist_time;
+
+        scheduler.newJob("Rotate playlist", rotationTime, async () => {
             await this.rotateScreens();
-            // let p = await this.getScreens(false)
-            // let now = Date.now()
-            // console.log("!!!!!!!! ROTATED !!!!!!!!")
-            // console.log("NOW", now)
-            // console.log("DIFF", rotationTime - now)
-            // console.log("PREVIOUS", JSON.stringify(p.prev, null, 2))
-            // console.log("CURRENT", JSON.stringify(p.cur, null, 2))
-            // console.log("NEXT", JSON.stringify(p.next, null, 2))
-            // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!")
+        });
+        scheduler.newJob("Clear scores after playlist rotation", resetScoreTime, async () => {
+            const db = require("./models/wdf-score")
+            const { deletedCount } = await db.deleteMany({
+                "game.version": this.version
+            });
+            global.logger.info(`Erased ${deletedCount} scores from ${this.version}`)
         });
         
         return screen;
@@ -225,7 +217,7 @@ class Playlist {
             };
         };
 
-        let request_playlist_time = world_result_stop_time - durations["playlist_request_delay"];
+        let request_playlist_time = world_result_stop_time // - durations["playlist_request_delay"];
         
         let unlock_computation_time = stop_song_time + durations["send_stars_delay"];
         let request_unlock_time = unlock_computation_time + durations["unlock_computation_delay"];

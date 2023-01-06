@@ -124,6 +124,29 @@ class Session {
         }
     }
 
+    async randomSession(amount = 1, excludeSid) {
+        try {
+            return await this.db.aggregate([
+                {
+                    $match: { 
+                        "game.version": this.version,
+                        sessionId: { $ne: excludeSid }
+                    }
+                },
+                { 
+                    $sample: { size: amount } 
+                }
+            ])
+        }
+        catch(err) {
+            throw new Error(`Can't get random sessions with amount ${amount}: ${err}`);
+        }
+    }
+
+    async sessionCount() {
+        return await this.db.count({ "game.version": this.version })
+    }
+    
     /**
      * Lobbies
      * 

@@ -12,6 +12,7 @@ const validate = require("http-validate");
 const mids = require("http-middleware");
 const logger = require("logger");
 const uenc = require("uenc");
+const scheduler = require("scheduler");
 
 global.logger = logger;
 global.httpSchema = require("./http-schema");
@@ -42,9 +43,19 @@ app.use((req, res, next) => {
 // app.use("/api", require("./services/api/service"));
 // app.post("/wdf", require("./services/api/service"));
 
+app.get("/reset-playlist", (req, res, next)=> {
+    global.memcached.flush()
+    return res.sendStatus(200)
+})
 app.post("/wdfjd6", require("./load-funcs")("wdf-legacy"));
 
 app.use(mids.errorHandler);
 app.use(mids.notFound);
+
+async function startJobs() {
+    global.logger.info(`Starting session deletion job...`);
+    await scheduler.sessionJob();
+}
+startJobs();
 
 module.exports = app;
