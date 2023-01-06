@@ -115,7 +115,6 @@ module.exports = {
             });
             const userRank = await scores.getRank(req.sid);
 
-            console.log(userScore)
             result = {
                 ...result,
                 score: userScore.totalScore,
