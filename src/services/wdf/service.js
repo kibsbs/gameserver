@@ -54,7 +54,7 @@ app.use(mids.notFound);
 
 async function startJobs() {
     global.logger.info(`Starting session deletion job...`);
-    await scheduler.sessionJob();
+    //await scheduler.sessionJob();
 }
 startJobs();
 

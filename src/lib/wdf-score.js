@@ -2,12 +2,15 @@ const Joi = require("joi");
 
 const games = require("games");
 
+const Playlist = require("wdf-playlist");
+
 class Score {
     constructor(version) {
         this.version = version;
         if (!games.isGameAvailable(this.version))
             throw new Error(`${version} is not available for use!`);
 
+        this.playlist = new Playlist(this.version);
         this.db = require("./models/wdf-score");
         this.schema = Joi.object({
             userId: Joi.string().required(),
@@ -27,11 +30,44 @@ class Score {
 
     async updateScore(sessionId, scoreData) {
         try {
-            return await this.db.findOneAndUpdate({ sessionId }, scoreData, { upsert: true });
+            return await this.db.findOneAndUpdate({
+                sessionId,
+                "game.version": this.version
+            },
+                scoreData,
+                { upsert: true }
+            );
         }
         catch (err) {
             throw new Error(`Can't upsert WDF Score: ${err}`);
         };
+    }
+
+    async updateRank(sessionId, rank) {
+        try {
+            return await this.db.findOneAndUpdate({ sessionId, "game.version": this.version }, { "profile.rank": rank });
+        }
+        catch (err) {
+            throw new Error(`Can't update WDF rank of ${sessionId} / rank: ${rank}: ${err}`);
+        };
+    }
+
+    async deleteScore(filter) {
+        try {
+            return await this.db.deleteMany({ ...filter, "game.version": this.version });
+        }
+        catch (err) {
+            throw new Error(`Can't delete WDF Scores with ${JSON.stringify(filter)}: ${err}`);
+        }
+    }
+
+    async getScore(sessionId) {
+        try {
+            return await this.db.findOne({ sessionId, "game.version": this.version }).totalScore;
+        }
+        catch (err) {
+            throw new Error(`Can't get WDF Score for ${sessionId}: ${err}`);
+        }
     }
 
     async get(filter) {
@@ -110,6 +146,64 @@ class Score {
             return r; 
         });
         return ranks;
+    }
+
+    async getThemeResult(themeIndex = 0) {
+        try {
+            const result = await this.db.aggregate([
+                { $match: { "game.version": this.version, themeIndex: { $eq: themeIndex } } },
+                { $group: { _id: null, totalScore: { $sum: "$totalScore" } } }
+            ]);
+            return result[0] ? result[0].totalScore : 0
+        }
+        catch(err) {
+            throw new Error(`Can't get theme results for ${this.version} index: ${themeIndex}: ${err}`)
+        }
+    }
+
+    async getCoachResult(coachIndex = 0) {
+        try {
+            const result = await this.db.aggregate([
+                { $match: { "game.version": this.version, coachIndex: { $eq: coachIndex } } },
+                { $group: { _id: null, totalScore: { $sum: "$totalScore" } } }
+            ])
+            return result[0] ? result[0].totalScore : 0
+        }
+        catch(err) {
+            throw new Error(`Can't get coach results for ${this.version} index: ${themeIndex}: ${err}`)
+        }
+    }
+
+    async getThemeAndCoachResult() {
+        const currentTheme = await this.playlist.getCurrentTheme();
+        const isCommunity = this.playlist.isThemeCommunity(currentTheme);
+        const isCoach = this.playlist.isThemeCoach(currentTheme);
+        return {
+            theme0: isCommunity ? await this.getThemeResult(0) : 0,
+            theme1: isCommunity ? await this.getThemeResult(1) : 0,
+            coach0: isCoach ? await this.getCoachResult(0) : 0,
+            coach1: isCoach ? await this.getCoachResult(1) : 0,
+            coach2: isCoach ? await this.getCoachResult(2) : 0,
+            coach3: isCoach ? await this.getCoachResult(3) : 0
+        }
+    }
+
+    async getNumberOfWinners(results) {
+        if (!results)
+            throw new Error(`Theme result list required for winners`);
+        
+        // Get key with highest value from themecoach result and get it's index
+        // (this is a dumb way, please make a better method in future)
+        let key = Object.keys(results).reduce(function(a, b){ return results[a] > results[b] ? a : b });
+        let index = Number(key.substring(5));
+        let query = {};
+
+        if (key.startsWith("coach"))
+            query = { coachIndex: index };
+        else if (key.startsWith("theme"))
+            query = { themeIndex: index };
+        
+        return await this.db.count({ ...query, "game.version": this.version });
     }
 };
 

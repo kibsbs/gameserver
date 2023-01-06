@@ -6,12 +6,6 @@ const time = require("time");
 const scheduler = require("scheduler");
 const scores = require("wdf-score");
 
-const isThemeAutodance = (id) => id == 0;
-const isThemeCommunity = (id) => id == 1;
-const isThemeVote = (id) => id == 2;
-const isThemeCoach = (id) => id == 3;
-const isThemeStarChallenge = (id) => id == 4;
-
 class Playlist {
     constructor(version) {
         this.version = version;
@@ -35,6 +29,12 @@ class Playlist {
 
     async randomMap(amount = 1, mapsToExclude = [], filter = {}) {
         return await songs.random(this.version, amount, mapsToExclude, filter);
+    }
+
+    async getCurrentTheme() {
+        const cur = await cache.get(this.keys.cur);
+        if (!cur) return null;
+        return cur.theme.id;
     }
 
     /**
@@ -111,7 +111,7 @@ class Playlist {
         let ignoredSongs = [prev?.map.mapName, cur?.map.mapName, next?.map.mapName];
     
         let theme = this.randomTheme(ignoredTheme);
-        if (isThemeCommunity(theme.id)) {
+        if (this.isThemeCommunity(theme.id)) {
             theme.communities = ["Test1", "Test2"];
         }
 
@@ -119,7 +119,7 @@ class Playlist {
         let mapFilter = {};
 
         // Theme 3 is coach pick and map filter should be non-solo maps
-        if (isThemeCoach(theme.id)) {
+        if (this.isThemeCoach(theme.id)) {
             mapFilter = {
                 numCoach: {
                     $gt: 1
@@ -132,7 +132,7 @@ class Playlist {
             throw new Error(`Playlist couldn't find a map to create screen for, is the song database empty?`);
     
         // Set baseTime depending on theme type
-        if (isNext && cur && cur.timing.request_playlist_time && isThemeVote(theme.id)) {
+        if (isNext && cur && cur.timing.request_playlist_time && this.isThemeVote(theme.id)) {
             baseTime = cur.timing.request_playlist_time
         }
         else if (isNext && cur && cur.timing.request_playlist_time) {
@@ -155,12 +155,15 @@ class Playlist {
         screen.timingProgramming = times.timingProgramming;
         
         // Schedule the next rotation
-        let rotationTime = screen.timing.request_playlist_time - 15000;
-        let resetScoreTime = screen.timing.world_result_stop_time;
+        let rotationTime = screen.timing.request_playlist_time;
+        let resetScoreTime = screen.timing.request_playlist_time;
 
+        // Rotate playlist 
         scheduler.newJob("Rotate playlist", rotationTime, async () => {
             await this.rotateScreens();
         });
+
+        // Clear all scores for version
         scheduler.newJob("Clear scores after playlist rotation", resetScoreTime, async () => {
             const db = require("./models/wdf-score")
             const { deletedCount } = await db.deleteMany({
@@ -199,7 +202,7 @@ class Playlist {
         let pre_compute_time;
         let second_request_playlist_time;
 
-        if (isNext && isThemeVote(themeType)) {
+        if (isNext && this.isThemeVote(themeType)) {
             last_vote_time = world_result_stop_time + durations["vote_choice_duration"];
             playlist_computation_time = last_vote_time + durations["vote_computation_delay"];
             pre_compute_time = world_result_stop_time - durations["playlist_request_delay"] - durations["playlist_computation_delay"];
@@ -207,7 +210,7 @@ class Playlist {
 
         }
         else {
-            if (isNext && isThemeStarChallenge(themeType)) {
+            if (isNext && this.isThemeStarChallenge(themeType)) {
                 last_vote_time = world_result_stop_time + durations["star_challenge_intro_duration"];
             }
             else {
@@ -226,7 +229,7 @@ class Playlist {
             base_time: baseTime,
             presentation_start_time, 
             start_song_time, 
-            stop_song_time, 
+            stop_song_time,
             recap_start_time, 
             session_result_start_time, 
             session_to_world_result_time, 
@@ -241,7 +244,7 @@ class Playlist {
 
         let next_new_step_time = 0;
 
-        if (isNext && isThemeVote(themeType)) next_new_step_time = request_playlist_time;
+        if (isNext && this.isThemeVote(themeType)) next_new_step_time = request_playlist_time;
         else next_new_step_time = world_result_stop_time;
         
         let next_presentation_start_time = next_new_step_time + this.computePreSongDuration(themeType)
@@ -257,34 +260,40 @@ class Playlist {
     }
 
     computePreSongDuration(themeType, durations = this.durations) {
-        if (isThemeVote(themeType))
+        if (this.isThemeVote(themeType))
             return durations["vote_result_duration"]
-        else if (isThemeCommunity(themeType)) {
+        else if (this.isThemeCommunity(themeType)) {
             return durations["community_choice_duration"]
         }
-        else if (isThemeCoach(themeType)) {
+        else if (this.isThemeCoach(themeType)) {
             return durations["coach_choice_duration"]
         }
-        else if (isThemeStarChallenge(themeType)) {
+        else if (this.isThemeStarChallenge(themeType)) {
             return durations["star_challenge_intro_duration"]
         }
         else return 0
     }
 
     computeThemeResultDuration(themeType, durations = this.durations) {
-        if (isThemeAutodance(themeType))
+        if (this.isThemeAutodance(themeType))
             return durations["autodance_result_duration"]
-        else if (isThemeCommunity(themeType)) {
+        else if (this.isThemeCommunity(themeType)) {
             return durations["community_result_duration"]
         }
-        else if (isThemeCoach(themeType)) {
+        else if (this.isThemeCoach(themeType)) {
             return durations["coach_result_duration"]
         }
-        else if (isThemeStarChallenge(themeType)) {
+        else if (this.isThemeStarChallenge(themeType)) {
             return durations["star_challenge_outro_duration"]
         }
         else return 0
     }
+
+    isThemeAutodance = (id) => id == 0;
+    isThemeCommunity = (id) => id == 1;
+    isThemeVote = (id) => id == 2;
+    isThemeCoach = (id) => id == 3;
+    isThemeStarChallenge = (id) => id == 4;
 }
 
 module.exports = Playlist;

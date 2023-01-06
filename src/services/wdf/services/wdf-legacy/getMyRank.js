@@ -20,10 +20,16 @@ module.exports = {
         const scores = new Scores(req.game.version);
 
         // User's leveled up their WDF level, update it
-        if (onlinescore !== req.profile.rank)
-            await scores.updateScore(req.sid, { "profile.rank": onlinescore });
+        await session.updateRank(req.sid, onlinescore);
+        await scores.updateRank(req.sid, onlinescore);
+
+        const count = await session.sessionCount();
+        const total = await scores.scoreCount();
 
         const userRank = await scores.getRank(req.sid);
+        const userScore = await scores.getScore(req.sid);
+        const themeResults = await scores.getThemeAndCoachResult();
+        const winners = await scores.getNumberOfWinners(themeResults);
 
         // Get top 10 scores
         const topTen = await scores.getRanks(10);
@@ -34,30 +40,22 @@ module.exports = {
                 pays: s.profile.country,
                 avatar: s.profile.avatar,
                 sid: s.sessionId
-            }
+            };
         });
 
         return res.uenc({
-
             onlinescore_updated: onlinescore,
             ...uenc.setIndex(mappedScores),
-            count: await session.sessionCount(),
-            total: await scores.scoreCount(),
+            count,
+            total,
             myrank: userRank,
+            myscore: userScore,
             song_id: song_id,
-            // theme and coach star counts
-            theme0: 0,
-            theme1: 0,
-            coach0: 0,
-            coach1: 0,
-            coach2: 0,
-            coach3: 0,
-            //
-            nb_winners: 0,
+            ...themeResults,
+            nb_winners: winners,
             star_score,
             numscores: mappedScores.length,
             t: utils.serverTime()
-
         })
 
     }

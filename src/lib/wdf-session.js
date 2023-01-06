@@ -4,12 +4,15 @@ const uuid = require("uuid");
 const games = require("games");
 const cheatDetection = require("cheat-detection");
 
+const Score = require("wdf-score");
+
 class Session {
     constructor(version) {
         this.version = version;
         if (!games.isGameAvailable(this.version))
             throw new Error(`${version} is not available for use!`);
         
+        this.scores = new Score(this.version);
         this.db = require("./models/session");
         this.schema = Joi.object({
             // profileId: Joi.string().guid().required(),
@@ -90,11 +93,18 @@ class Session {
         }
     }
 
+    /**
+     * Deletes session and any score entries by player
+     * @param {*} userOrSessionId 
+     * @returns 
+     */
     async deleteSession(userOrSessionId) {
         try {
-            return await this.db.deleteOne({
+            const query = {
                 $or: [{ userId: userOrSessionId }, { sessionId: userOrSessionId }]
-            });
+            };
+            await this.scores.deleteScore(query); // Delete scores
+            return await this.db.deleteOne(query); // Delete session
         }
         catch (err) {
             throw new Error(`Can't delete Session with ${JSON.stringify(filter)}: ${err}`);
@@ -108,6 +118,15 @@ class Session {
         catch (err) {
             throw new Error(`Can't delete many Sessions with ${JSON.stringify(filter)}: ${err}`);
         }
+    }
+
+    async updateRank(sessionId, rank) {
+        try {
+            return await this.db.findOneAndUpdate({ sessionId, "game.version": this.version }, { "profile.rank": rank });
+        }
+        catch (err) {
+            throw new Error(`Can't update WDF rank of ${sessionId} / rank: ${rank}: ${err}`);
+        };
     }
 
     async pingSession(userOrSessionId) {

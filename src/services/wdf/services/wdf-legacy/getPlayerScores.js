@@ -22,6 +22,8 @@ module.exports = {
         const scores = new Score(req.game.version);
 
         const count = await session.sessionCount();
+        const total = await scores.scoreCount();
+        const themeResults = await scores.getThemeAndCoachResult();
         
         let result = {
             num: req.lobby.sessions.length,
@@ -65,7 +67,7 @@ module.exports = {
             result = {
                 ...uenc.setIndex(mappedScores, 1, "_"),
                 ...result,
-                count: await session.sessionCount()
+                count
             };
         }
 
@@ -78,7 +80,7 @@ module.exports = {
                 score: Joi.number().optional(),
                 song_id: Joi.string().optional(),
                 stars: Joi.number().min(0).max(5).optional(),
-                themeindex: Joi.number().min(0).max(1).optional(),
+                themeindex: Joi.number().min(0).max(2).optional(),
                 total_score: Joi.number().min(0).max(global.gs.MAX_SCORE).optional()
             }).unknown(true);
 
@@ -112,18 +114,15 @@ module.exports = {
                 totalScore: total_score
             });
             const userRank = await scores.getRank(req.sid);
+
+            console.log(userScore)
             result = {
                 ...result,
-                score: userScore?.totalScore || 0,
-                rank: userRank || 0,
-                count: await session.sessionCount(),
-                total: await scores.scoreCount(),
-                theme0: 0,
-                theme1: 0,
-                coach0: 0,
-                coach1: 0,
-                coach2: 0,
-                coach3: 0
+                score: userScore.totalScore,
+                rank: userRank,
+                count,
+                total,
+                ...themeResults
             }
         }
 

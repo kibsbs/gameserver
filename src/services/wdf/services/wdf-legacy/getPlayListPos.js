@@ -23,6 +23,8 @@ module.exports = {
 
         const { prev, cur, next } = await playlist.getScreens();
 
+        const count = await session.sessionCount();
+
         let pos = (now - cur.timing.start_song_time) / 1000; // "pos" indicates the position of the playlist
         let left = (cur.timing.stop_song_time - now) / 1000; // "left" shows how many seconds are left until a map ends
 
@@ -104,7 +106,7 @@ module.exports = {
 
         return res.uenc({
             ...playlistData,
-            count: await session.sessionCount(),
+            count,
             t: utils.serverTime(now)
         });
     }
