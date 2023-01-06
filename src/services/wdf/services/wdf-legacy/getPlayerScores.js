@@ -14,8 +14,10 @@ module.exports = {
 
     async init(req, res, next) {
 
-        const { event, sid, sid_list, send_score } = req.body;
+        let { event, _sid, sid_list, send_score } = req.body;
 
+        event = decodeURIComponent(event);
+        
         const session = new Session(req.game.version);
         const scores = new Score(req.game.version);
 
