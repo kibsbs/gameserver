@@ -117,7 +117,7 @@ module.exports = {
 
             result = {
                 ...result,
-                score: userScore?.totalScore,
+                score: userScore?.totalScore || 0,
                 rank: userRank,
                 count,
                 total,
