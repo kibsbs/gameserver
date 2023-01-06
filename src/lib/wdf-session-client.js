@@ -3,6 +3,7 @@
  */
 
 const Session = require("wdf-session");
+const cheatDetection = require("cheat-detection");
 
 module.exports.lobby = async (req, res, next) => {
     let userSession = req.session;
@@ -22,6 +23,7 @@ module.exports.lobby = async (req, res, next) => {
 module.exports.session = async (req, res, next) => {
     let sid = req.sid;
     let game = req.game;
+    
     if (!sid) return next({
         status: 401,
         message: `SessionId is required for session client!`
@@ -32,6 +34,13 @@ module.exports.session = async (req, res, next) => {
     });
 
     const session = new Session(req.game.version);
+
+    // Don't allow banned users
+    const isBanned = await cheatDetection.isUserBanned(req.uid);
+    if (isBanned) return next({
+        status: 403,
+        message: `Forbidden access`
+    });
 
     const userSession = await session.getSession({ sessionId: sid });
     if (!userSession) return next({
