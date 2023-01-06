@@ -48,8 +48,10 @@ module.exports = {
             ...uenc.setIndex(mappedScores),
             count,
             total,
-            myrank: userRank,
-            myscore: userScore,
+            
+            myrank: userRank || count,
+            myscore: userScore || 0,
+
             song_id: song_id,
             ...themeResults,
             nb_winners: winners,
