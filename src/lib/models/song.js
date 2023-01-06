@@ -6,6 +6,12 @@ const Schema = new mongoose.Schema(
   {
     mapName: {
         type: String,
+        unique: true,
+        required: true
+    },
+    songId: {
+        type: String,
+        unique: true,
         required: true
     },
     title: {
@@ -26,10 +32,6 @@ const Schema = new mongoose.Schema(
     },
     difficulty: {
         type: Number,
-        required: true
-    },
-    songId: {
-        type: String,
         required: true
     },
     songHash: {

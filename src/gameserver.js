@@ -14,6 +14,8 @@ const http = require("http");
 const async = require("async");
 const dotenv = require("dotenv");
 const logger = require("logger");
+const migrateDb = require("./migrate-db");
+
 
 let config;
 let service;
@@ -85,6 +87,17 @@ async.waterfall(
             };
             logger.success("Initalized all clients!");
             return cb();
+        },
+        (cb) => {
+            // If DB exists, call database migration
+            if (service.clients.includes("db")) {
+                migrateDb.migrateSongs((err, ok) => {
+                    if (err) return cb(err);
+                    if (ok) logger.success("Migrated songs successfully!");
+                    return cb();
+                })
+            }
+            else return cb();
         },
         (cb) => {
             // Initate provided service
