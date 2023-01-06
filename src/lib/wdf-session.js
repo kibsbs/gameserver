@@ -147,7 +147,7 @@ class Session {
         try {
             return await this.db.aggregate([
                 {
-                    $match: { 
+                    $match: {
                         "game.version": this.version,
                         sessionId: { $ne: excludeSid }
                     }
@@ -236,6 +236,7 @@ class Session {
     async joinLobby(sessionId) {
         let lobbyId;
         let availableLobby = await this.findAvailableLobby();
+        console.log("available lobby", availableLobby)
         
         // If there's an available lobby, set the lobbyId
         // else, we create a new lobby so generate a new ID

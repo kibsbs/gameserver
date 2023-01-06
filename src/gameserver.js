@@ -36,6 +36,7 @@ async.waterfall(
         (cb) => {
             // Start CLI progress
             const args = require("./cli")();
+            global.args = args;
             return cb(null, args);
         },
         (args, cb) => {

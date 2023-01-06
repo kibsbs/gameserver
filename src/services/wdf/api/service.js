@@ -10,6 +10,7 @@ router.get("/test", (req, res) => {
 });
 
 router.use("/config", require("./services/config"));
+router.use("/moderation", require("./services/moderation"));
 router.use("/playlist", require("./services/playlist"));
 router.use("/songs", require("./services/songs"));
 

@@ -24,10 +24,10 @@ module.exports = {
         const count = await session.sessionCount();
         const total = await scores.scoreCount();
         const themeResults = await scores.getThemeAndCoachResult();
+        const t = utils.serverTime()
         
         let result = {
             num: req.lobby.sessions.length,
-            t: utils.serverTime(),
             count
         };
 
@@ -60,7 +60,7 @@ module.exports = {
                     mappedScores.push({
                         s: sid,
                         sc: -1,
-                        r: -1
+                        r: 1
                     });
                 }
             }
@@ -125,6 +125,7 @@ module.exports = {
             }
         }
 
+        result.t = t;
         return res.uenc(result);
     }
 }

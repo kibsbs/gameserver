@@ -40,7 +40,7 @@ app.use((req, res, next) => {
     return next();
 });
 
-// app.use("/api", require("./services/api/service"));
+app.use("/api", require("./api/service"));
 // app.post("/wdf", require("./services/api/service"));
 
 app.get("/reset-playlist", (req, res, next)=> {
@@ -53,8 +53,9 @@ app.use(mids.errorHandler);
 app.use(mids.notFound);
 
 async function startJobs() {
-    global.logger.info(`Starting session deletion job...`);
-    await scheduler.sessionJob();
+    if (!global.args.ns)
+        global.logger.info(`Starting schedule deletion job...`);
+        await scheduler.sessionJob();
 }
 startJobs();
 

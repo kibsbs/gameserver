@@ -20,6 +20,11 @@ module.exports = () => {
         type: "number",
         description: "Port to bind on"
     })
+    .option("no-scheduler", {
+        type: "boolean",
+        alias: "ns",
+        description: "Don't schedule any session / score removal"
+    })
     .demandCommand()
     .showHelpOnFail()
     .parse()
