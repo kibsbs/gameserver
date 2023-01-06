@@ -23,7 +23,7 @@ class Score {
             score: Joi.number().required(),
             sendScore: Joi.boolean().truthy('1').falsy('0').required(),
             stars: Joi.number().min(0).max(3).required(),
-            themeIndex: Joi.number().min(0).max(1).required(),
+            themeIndex: Joi.number().required(),
             totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
         });
     }
