@@ -9,10 +9,6 @@ module.exports = function (req, res, next) {
 
   const { action } = req.body;
 
-  console.log(req.connection.remoteAddress,
-    req.connection.remotePort,
-    req.connection.localAddress,
-    req.connection.localPort,)
   axios({
     method: "POST",
     url: `http://nas.wiimmfi.de/ac`,
