@@ -13,10 +13,8 @@ class CheatDetection {
         }
     }
 
-    async isUserBanned(userOrProfileId) {
-        return this.db.exists({
-            $or: [{ profileId: userOrProfileId }, { userId: userOrProfileId }]
-        }) ? true : false;
+    async isUserBanned(userId) {
+        return this.db.exists({ userId }) ? true : false;
     }
 }
 
