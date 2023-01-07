@@ -1,6 +1,7 @@
 const utils = require("wdf-utils");
 
 const Session = require("wdf-session");
+const cheatDetection = require("cheat-detection");
 
 module.exports = {
 
@@ -14,9 +15,10 @@ module.exports = {
         const session = new Session(req.game.version);
 
         // Check if user is allowed to connect to WDF
-        const canConnect = await session.canUserConnect(req.uid);
-        if (!canConnect) return next({
-            status: 401,
+        const isBanned = await cheatDetection.isUserBanned(req.uid);
+        console.log("isBanned", isBanned)
+        if (isBanned) return next({
+            status: 403,
             message: `User is not allowed to create connection to WDF!`
         });
 
@@ -45,7 +47,7 @@ module.exports = {
             }
         });
 
-        global.logger.info(`${req.game.id} // ${name} joined WDF to lobby ${sessionData.lobbyId}`);
+        global.logger.info(`${req.game.version} - ${req.game.id} // ${req.uid} // ${name} joined WDF to lobby ${sessionData.lobbyId}`);
 
         return res.uenc({
             sid: req.sid,

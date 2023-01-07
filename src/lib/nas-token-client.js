@@ -1,9 +1,10 @@
 const nasToken = require("nas-token");
 const utils = require("utils");
 const games = require("games");
+const cheatDetection = require("cheat-detection");
 
 // Used if token is not required but should be set in request
-module.exports.permit = (req, res, next) => {
+module.exports.permit = async (req, res, next) => {
     if (req.token) return next();
 
     let token = req.body.token;
@@ -19,6 +20,14 @@ module.exports.permit = (req, res, next) => {
                 status: 401,
                 message: `${gid} is disabled on this server!`
             });
+        
+        
+        // Don't allow banned users
+        const isBanned = await cheatDetection.isUserBanned(uid);
+        if (isBanned) return next({
+            status: 403,
+            message: `Forbidden`
+        });
         
         req.token = payload;
         req.game = games.getGameById(gid);
@@ -42,8 +51,8 @@ module.exports.permit = (req, res, next) => {
 };
 
 // Used if token is required
-module.exports.require = (req, res, next) => {
-    return this.permit(req, res, (err) => {
+module.exports.require = async (req, res, next) => {
+    return await this.permit(req, res, (err) => {
         if (err) return next(err);
 
         if (!req.token) {
@@ -59,8 +68,8 @@ module.exports.require = (req, res, next) => {
 };
 
 // Used for developer access
-module.exports.dev = (req, res, next) => {
-    return this.permit(req, res, (err) => {
+module.exports.dev = async (req, res, next) => {
+    return await this.permit(req, res, (err) => {
         if (err) return next(err);
 
         if (!req.token || !req.isDev) {

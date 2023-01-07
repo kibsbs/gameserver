@@ -35,13 +35,6 @@ module.exports.session = async (req, res, next) => {
 
     const session = new Session(req.game.version);
 
-    // Don't allow banned users
-    const isBanned = await cheatDetection.isUserBanned(req.uid);
-    if (isBanned) return next({
-        status: 403,
-        message: `Forbidden access`
-    });
-
     const userSession = await session.getSession({ sessionId: sid });
     if (!userSession) return next({
         status: 401,
