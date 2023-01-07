@@ -10,4 +10,10 @@
 	"args": "serve wdf --port 9000",
 	"exec_mode": "fork_mode",
 	"instances": 1
+}, {
+	"name": "NAS",
+	"script": "src/gameserver.js",
+	"args": "serve nas --port 12000",
+	"exec_mode": "fork_mode",
+	"instances": 1
 }]
