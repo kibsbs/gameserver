@@ -8,14 +8,13 @@ const Score = require("wdf-score");
 
 module.exports = {
 
-    name: `getMyRank`,
+    name: `getPlayerScores`,
     description: ``,
     version: `1.0.0`,
 
     async init(req, res, next) {
 
         let { event, _sid, sid_list, send_score } = req.body;
-
         event = decodeURIComponent(event);
         
         const session = new Session(req.game.version);
@@ -27,43 +26,69 @@ module.exports = {
         const t = utils.serverTime()
         
         let result = {
-            num: req.lobby.sessions.length,
+            num: req.lobby.sessions.length + 1,
             count
         };
 
-        // Sid List is used for listing given sessionIds profile, score and rank
+        // "sid_list" is not empty, so include score data of given sids in response
         if (sid_list.length > 0) {
-            const sids = sid_list.filter(sid => sid !== req.sid);
-            const sidScores = await scores.getMany({
-                sessionId: sids
-            });
 
+            const sids = sid_list.filter(sid => sid !== req.sid); // Exclude client's sid if given
+            const lobbySessions = req.lobby.sessions;
             const mappedScores = [];
 
-            for (let i = 0; i < sidScores.length; i++) {
-                const score = sidScores[i];
-                const sid = score.sessionId;
-                const rank = await scores.getRank(sid);
+            // Loop through all sids in sid_list
+            // - If sid is in lobby, but has no scory entry, their score will be 0 and rank = count (so they are last)
+            // - If sid is not in lobby, show their score as -1 and rank as 1 so that the game removes them from list (visually)
+            // s - sessionId
+            // sc - score
+            // r - rank
+            // e - event
+            // c - coach index
+            // o - online rank
+            for (let i = 0; i < sids.length; i++) {
 
-                // If sid exists in client's lobby
-                if (req.lobby.sessions.includes(sid)) {
-                    mappedScores.push({
-                        s: sid,
-                        sc: score.totalScore,
-                        r: rank || count,
-                        e: score.event,
-                        c: score.coachIndex,
-                        o: score.profile.rank
-                    });
-                }
-                else {
+                const sid = sids[i];
+                const rank = await scores.getRank(sid);
+                const sessionData = await session.getSession({ sessionId: sid});
+                const scoreData = await scores.getScore(sid);
+                const isInLobby = lobbySessions.some(s => s === sid);
+
+                // "sid" is not in lobby or does not have session
+                if (!isInLobby || !sessionData) {
                     mappedScores.push({
                         s: sid,
                         sc: -1,
                         r: 1
                     });
+                    continue;
                 }
+
+                // "sid" is in lobby but does not have score data
+                // their score will be 0 and will be placed last in ranking
+                if (!scoreData) {
+                    mappedScores.push({
+                        s: sid,
+                        sc: 0,
+                        r: count,
+                        e: "",
+                        c: 0,
+                        o: sessionData.profile.rank
+                    });
+                    continue;
+                }
+
+                // "sid" is in lobby & has session & has score entry, now it's okay to push their score
+                mappedScores.push({
+                    s: sid,
+                    sc: scoreData.totalScore,
+                    r: rank,
+                    e: scoreData.event,
+                    c: scoreData.coachIndex,
+                    o: scoreData.profile.rank
+                });
             }
+
             result = {
                 ...uenc.setIndex(mappedScores, 1, "_"),
                 ...result,
@@ -117,8 +142,8 @@ module.exports = {
 
             result = {
                 ...result,
-                score: userScore?.totalScore || 0,
-                rank: userRank || count,
+                score: total_score,
+                rank: userRank,
                 count,
                 total,
                 ...themeResults

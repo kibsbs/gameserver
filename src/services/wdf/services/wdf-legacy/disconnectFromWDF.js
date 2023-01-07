@@ -4,7 +4,7 @@ const Session = require("wdf-session");
 module.exports = {
 
     name: `disconnectFromWDF`,
-    description: ``,
+    description: `Disconnects user from WDF, removing their session and from their lobby`,
     version: `1.0.0`,
 
     async init(req, res, next) {

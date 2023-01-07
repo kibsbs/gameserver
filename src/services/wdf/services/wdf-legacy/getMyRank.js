@@ -9,7 +9,7 @@ const Scores = require("wdf-score");
 module.exports = {
 
     name: `getMyRank`,
-    description: ``,
+    description: `Serves rank status for top 10 players & client's score`,
     version: `1.0.0`,
 
     async init(req, res, next) {
@@ -20,6 +20,8 @@ module.exports = {
         const scores = new Scores(req.game.version);
 
         // User's leveled up their WDF level, update it
+        // TODO: maybe have 1 function to updateRank OR
+        // remove profile from score and make session have it only
         await session.updateRank(req.sid, onlinescore);
         await scores.updateRank(req.sid, onlinescore);
 
@@ -28,6 +30,8 @@ module.exports = {
 
         const userRank = await scores.getRank(req.sid);
         const userScore = await scores.getScore(req.sid);
+
+        // Get theme results (coach/theme) and amount of winning side's player count
         const themeResults = await scores.getThemeAndCoachResult();
         const winners = await scores.getNumberOfWinners(themeResults);
 
@@ -45,18 +49,22 @@ module.exports = {
 
         return res.uenc({
             onlinescore_updated: onlinescore,
+
             ...uenc.setIndex(mappedScores),
+
             count,
             total,
             
             myrank: userRank || count,
-            myscore: userScore || 0,
-
+            myscore: userScore.totalScore,
             song_id: song_id,
+
             ...themeResults,
+
             nb_winners: winners,
             star_score,
             numscores: mappedScores.length,
+            
             t: utils.serverTime()
         })
 

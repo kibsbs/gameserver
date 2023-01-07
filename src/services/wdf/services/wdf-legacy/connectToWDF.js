@@ -6,8 +6,8 @@ const cheatDetection = require("cheat-detection");
 module.exports = {
 
     name: `connectToWDF`,
-    description: ``,
-    version: `1.0.0`,
+    description: `Connects user to WDF, creating session and adding user to a lobby.`,
+    version: `1.5.0`,
 
     async init(req, res, next) {
 
@@ -23,7 +23,7 @@ module.exports = {
             await session.deleteSession(req.sid);
         };
 
-        // New session
+        // Create a new session (which also joins user to a lobby)
         const sessionData = await session.newSession({
             userId: req.uid,
             sessionId: req.sid,

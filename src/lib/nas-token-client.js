@@ -22,14 +22,14 @@ module.exports.permit = async (req, res, next) => {
             });
         
         
-        // Don't allow banned users
+        // Don't permit banned users
         const isBanned = await cheatDetection.isUserBanned(uid);
-        // console.log(uid, gid, isBanned)
         if (isBanned) return next({
             status: 403,
             message: `Forbidden`
         });
         
+        // Set shortcuts in req
         req.token = payload;
         req.game = games.getGameById(gid);
         req.uid = uid;
@@ -37,7 +37,6 @@ module.exports.permit = async (req, res, next) => {
         req.gid = gid;
         req.rgn = rgn;
         req.loc = loc;
-
         req.isDev = utils.isDev() ? true : false;
         req.isTest = utils.isDev() ? true : false;
         return next();

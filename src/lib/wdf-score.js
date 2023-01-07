@@ -63,7 +63,7 @@ class Score {
 
     async getScore(sessionId) {
         try {
-            return await this.db.findOne({ sessionId, "game.version": this.version }).totalScore;
+            return await this.db.findOne({ sessionId, "game.version": this.version });
         }
         catch (err) {
             throw new Error(`Can't get WDF Score for ${sessionId}: ${err}`);

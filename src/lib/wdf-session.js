@@ -264,7 +264,7 @@ class Session {
         return await this.db.count({
             "game.version": this.version,
             "profile.country": country
-        }) || 0;
+        });
     }
 
     /** */
