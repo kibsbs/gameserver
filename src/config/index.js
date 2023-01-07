@@ -69,6 +69,7 @@ module.exports.MAX_WDF_LEVEL = 5000;
 // TODO: JD17 has 6 (superstar), JD18 has 7 stars (superstar & megastar)
 // so we need to add a way to change max stars depending on game
 // (probably make a function in utils with game as param?)
+module.exports.LEADERBOARD_RESET_INTERVAL = 7 * 86400000 // 7 days (1 week) so that it's weekly
 module.exports.MAX_LOBBY_PLAYERS = 8;
 module.exports.MAX_LEADERBOARD_SIZE = 3;
 

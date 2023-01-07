@@ -169,7 +169,7 @@ class Playlist {
             const { deletedCount } = await db.deleteMany({
                 "game.version": this.version
             });
-            global.logger.info(`Erased ${deletedCount} scores from ${this.version}`)
+            global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
         });
         
         return screen;

@@ -141,7 +141,7 @@ module.exports = {
                 userId: req.uid,
                 sessionId: req.sid,
                 game: { id: req.game.id, version: req.game.version },
-                profile: req.profile,
+                profile: userSession.profile,
                 coachIndex: coachindex,
                 event: event,
                 lastMove: lastmove,

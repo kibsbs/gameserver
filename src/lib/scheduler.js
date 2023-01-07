@@ -2,8 +2,8 @@ const cron = require("cron");
 const Agenda = require("agenda");
 
 const time = require("time");
-const scoreDb = require("./models/score");
 const sessionDb = require("./models/session");
+const wdfScoreDb = require("./models/wdf-score");
 
 class Scheduler {
     constructor() {
@@ -24,11 +24,11 @@ class Scheduler {
     async sessionJob() {
         this.agenda.define("remove inactive sessions", async (job) => {
             const { deletedCount } = await sessionDb.deleteMany({ updatedAt: { $lt: new Date( ( new Date() ) - 30 * 1000 ) } });
-            global.logger.info(`Deleted ${deletedCount} inactive sessions`);
+            global.logger.info(`Scheduler: Deleted ${deletedCount} inactive sessions`);
         });
         this.agenda.define("remove inactive scores", async (job) => {
-            const { deletedCount } = await scoreDb.deleteMany({ updatedAt: { $lt: new Date( ( new Date() ) - 80 * 1000 ) } });
-            global.logger.info(`Deleted ${deletedCount} inactive scores`);
+            const { deletedCount } = await wdfScoreDb.deleteMany({ updatedAt: { $lt: new Date( ( new Date() ) - 80 * 1000 ) } });
+            global.logger.info(`Scheduler: Deleted ${deletedCount} inactive WDF scores`);
         });
         await this.agenda.start();
         await this.agenda.every("30 seconds", "remove inactive sessions");

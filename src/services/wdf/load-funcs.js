@@ -44,7 +44,7 @@ const conf = {
         },
         getMyRank: {
             id: 914,
-            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
+            mid: [nasClient.require, gameClient] // no session or lobby client, it gets them itself
         },
         getRandomPlayers: {
             id: 1665,

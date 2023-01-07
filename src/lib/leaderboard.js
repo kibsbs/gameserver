@@ -75,14 +75,17 @@ class Leaderboard {
         let match = {
             songId: { $eq: songId },
             "game.id": { $eq: gameId },
+            createdAt: {
+                $gt: new Date(Date.now() - global.gs.LEADERBOARD_RESET_INTERVAL) // only get 1 week old scores
+            }
         };
         if (country) match.userCountry = { $eq: country };
 
         // Get data from db and sort by score
         const result = await this.db.aggregate([
             { $match: match },
-            { $group: { _id: "$profileId", root: { $first: "$$ROOT"  } } },
-            { $sort: { "root.totalScore": -1 } },
+            { $group: { _id: "$profileId", score: { $max: "$score" }, root: { $first: "$$ROOT" } } },
+            { $sort: { score: -1 } },
             { $limit: this.maxResult }
         ]);
         

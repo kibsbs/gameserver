@@ -32,7 +32,7 @@ module.exports = {
         const userScore = await scores.getScore(req.sid);
 
         // Get theme results (coach/theme) and amount of winning side's player count
-        const themeResults = await scores.getThemeAndCoachResult();
+        const { themeResults } = await scores.getThemeAndCoachResult();
         const winners = await scores.getNumberOfWinners(themeResults);
 
         // Get top 10 scores
