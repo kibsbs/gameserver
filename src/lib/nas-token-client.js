@@ -24,7 +24,6 @@ module.exports.permit = async (req, res, next) => {
         
         // Don't allow banned users
         const isBanned = await cheatDetection.isUserBanned(uid);
-        console.log(uid, gid, isBanned)
         if (isBanned) return next({
             status: 403,
             message: `Forbidden`
