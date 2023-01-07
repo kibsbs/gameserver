@@ -14,7 +14,7 @@ class CheatDetection {
     }
 
     async isUserBanned(userId) {
-        return this.db.exists({ userId }) ? true : false;
+        return await this.db.exists({ userId }) ? true : false;
     }
 }
 
