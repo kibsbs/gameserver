@@ -66,7 +66,6 @@ module.exports = {
             numscores: mappedScores.length,
             
             t: utils.serverTime()
-        })
-
+        });
     }
 }

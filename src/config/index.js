@@ -13,15 +13,6 @@ module.exports.SECRETS = require("./secrets");
 module.exports.DATABASE = require("./database"); // Database loaded here but service and env are configured in service config
 module.exports.SERVICES = {
 
-    // --- Internal services
-    galaxy: {
-        id: "galaxy",
-        name: "Galaxy",
-        path: "services/galaxy/service.js",
-        clients: ["db"]
-    },
-    // ---
-
     // --- Legacy services
     jmcs: {
         id: "jmcs",
@@ -35,8 +26,16 @@ module.exports.SERVICES = {
         path: "services/wdf/service.js",
         clients: ["db", "memcached"],
         isWdf: true
-    }
+    },
     // ---
+
+    
+    nas: {
+        id: "nas",
+        name: "NAS",
+        path: "services/nas/service.js",
+        clients: []
+    }
 
 };
 

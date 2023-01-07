@@ -35,11 +35,6 @@ app.use((req, res, next) => {
     return next();
 });
 
-app.use((req, res, next) => {
-    res.set("Connection", "close");
-    return next();
-});
-
 app.use("/api", require("./api/service"));
 // app.post("/wdf", require("./services/api/service"));
 
