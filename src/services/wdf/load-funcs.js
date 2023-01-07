@@ -11,44 +11,44 @@ const sessionClient = require("wdf-session-client");
 const conf = {
     "wdf-jd5": {},
     "wdf-legacy": {
+        getServerTime: {
+            id: 1350
+        },
         checkToken: {
             id: 1023,
+            mid: [nasClient.require, gameClient]
+        },
+        getPlayListPos: {
+            id: 1444,
             mid: [nasClient.require, gameClient]
         },
         connectToWDF: {
             id: 1166,
             mid: [nasClient.require, gameClient]
         },
-        disconnectFromWDF: {
-            id: 1695,
-            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
+        getRandomPlayersWMap: {
+            id: 2038,
+            mid: [nasClient.require, gameClient]
         },
         getBloomBergs2: {
             id: 1374,
+            mid: [nasClient.require, gameClient]
+        },
+        getPlayerScores: {
+            id: 1564,
+            mid: [nasClient.require, gameClient] // no session or lobby client, it gets them itself
+        },
+        disconnectFromWDF: {
+            id: 1695,
             mid: [nasClient.require, gameClient]
         },
         getMyRank: {
             id: 914,
             mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
         },
-        getPlayerScores: {
-            id: 1564,
-            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
-        },
-        getPlayListPos: {
-            id: 1444,
-            mid: [nasClient.require, gameClient]
-        },
         getRandomPlayers: {
             id: 1665,
-            mid: [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby]
-        },
-        getRandomPlayersWMap: {
-            id: 2038,
-            mid: [nasClient.require, gameClient, sessionClient.session]
-        },
-        getServerTime: {
-            id: 1350
+            mid: [nasClient.require, gameClient]
         }
     }
 };
@@ -89,7 +89,17 @@ module.exports = (wdfName) => {
 
         if (funcs.hasOwnProperty(func)) {
             let funcData = funcs[func];
-            middleware = [...funcData.mid || [], funcScript];
+            let mids = funcData.mid || [];
+
+            // for getServerTime, if "sid" and "token" is given in body
+            // it means user should be removed from session & lobby
+            // so only have nasToken & session / lobby client for serverTime
+            // if "sid" and "token" is present in body, if not, it will send basic response
+
+            if (func === "getServerTime" && req.body.token)
+                mids = [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby];
+
+            middleware = [...mids, funcScript];
             req.func = {
                 id: funcData.id,
                 name: func

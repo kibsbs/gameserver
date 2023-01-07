@@ -38,19 +38,16 @@ app.use((req, res, next) => {
 app.use("/api", require("./api/service"));
 // app.post("/wdf", require("./services/api/service"));
 
-app.get("/reset-playlist", (req, res, next)=> {
-    global.memcached.flush()
-    return res.sendStatus(200)
-})
 app.post("/wdfjd6", require("./load-funcs")("wdf-legacy"));
 
 app.use(mids.errorHandler);
 app.use(mids.notFound);
 
 async function startJobs() {
-    if (!global.args.ns)
+    if (!global.args.ns) {
         global.logger.info(`Starting schedule deletion job...`);
         await scheduler.sessionJob();
+    }
 }
 startJobs();
 

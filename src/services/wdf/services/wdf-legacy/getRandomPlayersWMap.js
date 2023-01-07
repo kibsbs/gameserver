@@ -1,6 +1,8 @@
 const Session = require("wdf-session");
 const uenc = require("uenc");
 
+const cache = require("cache");
+
 module.exports = {
 
     name: `getServerTime`,
@@ -12,6 +14,9 @@ module.exports = {
         const { nr_players, player_sid, sid_list } = req.body;
 
         const session = new Session(req.game.version);
+        const sessionId = req.sid;
+
+        const userCache = await session.getSessionCache(sessionId);
 
         // Fetch random sessions, but exclude player's sid from list
         const sessions = await session.randomSession(nr_players, req.sid);
@@ -26,12 +31,13 @@ module.exports = {
         });
 
         return res.uenc({
-            player_name: req.profile.name,
+            player_name: userCache.name,
 
             ...uenc.setIndex(sessionsMap),
 
             nr_players: sessions.length,
             nr_asked: nr_players,
+            
             count: await session.sessionCount()
         });
     }

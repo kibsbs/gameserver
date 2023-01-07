@@ -4,6 +4,7 @@ const uenc = require("uenc");
 const utils = require("wdf-utils");
 
 const Session = require("wdf-session");
+const sessionClient = require("wdf-session-client");
 const Score = require("wdf-score");
 
 module.exports = {
@@ -20,21 +21,32 @@ module.exports = {
         const session = new Session(req.game.version);
         const scores = new Score(req.game.version);
 
+        const userSession = await session.getSession(req.sid);
         const count = await session.sessionCount();
         const total = await scores.scoreCount();
-        const themeResults = await scores.getThemeAndCoachResult();
-        const t = utils.serverTime()
-        
+        const { themeResults, isCoach } = await scores.getThemeAndCoachResult();
+
+        const t = utils.serverTime();
+
         let result = {
-            num: req.lobby.sessions.length + 1,
+            num: 1,
+            t,
             count
         };
 
+        // If user does not have a session, only send num, t and count
+        if (!userSession)
+            return res.uenc(result);
+
+        const lobbyId = userSession.lobbyId;
+        const lobbyData = await session.getLobby(lobbyId);
+        const lobbySessions = lobbyData.sessions;
+        const num = lobbySessions.length;
+       
         // "sid_list" is not empty, so include score data of given sids in response
         if (sid_list.length > 0) {
 
             const sids = sid_list.filter(sid => sid !== req.sid); // Exclude client's sid if given
-            const lobbySessions = req.lobby.sessions;
             const mappedScores = [];
 
             // Loop through all sids in sid_list
@@ -50,7 +62,7 @@ module.exports = {
 
                 const sid = sids[i];
                 const rank = await scores.getRank(sid);
-                const sessionData = await session.getSession({ sessionId: sid});
+                const sessionData = await session.getSession(sid);
                 const scoreData = await scores.getScore(sid);
                 const isInLobby = lobbySessions.some(s => s === sid);
 
@@ -84,14 +96,15 @@ module.exports = {
                     sc: scoreData.totalScore,
                     r: rank,
                     e: scoreData.event,
-                    c: scoreData.coachIndex,
+                    c: isCoach ? scoreData.coachIndex : scoreData.themeIndex,
                     o: scoreData.profile.rank
                 });
             }
 
             result = {
                 ...uenc.setIndex(mappedScores, 1, "_"),
-                ...result,
+                num,
+                t,
                 count
             };
         }
@@ -104,7 +117,7 @@ module.exports = {
                 lastmove: Joi.boolean().truthy('1').falsy('0').optional(),
                 score: Joi.number().optional(),
                 song_id: Joi.string().optional(),
-                stars: Joi.number().min(0).max(5).optional(),
+                stars: Joi.number().min(0).max(req.game.maxStars).optional(),
                 themeindex: Joi.number().min(0).max(5).optional(),
                 total_score: Joi.number().min(0).max(global.gs.MAX_SCORE).optional()
             }).unknown(true);
@@ -141,7 +154,9 @@ module.exports = {
             const userRank = await scores.getRank(req.sid);
 
             result = {
-                ...result,
+                ...result, // if sid list data is given...
+                num,
+                t,
                 score: total_score,
                 rank: userRank,
                 count,
@@ -150,7 +165,6 @@ module.exports = {
             }
         }
 
-        result.t = t;
         return res.uenc(result);
     }
 }

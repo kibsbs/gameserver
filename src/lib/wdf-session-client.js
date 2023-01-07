@@ -21,8 +21,9 @@ module.exports.lobby = async (req, res, next) => {
 };
 
 module.exports.session = async (req, res, next) => {
-    let sid = req.sid;
-    let game = req.game;
+
+    const sid = req.sid;
+    const game = req.game;
     
     if (!sid) return next({
         status: 401,
@@ -35,7 +36,7 @@ module.exports.session = async (req, res, next) => {
 
     const session = new Session(req.game.version);
 
-    const userSession = await session.getSession({ sessionId: sid });
+    const userSession = await session.getSession(sid);
     if (!userSession) return next({
         status: 401,
         message: `Player does not have a session!`

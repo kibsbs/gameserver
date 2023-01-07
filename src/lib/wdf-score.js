@@ -22,7 +22,7 @@ class Score {
             lastMove: Joi.boolean().truthy('1').falsy('0').required(),
             score: Joi.number().required(),
             sendScore: Joi.boolean().truthy('1').falsy('0').required(),
-            stars: Joi.number().min(0).max(3).required(),
+            stars: Joi.number().required(),
             themeIndex: Joi.number().required(),
             totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
         });
@@ -152,9 +152,9 @@ class Score {
         try {
             const result = await this.db.aggregate([
                 { $match: { "game.version": this.version, themeIndex: { $eq: themeIndex } } },
-                { $group: { _id: null, totalScore: { $sum: "$totalScore" } } }
+                { $group: { _id: null, stars: { $sum: "$stars" } } }
             ]);
-            return result[0] ? result[0].totalScore : 0
+            return result[0] ? result[0].stars : 0
         }
         catch(err) {
             throw new Error(`Can't get theme results for ${this.version} index: ${themeIndex}: ${err}`)
@@ -165,9 +165,9 @@ class Score {
         try {
             const result = await this.db.aggregate([
                 { $match: { "game.version": this.version, coachIndex: { $eq: coachIndex } } },
-                { $group: { _id: null, totalScore: { $sum: "$totalScore" } } }
+                { $group: { _id: null, stars: { $sum: "$stars" } } }
             ])
-            return result[0] ? result[0].totalScore : 0
+            return result[0] ? result[0].stars : 0
         }
         catch(err) {
             throw new Error(`Can't get coach results for ${this.version} index: ${themeIndex}: ${err}`)
@@ -179,12 +179,17 @@ class Score {
         const isCommunity = this.playlist.isThemeCommunity(currentTheme);
         const isCoach = this.playlist.isThemeCoach(currentTheme);
         return {
-            theme0: isCommunity ? await this.getThemeResult(0) : 0,
-            theme1: isCommunity ? await this.getThemeResult(1) : 0,
-            coach0: isCoach ? await this.getCoachResult(0) : 0,
-            coach1: isCoach ? await this.getCoachResult(1) : 0,
-            coach2: isCoach ? await this.getCoachResult(2) : 0,
-            coach3: isCoach ? await this.getCoachResult(3) : 0
+            currentTheme,
+            isCommunity,
+            isCoach,
+            themeResults: {
+                theme0: (isCommunity ? await this.getThemeResult(0) : 0) * 2000,
+                theme1: (isCommunity ? await this.getThemeResult(1) : 0) * 2000,
+                coach0: (isCoach ? await this.getCoachResult(0) : 0) * 2000,
+                coach1: (isCoach ? await this.getCoachResult(1) : 0) * 2000,
+                coach2: (isCoach ? await this.getCoachResult(2) : 0) * 2000,
+                coach3: (isCoach ? await this.getCoachResult(3) : 0) * 2000
+            }
         }
     }
 

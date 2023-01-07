@@ -3,6 +3,7 @@ const uuid = require("uuid");
 
 const games = require("games");
 const cheatDetection = require("cheat-detection");
+const cache = require("cache");
 
 const Score = require("wdf-score");
 
@@ -75,18 +76,18 @@ class Session {
         };
     }
 
-    async getSession(filter) {
+    async getSession(sessionId) {
         try {
-            return await this.db.findOne(filter);
+            return await this.db.findOne({ sessionId, "game.version": this.version });
         }
         catch (err) {
-            throw new Error(`Can't get Session with ${JSON.stringify(filter)}: ${err}`);
+            throw new Error(`Can't get Session with ${sessionId}: ${err}`);
         }
     }
 
     async getManySessions(filter) {
         try {
-            return await this.db.find(filter);
+            return await this.db.find({ ...filter, "game.version": this.version });
         }
         catch (err) {
             throw new Error(`Can't get many Sessions with ${JSON.stringify(filter)}: ${err}`);
@@ -95,25 +96,26 @@ class Session {
 
     /**
      * Deletes session and any score entries by player
-     * @param {*} userOrSessionId 
+     * @param {*} sessionId 
      * @returns 
      */
-    async deleteSession(userOrSessionId) {
+    async deleteSession(sessionId) {
         try {
             const query = {
-                $or: [{ userId: userOrSessionId }, { sessionId: userOrSessionId }]
+                sessionId,
+                "game.version": this.version
             };
             await this.scores.deleteScore(query); // Delete scores
             return await this.db.deleteOne(query); // Delete session
         }
         catch (err) {
-            throw new Error(`Can't delete Session with ${JSON.stringify(filter)}: ${err}`);
+            throw new Error(`Can't delete Session with ${JSON.stringify(sessionId)}: ${err}`);
         }
     }
 
     async deleteManySessions(filter) {
         try {
-            return await this.db.deleteMany(filter);
+            return await this.db.deleteMany({ ...filter, "game.version": this.version });
         }
         catch (err) {
             throw new Error(`Can't delete many Sessions with ${JSON.stringify(filter)}: ${err}`);
@@ -164,6 +166,21 @@ class Session {
 
     async sessionCount() {
         return await this.db.count({ "game.version": this.version })
+    }
+
+    async createSessionCache(sessionId, data) {
+        const cacheKey = `wdf-player-cache:${this.version}:${sessionId}`;
+        return await cache.set(cacheKey, data, global.gs.TOKEN_EXPIRATION);
+    }
+
+    async getSessionCache(sessionId) {
+        const cacheKey = `wdf-player-cache:${this.version}:${sessionId}`;
+        return await cache.get(cacheKey);
+    }
+
+    async deleteSessionCache(sessionId) {
+        const cacheKey = `wdf-player-cache:${this.version}:${sessionId}`;
+        return await cache.set(cacheKey, null);
     }
     
     /**
@@ -236,7 +253,6 @@ class Session {
     async joinLobby(sessionId) {
         let lobbyId;
         let availableLobby = await this.findAvailableLobby();
-        console.log("available lobby", availableLobby)
         
         // If there's an available lobby, set the lobbyId
         // else, we create a new lobby so generate a new ID

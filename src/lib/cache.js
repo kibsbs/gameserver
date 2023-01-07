@@ -3,9 +3,16 @@ class Cache {
         this.m = global.memcached;
     }
 
-    async set(key, value, options = {}) {
-        value = JSON.stringify(value);
-        return await this.m.set(key, value, options);
+    async set(key, value, expires) {
+        if (Array.isArray(value) || typeof value == "object")
+            value = JSON.stringify(value);
+        
+        try {
+            await this.m.set(key, value, { expires });
+        }
+        catch(err) {
+            throw new Error(`Can't save ${key} to cache: ${err}`);
+        }
     }
 
     async get(key) {

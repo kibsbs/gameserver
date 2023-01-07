@@ -56,7 +56,7 @@ module.exports = {
             total,
             
             myrank: userRank || count,
-            myscore: userScore.totalScore,
+            myscore: userScore?.totalScore || 0,
             song_id: song_id,
 
             ...themeResults,

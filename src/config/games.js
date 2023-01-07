@@ -46,7 +46,8 @@ module.exports = [{
         totalStars: 275,
         songsCount: 55,
         unlocksCount: 24
-    }
+    },
+    maxStars: 5
 }, {
     name: "Just Dance 2015",
     version: 2015,
@@ -65,7 +66,8 @@ module.exports = [{
         totalStars: 465,
         songsCount: 93,
         unlocksCount: 27
-    }
+    },
+    maxStars: 5
 }, {
     name: "Just Dance 2016",
     version: 2016,
@@ -84,7 +86,8 @@ module.exports = [{
         totalStars: 280,
         songsCount: 56,
         unlocksCount: 32
-    }
+    },
+    maxStars: 5
 }, {
     name: "Just Dance 2017",
     version: 2017,
@@ -103,7 +106,8 @@ module.exports = [{
         totalStars: 275,
         songsCount: 55,
         unlocksCount: 24
-    }
+    },
+    maxStars: 6
 }, {
     name: "Just Dance 2018",
     version: 2018,
@@ -122,7 +126,8 @@ module.exports = [{
         totalStars: 420,
         songsCount: 60,
         unlocksCount: 12
-    }
+    },
+    maxStars: 7
 }
     // You can add mods here!
     // ...
