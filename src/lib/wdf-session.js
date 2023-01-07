@@ -257,7 +257,7 @@ class Session {
 
     async canUserConnect(userId) {
         let isBanned = await cheatDetection.isUserBanned(userId);
-        return isBanned;
+        return !isBanned;
     }
 
     async getCountryPlayers(country) {
