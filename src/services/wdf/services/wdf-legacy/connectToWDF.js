@@ -14,14 +14,6 @@ module.exports = {
         const { avatar, name, onlinescore, pays } = req.body;
         const session = new Session(req.game.version);
 
-        // Check if user is allowed to connect to WDF
-        const isBanned = await cheatDetection.isUserBanned(req.uid);
-        console.log("isBanned", isBanned)
-        if (isBanned) return next({
-            status: 403,
-            message: `User is not allowed to create connection to WDF!`
-        });
-
         // Amount of players in client's country
         const playersInCountry = await session.getCountryPlayers(pays);
         const sessionExists = await session.exists(req.sid);
