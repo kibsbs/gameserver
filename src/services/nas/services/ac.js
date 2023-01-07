@@ -14,7 +14,7 @@ module.exports = function (req, res, next) {
     url: `http://nas.wiimmfi.de/ac`,
     headers: {
       "User-Agent": "RVL SDK/1.0",
-      "X-Forwarded-For": global.config.SERVER_IP,
+      "X-Forwarded-For": req.ip,
       HTTP_X_GAMECD: req.headers.HTTP_X_GAMECD || ""
     },
     data: b64.encode(req.body)
