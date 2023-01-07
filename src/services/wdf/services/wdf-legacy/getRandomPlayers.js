@@ -39,10 +39,6 @@ module.exports = {
         const lobbyData = await session.getLobby(lobbyId);
         let lobbySessions = lobbyData.sessions.filter(sid => sid !== req.sid);
 
-        // If "sid_list" has ids in it, filter lobby's sids with it
-        if (sid_list.length > 0) 
-            lobbySessions = lobbySessions.filter(sid => sid_list.includes(sid));
-
         const sessions = await session.getManySessions({
             sessionId: lobbySessions
         });
@@ -61,7 +57,7 @@ module.exports = {
 
             ...uenc.setIndex(sessionsMap),
 
-            nr_players: lobbySessions.length,
+            nr_players: sessions.length,
             nr_asked: nr_players,
             
             count: await session.sessionCount()

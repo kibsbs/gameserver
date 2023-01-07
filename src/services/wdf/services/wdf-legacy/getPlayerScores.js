@@ -41,7 +41,7 @@ module.exports = {
         const lobbyId = userSession.lobbyId;
         const lobbyData = await session.getLobby(lobbyId);
         const lobbySessions = lobbyData.sessions;
-        const num = lobbySessions.length;
+        const num = lobbySessions.length + 1;
        
         // "sid_list" is not empty, so include score data of given sids in response
         if (sid_list.length > 0) {

@@ -2,15 +2,15 @@ const Joi = require("joi");
 
 const games = require("games");
 
-const Playlist = require("wdf-playlist");
-
 class Score {
     constructor(version) {
         this.version = version;
         if (!games.isGameAvailable(this.version))
             throw new Error(`${version} is not available for use!`);
 
+        const Playlist = require("wdf-playlist");
         this.playlist = new Playlist(this.version);
+        
         this.db = require("./models/wdf-score");
         this.schema = Joi.object({
             userId: Joi.string().required(),
