@@ -9,11 +9,16 @@ module.exports = function (req, res, next) {
 
   const { action } = req.body;
 
+  console.log(req.connection.remoteAddress,
+    req.connection.remotePort,
+    req.connection.localAddress,
+    req.connection.localPort,)
   axios({
     method: "POST",
     url: `http://nas.wiimmfi.de/ac`,
     headers: {
       "User-Agent": "RVL SDK/1.0",
+      "X-Forwarded-For": global.config.SERVER_IP,
       HTTP_X_GAMECD: req.headers.HTTP_X_GAMECD || ""
     },
     data: b64.encode(req.body)
