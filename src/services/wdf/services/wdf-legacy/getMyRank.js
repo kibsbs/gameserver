@@ -43,6 +43,7 @@ module.exports = {
                 name: s.profile.name,
                 pays: s.profile.country,
                 avatar: s.profile.avatar,
+                rank: s.profile.rank,
                 sid: s.sessionId
             };
         });

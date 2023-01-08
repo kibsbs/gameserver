@@ -172,6 +172,7 @@ module.exports = {
             }
         }
 
+        await session.pingSession(req.sid);
         return res.uenc(result);
     }
 }

@@ -58,6 +58,7 @@ module.exports = {
             }
         });
 
+        await session.pingSession(req.sid);
         return res.uenc({
             player_name: userSession.profile.name,
 

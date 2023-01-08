@@ -13,7 +13,7 @@ server {
   listen 80;
   listen [::]:80;
 
-  server_name wdf wii01-lgc.danceparty.online;
+  server_name wdf wii-dance6-ws1.ubisoft.com wii01-lgc.danceparty.online;
   
   location / {
     proxy_pass http://wdf;

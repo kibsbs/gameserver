@@ -10,11 +10,13 @@ module.exports = {
         const session = new Session(req.game.version);
 
         const canConnect = await session.canUserConnect(req.uid);
-
-        if (!canConnect) return next({
-            status: 401,
-            message: `User is not allowed to create connection to WDF!`
-        });
+        if (!canConnect) {
+            global.logger.info(`${req.uid} with ${req.game.id} received 401 from checkToken!`)
+            return next({
+                status: 401,
+                message: `User is not allowed to create connection to WDF!`
+            });
+        }
 
         return res.uenc();
     }

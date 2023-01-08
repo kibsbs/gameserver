@@ -13,7 +13,7 @@ server {
   listen 80;
   listen [::]:80;
 
-  server_name jmcs wii02-lgc.danceparty.online;
+  server_name jmcs wii-dance6-ws2.ubisoft.com wii02-lgc.danceparty.online;
   
   location / {
     proxy_pass http://jmcs;
