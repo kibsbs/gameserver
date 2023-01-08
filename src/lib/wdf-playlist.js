@@ -172,7 +172,7 @@ class Playlist {
         
         // Schedule the next rotation
         let rotationTime = screen.timing.request_playlist_time;
-        let resetScoreTime = screen.timing.request_playlist_time;
+        let resetScoreTime = screen.timing.request_playlist_time - 5000;
 
         // Rotate playlist 
         scheduler.newJob("Rotate playlist", rotationTime, async () => {
@@ -181,10 +181,8 @@ class Playlist {
 
         // Clear all scores for version
         scheduler.newJob("Clear scores after playlist rotation", resetScoreTime, async () => {
-            const db = require("./models/wdf-score")
-            const { deletedCount } = await db.deleteMany({
-                "game.version": this.version
-            });
+            const db = require("./models/wdf-score");
+            const { deletedCount } = await db.deleteMany({ "game.version": this.version });
             global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
         });
         
@@ -223,7 +221,6 @@ class Playlist {
             playlist_computation_time = last_vote_time + durations["vote_computation_delay"];
             pre_compute_time = world_result_stop_time - durations["playlist_request_delay"] - durations["playlist_computation_delay"];
             second_request_playlist_time = last_vote_time + durations["vote_computation_delay"] + durations["playlist_computation_delay"];
-
         }
         else {
             if (isNext && this.isThemeStarChallenge(themeType)) {

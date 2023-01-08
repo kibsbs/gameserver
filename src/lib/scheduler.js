@@ -32,7 +32,7 @@ class Scheduler {
         });
         await this.agenda.start();
         await this.agenda.every("30 seconds", "remove inactive sessions");
-        await this.agenda.every("80 seconds", "remove inactive scores");
+        // await this.agenda.every("80 seconds", "remove inactive scores");
     }
 }
 
