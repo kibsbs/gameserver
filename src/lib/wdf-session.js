@@ -29,7 +29,8 @@ class Session {
                 name: Joi.string().required(),
                 rank: Joi.number().required(),
                 country: Joi.number().required(),
-            }).required()
+            }).required(),
+            isBot: Joi.boolean().default(false).optional()
         });
 
         this.maxLobbyPlayers = global.gs.MAX_LOBBY_PLAYERS;
@@ -115,7 +116,7 @@ class Session {
 
     async deleteManySessions(filter) {
         try {
-            return await this.db.deleteMany({ ...filter, "game.version": this.version });
+            return await this.db.deleteMany({ "game.version": this.version, ...filter });
         }
         catch (err) {
             throw new Error(`Can't delete many Sessions with ${JSON.stringify(filter)}: ${err}`);

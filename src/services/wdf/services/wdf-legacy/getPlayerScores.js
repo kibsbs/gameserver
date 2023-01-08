@@ -22,9 +22,16 @@ module.exports = {
         const scores = new Score(req.game.version);
 
         const userSession = await session.getSession(req.sid);
+        const userCache = await session.getSessionCache(req.sid);
         const count = await session.sessionCount();
         const total = await scores.scoreCount();
         const { themeResults, isCoach } = await scores.getThemeAndCoachResult();
+
+        if (!userCache)
+            return next({
+                status: 401,
+                message: "No session!"
+            });
 
         const t = utils.serverTime();
 

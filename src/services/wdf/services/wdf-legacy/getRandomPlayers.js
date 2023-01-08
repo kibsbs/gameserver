@@ -19,7 +19,13 @@ module.exports = {
             return res.sendStatus(504);
         }
         
+        const userCache = await session.getSessionCache(req.sid);
         let userSession = await session.getSession(req.sid);
+        if (!userCache)
+            return next({
+                status: 401,
+                message: "No session!"
+            });
 
         // User doesn't have a session, create one and join to a lobby
         if (!userSession) {
@@ -30,7 +36,7 @@ module.exports = {
                     id: req.game.id,
                     version: req.game.version
                 },
-                profile: await session.getSessionCache(req.sid)
+                profile: userCache
             });
             global.logger.info(`${req.uid} // ${req.game.version} - ${req.game.id} // ${userSession.profile.name} created session and joined lobby ${userSession.lobbyId}`);
         }

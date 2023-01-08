@@ -27,6 +27,9 @@ const Schema = new mongoose.Schema(
     profile: {
       type: Object,
       required: true
+    },
+    isBot: {
+      type: Boolean
     }
   },
   { versionKey: false, timestamps: true }
