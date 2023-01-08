@@ -23,11 +23,11 @@ class Scheduler {
      */
     async sessionJob() {
         this.agenda.define("remove inactive sessions", async (job) => {
-            const { deletedCount } = await sessionDb.deleteMany({ updatedAt: { $lt: new Date( ( new Date() ) - 30 * 1000 ) } });
+            const { deletedCount } = await sessionDb.deleteMany({ updatedAt: { $lt: new Date( Date.now() - (30 * 1000) ) } });
             global.logger.info(`Scheduler: Deleted ${deletedCount} inactive sessions`);
         });
         this.agenda.define("remove inactive scores", async (job) => {
-            const { deletedCount } = await wdfScoreDb.deleteMany({ updatedAt: { $lt: new Date( ( new Date() ) - 80 * 1000 ) } });
+            const { deletedCount } = await wdfScoreDb.deleteMany({ updatedAt: { $lt: new Date( Date.now() - (80 * 1000) ) } });
             global.logger.info(`Scheduler: Deleted ${deletedCount} inactive WDF scores`);
         });
         await this.agenda.start();

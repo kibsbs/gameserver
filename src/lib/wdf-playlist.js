@@ -27,6 +27,21 @@ class Playlist {
         return utils.random(themes);
     }
 
+    randomCommunity(exclude = []) {
+        let list = this.communities.list;
+        let locs = this.communities.locs;
+
+        // Get a random theme from list
+        let random = utils.random(list);
+        let [ theme0, theme1 ] = random;
+
+        // Get loc of themes
+        theme0 = locs[theme0];
+        theme1 = locs[theme1];
+
+        return [theme0["en"], theme1["en"]];
+    }
+
     async randomMap(amount = 1, mapsToExclude = [], filter = {}) {
         return await songs.random(this.version, amount, mapsToExclude, filter);
     }
@@ -112,7 +127,8 @@ class Playlist {
     
         let theme = this.randomTheme(ignoredTheme);
         if (this.isThemeCommunity(theme.id)) {
-            theme.communities = ["Test1", "Test2"];
+            let randomTheme = this.randomCommunity();
+            theme.communities = [randomTheme[0], randomTheme[1]];
         }
 
         // To filter maps depending on theme type
