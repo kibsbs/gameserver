@@ -12,7 +12,7 @@ module.exports.permit = async (req, res, next) => {
     
     try {
         let payload = nasToken.decrypt(token);
-        let { gid, sid, uid, rgn, loc } = payload;
+        let { gid, sid, uid } = payload;
 
         // Check if client's game is available to play
         if (!games.isGameAvailable(gid))
@@ -47,8 +47,6 @@ module.exports.permit = async (req, res, next) => {
         req.uid = uid;
         req.sid = sid;
         req.gid = gid;
-        req.rgn = rgn;
-        req.loc = loc;
         req.isDev = utils.isDev() ? true : false;
         req.isTest = utils.isDev() ? true : false;
         return next();
@@ -57,7 +55,7 @@ module.exports.permit = async (req, res, next) => {
         return next({
             status: 400,
             message: `Can't validate token`,
-            error: err
+            error: err.message
         });
     };
 };

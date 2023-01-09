@@ -16,6 +16,9 @@ const conf = {
         sendScore: {
             id: 934
         },
+        getMyRank: {
+            id: 914
+        },
         connectToWDF: {
             id: 1166,
             mid: [nasClient.require, gameClient]
@@ -27,10 +30,6 @@ const conf = {
         getPlayListPos: {
             id: 1444,
             mid: [nasClient.require, gameClient]
-        },
-        getMyRank: {
-            id: 914,
-            mid: [nasClient.require, gameClient] // no session or lobby client, it gets them itself
         }
     },
     "wdf-legacy": {

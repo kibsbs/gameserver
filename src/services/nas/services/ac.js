@@ -36,10 +36,9 @@ module.exports = function (req, res, next) {
             uid: userid.toString(),
             sid: sessionId.toString(),
             gid: gamecd.toString(),
-            loc: lang.toString(),
-            rgn: region.toString(),
-            exp: Date.now() + (global.gs.TOKEN_EXPIRATION * 1000),
-            env: global.ENV || "local"
+            // loc: lang.toString(),
+            // rgn: region.toString(),
+            exp: Date.now() + (global.gs.TOKEN_EXPIRATION * 1000)
           });
 
           global.logger.info(`${userid} created token for ${gamecd} // sid: ${sessionId} // reg: ${region}`)

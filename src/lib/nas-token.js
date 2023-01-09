@@ -5,12 +5,12 @@ const payloadSchema = Joi
     .object()
     .keys({
         exp: Joi.number().required(), // Token expiration
-        env: Joi.string().required(), // Enviroment
         uid: Joi.string().required(), // User ID
         gid: Joi.string().required(), // Game ID
         sid: Joi.string().required(), // NAS Session ID
-        loc: Joi.string().required(), // Language
-        rgn: Joi.string().required() // Region
+        // env: Joi.string().required(), // Enviroment
+        // loc: Joi.string().required(), // Language
+        // rgn: Joi.string().required() // Region
     })
     .unknown(false);
 

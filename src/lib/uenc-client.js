@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
         else if (global.service.id == "wdf") {
             res.set("Content-Type", "text/html");
             data = {
-                method_id: req.func.id || 0,
+                method_id: req.func?.id || 0,
                 ...data,
                 stat: 1
             };

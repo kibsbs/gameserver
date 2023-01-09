@@ -38,6 +38,12 @@ app.use((req, res, next) => {
 app.use("/api", require("./api/service"));
 app.post("/wdf", require("./load-funcs")("wdf-jd5"));
 app.post("/wdfjd6", require("./load-funcs")("wdf-legacy"));
+app.post("/tracking", (req, res, next) => {
+    res.uenc({
+        "activatekey": "",
+        "key": ""
+    })
+});
 
 app.use(mids.errorHandler);
 app.use(mids.notFound);

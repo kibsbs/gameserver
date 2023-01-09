@@ -37,8 +37,7 @@ module.exports.wdf = {
         body: {
             onlinescore: wdfRank,
             sid,
-            song_id: songId,
-            star_score: Joi.number().required()
+            song_id: songId
         }
     },
     sendScore: {
