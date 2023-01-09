@@ -31,7 +31,7 @@ const NTSC = "NTSC";
 module.exports = [{
     name: "Just Dance 2014",
     version: 2014,
-    isAvailable: false,
+    isAvailable: true,
     regions: {
         SJOP: {
             region: PAL,
@@ -42,11 +42,7 @@ module.exports = [{
             isAvailable: true
         }
     },
-    stats: {
-        totalStars: 275,
-        songsCount: 55,
-        unlocksCount: 24
-    },
+    stats: {},
     maxStars: 5
 }, {
     name: "Just Dance 2015",

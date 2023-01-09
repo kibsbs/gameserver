@@ -9,7 +9,11 @@ const songClient = require("songs-client");
 const sessionClient = require("wdf-session-client");
 
 const conf = {
-    "wdf-jd5": {},
+    "wdf-jd5": {
+        getServerTime: {
+            id: 1350
+        }
+    },
     "wdf-legacy": {
         getServerTime: {
             id: 1350

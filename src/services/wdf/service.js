@@ -36,8 +36,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", require("./api/service"));
-// app.post("/wdf", require("./services/api/service"));
-
+app.post("/wdf", require("./load-funcs")("wdf-jd5"));
 app.post("/wdfjd6", require("./load-funcs")("wdf-legacy"));
 
 app.use(mids.errorHandler);
