@@ -12,6 +12,25 @@ const conf = {
     "wdf-jd5": {
         getServerTime: {
             id: 1350
+        },
+        sendScore: {
+            id: 934
+        },
+        connectToWDF: {
+            id: 1166,
+            mid: [nasClient.require, gameClient]
+        },
+        disconnectFromWDF: {
+            id: 1695,
+            mid: [nasClient.require, gameClient]
+        },
+        getPlayListPos: {
+            id: 1444,
+            mid: [nasClient.require, gameClient]
+        },
+        getMyRank: {
+            id: 914,
+            mid: [nasClient.require, gameClient] // no session or lobby client, it gets them itself
         }
     },
     "wdf-legacy": {
@@ -88,26 +107,27 @@ module.exports = (wdfName) => {
             });
         
         let funcScript = await require(funcPath).init;
-
         let middleware;
+
 
         if (funcs.hasOwnProperty(func)) {
             let funcData = funcs[func];
             let mids = funcData.mid || [];
 
+            req.func = {
+                id: funcData.id,
+                name: func,
+                is2014: wdfName === "wdf-jd5"
+            };
+
             // for getServerTime, if "sid" and "token" is given in body
             // it means user should be removed from session & lobby
             // so only have nasToken & session / lobby client for serverTime
             // if "sid" and "token" is present in body, if not, it will send basic response
-
             if (func === "getServerTime" && req.body.token)
                 mids = [nasClient.require, gameClient, sessionClient.session, sessionClient.lobby];
 
             middleware = [...mids, funcScript];
-            req.func = {
-                id: funcData.id,
-                name: func
-            };
         }
             
         else return next();

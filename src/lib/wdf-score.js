@@ -10,9 +10,10 @@ class Score {
 
         const Playlist = require("wdf-playlist");
         this.playlist = new Playlist(this.version);
+        this.game = games.getGameByVersion(this.version);
         
         this.db = require("./models/wdf-score");
-        this.schema = Joi.object({
+        const schema = Joi.object({
             userId: Joi.string().required(),
             sessionId: Joi.string().required(),
             game: Joi.object().required(),
@@ -26,6 +27,19 @@ class Score {
             themeIndex: Joi.number().required(),
             totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
         });
+        const schema2014 = Joi.object({
+            userId: Joi.string().required(),
+            sessionId: Joi.string().required(),
+            game: Joi.object().required(),
+            profile: Joi.object().required(),
+            coachIndex: Joi.number().min(0).max(3).required(),
+            lastMove: Joi.boolean().truthy('1').falsy('0').required(),
+            score: Joi.number().required(),
+            stars: Joi.number().required(),
+            themeIndex: Joi.number().required(),
+            totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
+        });
+        this.schema = this.game.is2014 ? schema2014 : schema;
     }
 
     async updateScore(sessionId, scoreData) {
@@ -183,12 +197,12 @@ class Score {
             isCommunity,
             isCoach,
             themeResults: {
-                theme0: (isCommunity ? await this.getThemeResult(0) : 0) * 2000,
-                theme1: (isCommunity ? await this.getThemeResult(1) : 0) * 2000,
-                coach0: (isCoach ? await this.getCoachResult(0) : 0) * 2000,
-                coach1: (isCoach ? await this.getCoachResult(1) : 0) * 2000,
-                coach2: (isCoach ? await this.getCoachResult(2) : 0) * 2000,
-                coach3: (isCoach ? await this.getCoachResult(3) : 0) * 2000
+                [this.game.is2014 ? "score_theme0" : "theme0"]: (isCommunity ? await this.getThemeResult(0) : 0) * 2000,
+                [this.game.is2014 ? "score_theme1" : "theme1"]: (isCommunity ? await this.getThemeResult(1) : 0) * 2000,
+                [this.game.is2014 ? "score_coach0" : "coach0"]: (isCoach ? await this.getCoachResult(0) : 0) * 2000,
+                [this.game.is2014 ? "score_coach1" : "coach1"]: (isCoach ? await this.getCoachResult(1) : 0) * 2000,
+                [this.game.is2014 ? "score_coach2" : "coach2"]: (isCoach ? await this.getCoachResult(2) : 0) * 2000,
+                [this.game.is2014 ? "score_coach3" : "coach3"]: (isCoach ? await this.getCoachResult(3) : 0) * 2000
             }
         }
     }

@@ -15,11 +15,12 @@ class Session {
         
         this.scores = new Score(this.version);
         this.db = require("./models/session");
+        this.game = games.getGameByVersion(this.version);
         this.schema = Joi.object({
             // profileId: Joi.string().guid().required(),
             userId: Joi.string().required(),
             sessionId: Joi.string().required(),
-            lobbyId: Joi.string().guid().required(),
+            lobbyId: this.game.is2014 ? Joi.string().guid().optional() : Joi.string().guid().required(),
             game: Joi.object({
                 id: Joi.string().required(),
                 version: Joi.number().required()
@@ -49,6 +50,8 @@ class Session {
                     }
                 }
         }];
+        this.cacheKey = !this.game.is2014 ? 
+        `wdf-player-cache:${this.version}` : `wdf-player-cache`
     }
 
     
@@ -64,8 +67,10 @@ class Session {
             let sessionId = data.sessionId;
 
             // Join user to a lobby
-            const lobbyId = await this.joinLobby(sessionId);
-            data.lobbyId = lobbyId;
+            if (!this.game.is2014) {
+                const lobbyId = await this.joinLobby(sessionId);
+                data.lobbyId = lobbyId;
+            }
 
             const value = await this.schema.validateAsync(data);
             const entry = new this.db(value);
@@ -170,18 +175,15 @@ class Session {
     }
 
     async createSessionCache(sessionId, data) {
-        const cacheKey = `wdf-player-cache:${this.version}:${sessionId}`;
-        return await cache.set(cacheKey, data, global.gs.TOKEN_EXPIRATION);
+        return await cache.set(this.cacheKey + ":" + sessionId, data, global.gs.TOKEN_EXPIRATION);
     }
 
     async getSessionCache(sessionId) {
-        const cacheKey = `wdf-player-cache:${this.version}:${sessionId}`;
-        return await cache.get(cacheKey);
+        return await cache.get(this.cacheKey + ":" + sessionId);
     }
 
     async deleteSessionCache(sessionId) {
-        const cacheKey = `wdf-player-cache:${this.version}:${sessionId}`;
-        return await cache.set(cacheKey, null);
+        return await cache.set(this.cacheKey + ":" + sessionId, null);
     }
     
     /**

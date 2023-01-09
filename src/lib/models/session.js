@@ -18,7 +18,7 @@ const Schema = new mongoose.Schema(
     },
     lobbyId: {
       type: String,
-      required: true
+      // required: true disabled for 2014
     },
     game: {
       type: Object,

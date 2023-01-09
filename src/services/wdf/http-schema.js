@@ -16,7 +16,44 @@ const lang = Joi.string().required();
 const sid = Joi.string().required();
 const sidList = Joi.versionArray().required();
 
-module.exports.wdf = {};
+module.exports.wdf = {
+    checkToken: {
+        body: {}
+    },
+    getPlayListPos: {
+        body: {
+            lang
+        }
+    },
+    connectToWDF: {
+        body: {
+            avatar,
+            name: playerName,
+            onlinescore: wdfRank,
+            pays: country
+        }
+    },
+    getMyRank: {
+        body: {
+            onlinescore: wdfRank,
+            sid,
+            song_id: songId,
+            star_score: Joi.number().required()
+        }
+    },
+    sendScore: {
+        body: {
+            song_id: songId, 
+            score: Joi.number().required(), 
+            stars: Joi.number().min(0).max(5).required(), 
+            themeindex: Joi.number().min(0).max(2).required(),
+            coachindex: Joi.number().min(0).max(3).required(),
+            lastmove: Joi.boolean().truthy('1').falsy('0').optional(), 
+            total_score: Joi.number().min(0).max(global.gs.MAX_SCORE).required(), 
+            sid
+        }
+    }
+};
 
 module.exports.wdfjd6 = {
     checkToken: {

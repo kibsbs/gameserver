@@ -21,17 +21,29 @@ module.exports.permit = async (req, res, next) => {
                 message: `${gid} is disabled on this server!`
             });
         
-        
         // Don't permit banned users
         const isBanned = await cheatDetection.isUserBanned(uid);
         if (isBanned) return next({
             status: 403,
             message: `Forbidden`
         });
+
+        const game = games.getGameById(gid);
+
+        // If request comes from WDF and if it's 2014
+        // only accept 2014 games
+        if (req.func && req.func.is2014) {
+            if (!game.is2014) {
+                return next({
+                    status: 401,
+                    message: `This game is not allowed to access JD5 WDF!`
+                });
+            };
+        };
         
         // Set shortcuts in req
         req.token = payload;
-        req.game = games.getGameById(gid);
+        req.game = game;
         req.uid = uid;
         req.sid = sid;
         req.gid = gid;

@@ -43,7 +43,8 @@ module.exports = [{
         }
     },
     stats: {},
-    maxStars: 5
+    maxStars: 5,
+    is2014: true
 }, {
     name: "Just Dance 2015",
     version: 2015,
