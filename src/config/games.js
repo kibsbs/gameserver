@@ -27,8 +27,7 @@
 const PAL = "PAL";
 const NTSC = "NTSC";
 
-// 2014 support is disabled at the moment
-module.exports = [{
+const games = [{
     name: "Just Dance 2014",
     version: 2014,
     isAvailable: true,
@@ -126,6 +125,27 @@ module.exports = [{
     },
     maxStars: 7
 }
-    // You can add mods here!
-    // ...
-]
+];
+
+const mods = [{
+    name: "Just Dance Japan",
+    version: 1000,
+    isAvailable: true,
+    regions: {
+        SJME: {
+            region: PAL,
+            isAvailable: true
+        }
+    },
+    stats: {
+        totalStars: 200,
+        songsCount: 0,
+        unlocksCount: 0
+    },
+    maxStars: 5
+}];
+
+module.exports = [
+    ...games,
+    ...mods
+];
