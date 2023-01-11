@@ -48,7 +48,7 @@ module.exports.userAgentCheck = (req, res, next) => {
 
     if (userAgent !== validAgent) {
         global.logger.warn({
-            message: `${req.ip} tried to access ${req.original} with invalid agent!`,
+            message: `${req.ip} tried to access ${req.originalUrl} with invalid agent!`,
             headers: req.headers,
             body: req.body
         });
@@ -64,13 +64,11 @@ module.exports.ipBlocklist = (req, res, next) => {
 
     if (check) {
         global.logger.warn({
-            message: `Blocked IP ${ip} tried to access ${req.original}!`,
+            message: `Blocked IP ${ip} tried to access ${req.originalUrl}!`,
             headers: req.headers,
             body: req.body
         });
-        return next({
-            status: 403
-        })
+        return res.end();
     }
 
     return next();
