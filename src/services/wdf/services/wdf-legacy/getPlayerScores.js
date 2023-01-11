@@ -25,6 +25,8 @@ module.exports = {
         const userCache = await session.getSessionCache(req.sid);
         const count = await session.sessionCount();
         const total = await scores.scoreCount();
+            
+        const { themeResults, isCoach } = await scores.getThemeAndCoachResult();
 
         if (!userCache)
             return next({
@@ -158,8 +160,6 @@ module.exports = {
                 totalScore: total_score
             });
             const userRank = await scores.getRank(req.sid);
-            
-            const { themeResults, isCoach } = await scores.getThemeAndCoachResult();
 
             result = {
                 ...result, // if sid list data is given...
