@@ -1,5 +1,8 @@
 const utils = require("wdf-utils");
 
+/**
+ * getServerTime is for the game to sync with the server time
+ */
 module.exports = {
     name: `getServerTime`,
     description: ``,

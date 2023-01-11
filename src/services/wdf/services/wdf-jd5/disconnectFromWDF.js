@@ -1,6 +1,9 @@
 const utils = require("utils");
 const Session = require("wdf-session");
 
+/**
+ * disconnectFromWDF removes both cache and session of user
+ */
 module.exports = {
 
     name: `disconnectFromWDF`,

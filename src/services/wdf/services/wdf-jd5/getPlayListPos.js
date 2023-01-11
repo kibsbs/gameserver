@@ -4,9 +4,12 @@ const time = require("time")
 const Playlist = require("wdf-playlist");
 const Session = require("wdf-session");
 
+/**
+ * getPlayListPos is for the game to be in sync with the current WDF playlist
+ */
 module.exports = {
 
-    name: `checkToken`,
+    name: `getPlayListPos`,
     description: ``,
     version: `1.0.0`,
 
@@ -110,4 +113,4 @@ module.exports = {
             t: utils.serverTime(now)
         });
     }
-}
+};

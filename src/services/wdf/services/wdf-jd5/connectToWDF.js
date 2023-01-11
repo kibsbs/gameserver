@@ -4,6 +4,12 @@ const Session = require("wdf-session");
 const cheatDetection = require("cheat-detection");
 const cache = require("cache");
 
+/**
+ * "connectToWDF" is requested by the game once the user clicks the WDF button on UI.
+ * We don't exactly make the player join WDF, we just generate a cache data in memcached
+ * Because connectToWDF is where user connects, we generate a cache object that expires in 3h
+ * and once they actually join WDF by clicking "join" button in wdf lobby, we generate a session in sendScore
+ */
 module.exports = {
 
     name: `connectToWDF`,

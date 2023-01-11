@@ -38,6 +38,7 @@ module.exports.SERVICES = {
     }
 
 };
+module.exports.BLOCKLIST = require("./ip-blocklist.json")
 
 // --------------------
 // Server configuration
@@ -52,6 +53,7 @@ module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after
 // Headers
 module.exports.HEADER_FORCE_JSON = "X-Force-Json";
 module.exports.TOKEN_KEY = "token";
+module.exports.VALID_USER_AGENT = "WiiDance";
 
 // --------------------
 

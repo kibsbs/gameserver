@@ -4,6 +4,7 @@
 
 const uuid = require("uuid");
 const utils = require("utils");
+const ipRangeCheck = require("ip-range-check");
 
 function isSuccessful(status) {
     return status >= 200 && status <= 300
@@ -39,4 +40,38 @@ module.exports.errorHandler = (err, req, res, next) => {
 module.exports.notFound = (req, res, next) => {
     if (utils.isDev()) return next();
     else return res.status(404).send();
+};
+
+module.exports.userAgentCheck = (req, res, next) => {
+    const userAgent = req.headers["user-agent"];
+    const validAgent = global.gs.VALID_USER_AGENT;
+
+    if (userAgent !== validAgent) {
+        global.logger.warn({
+            message: `${req.ip} tried to access ${req.original} with invalid agent!`,
+            headers: req.headers,
+            body: req.body
+        });
+        return res.status(403).send();
+    };
+    return next();
+};
+
+const ipList = global.gs.BLOCKLIST.map(a => a.ips).flat(2);
+module.exports.ipBlocklist = (req, res, next) => {
+    const ip = req.ip;
+    const check = ipRangeCheck(ip, ipList)
+
+    if (check) {
+        global.logger.warn({
+            message: `Blocked IP ${ip} tried to access ${req.original}!`,
+            headers: req.headers,
+            body: req.body
+        });
+        return next({
+            status: 403
+        })
+    }
+
+    return next();
 };

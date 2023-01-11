@@ -8,6 +8,9 @@ const Scores = require("wdf-score");
 
 const cache = require("cache");
 
+/**
+ * getMyRank is for listing the top 10 users who scored the best in a WDF session
+ */
 module.exports = {
 
     name: `getMyRank`,

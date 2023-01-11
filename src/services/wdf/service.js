@@ -22,6 +22,7 @@ app.use(express.static(__dirname + "/static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(mids.ipBlocklist);
 app.use(morganMiddleware);
 app.use(uenc.client);
 app.use(validate);
@@ -39,10 +40,10 @@ app.use("/api", require("./api/service"));
 app.post("/wdf", require("./load-funcs")("wdf-jd5"));
 app.post("/wdfjd6", require("./load-funcs")("wdf-legacy"));
 app.post("/tracking", (req, res, next) => {
-    res.uenc({
+    return res.uenc({
         "activatekey": "",
         "key": ""
-    })
+    });
 });
 
 app.use(mids.errorHandler);

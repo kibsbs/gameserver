@@ -4,6 +4,10 @@ const Session = require("wdf-session");
 const Scores = require("wdf-score");
 const cache = require("cache");
 
+/**
+ * "sendScore" is where player sends their score to the WDF and we upsert the score to DB.
+ * If user joined WDF, this is where we create their session.
+ */
 module.exports = {
     name: `sendScore`,
     description: ``,
