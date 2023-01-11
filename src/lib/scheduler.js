@@ -23,16 +23,20 @@ class Scheduler {
      */
     async sessionJob() {
         this.agenda.define("remove inactive sessions", async (job) => {
-            const { deletedCount } = await sessionDb.deleteMany({ isBot: false, updatedAt: { $lt: new Date( Date.now() - (30 * 1000) ) } });
-            global.logger.info(`Scheduler: Deleted ${deletedCount} inactive sessions`);
-        });
-        this.agenda.define("remove inactive scores", async (job) => {
-            const { deletedCount } = await wdfScoreDb.deleteMany({ updatedAt: { $lt: new Date( Date.now() - (80 * 1000) ) } });
-            global.logger.info(`Scheduler: Deleted ${deletedCount} inactive WDF scores`);
+            // Find any session that has passed 30 seconds of inactivity
+            const sessions = await sessionDb.find({ isBot: false, updatedAt: { $lt: new Date( Date.now() - (30 * 1000) ) } });
+            if (sessions.length > 0) {
+                // Delete all inactive sessions and their score entries
+                const sessionIds = sessions.map(s => s.sessionId);
+
+                await sessionDb.deleteMany({ sessionId: sessionIds });
+                await wdfScoreDb.deleteMany({ sessionId: sessionIds });
+
+                global.logger.info(`Scheduler: Deleted ${sessions.length} inactive sessions and their scores`);
+            }
         });
         await this.agenda.start();
         await this.agenda.every("30 seconds", "remove inactive sessions");
-        // await this.agenda.every("80 seconds", "remove inactive scores");
     }
 }
 

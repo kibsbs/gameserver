@@ -14,8 +14,6 @@ module.exports = {
 
         const { lang } = req.body;
 
-        const now = time.milliseconds();
-
         const playlist = new Playlist(req.game.version);
         const session = new Session(req.game.version);
 
@@ -24,6 +22,8 @@ module.exports = {
         const { prev, cur, next } = await playlist.getScreens();
 
         const count = await session.sessionCount();
+
+        const now = time.milliseconds();
 
         let pos = (now - cur.timing.start_song_time) / 1000; // "pos" indicates the position of the playlist
         let left = (cur.timing.stop_song_time - now) / 1000; // "left" shows how many seconds are left until a map ends

@@ -12,7 +12,7 @@ module.exports = {
         router.use((req, res, next) => {
             if (utils.isDev()) return next();
             else return res.sendStatus(403);
-        })
+        });
 
         router.get("/getConfig", (req, res) => {
             return res.send(utils.getConfig())

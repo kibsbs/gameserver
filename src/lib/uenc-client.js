@@ -23,7 +23,11 @@ module.exports = (req, res, next) => {
             res.set("Content-Type", "application/json");
             return res.json(data);
         }
-        return res.send(uenc.serialize(data, setIndex, offset));
+
+        let serialized = decodeURIComponent(
+            uenc.serialize(data, setIndex, offset)
+        );
+        return res.send(serialized);
     };
     
     return next();

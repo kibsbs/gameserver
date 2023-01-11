@@ -122,7 +122,7 @@ async.waterfall(
         },
         (app, cb) => {
             // Start the service
-            http.createServer(app).listen(global.PORT);
+            app.listen(global.PORT, "127.0.0.1");
             logger.success(`Service ${service.name} is listening on port ${global.PORT} in '${global.ENV}' enviroment successfully!`);
             return cb();
         }

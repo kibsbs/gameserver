@@ -42,34 +42,35 @@ module.exports.notFound = (req, res, next) => {
     else return res.status(404).send();
 };
 
-module.exports.userAgentCheck = (req, res, next) => {
+module.exports.agentCheck = (req, res, next) => {
     const userAgent = req.headers["user-agent"];
     const validAgent = global.gs.VALID_USER_AGENT;
-
+    
     if (userAgent !== validAgent) {
         global.logger.warn({
-            message: `${req.ip} tried to access ${req.originalUrl} with invalid agent!`,
+            msg: `${req.ip} tried to access ${req.originalUrl} with invalid agent!`,
             headers: req.headers,
             body: req.body
         });
         return res.status(403).send();
     };
+
     return next();
 };
 
 const ipList = global.gs.BLOCKLIST.map(a => a.ips).flat(2);
 module.exports.ipBlocklist = (req, res, next) => {
     const ip = req.ip;
-    const check = ipRangeCheck(ip, ipList)
+    const check = ipRangeCheck(ip, ipList);
 
     if (check) {
         global.logger.warn({
-            message: `Blocked IP ${ip} tried to access ${req.originalUrl}!`,
+            msg: `Blocked IP ${ip} tried to access ${req.originalUrl}!`,
             headers: req.headers,
             body: req.body
         });
-        return res.end();
-    }
+        return res.status(403).send();
+    };
 
     return next();
 };
