@@ -33,6 +33,7 @@ class Playlist {
 
         // Get a random theme from list
         let random = utils.random(list);
+        if (!random) random = utils.random(list);
         let [ theme0, theme1 ] = random;
 
         // Get loc of themes
