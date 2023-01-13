@@ -29,11 +29,16 @@ module.exports.SERVICES = {
     },
     // ---
 
-    
     nas: {
         id: "nas",
         name: "NAS",
         path: "services/nas/service.js",
+        clients: []
+    },
+    tracking: {
+        id: "tracking",
+        name: "Tracking",
+        path: "services/tracking/service.js",
         clients: []
     }
 
