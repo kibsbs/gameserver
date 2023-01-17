@@ -59,7 +59,8 @@ module.exports = {
         const userRank = await scores.getRank(sid);
 
         const { themeResults } = await scores.getThemeAndCoachResult();
-
+        
+        await session.pingSession(sid);
         return res.uenc({
             num: 0,
             count,

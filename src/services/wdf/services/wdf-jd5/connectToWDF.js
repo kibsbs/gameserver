@@ -20,7 +20,7 @@ module.exports = {
 
         const { avatar, name, onlinescore, pays } = req.body;
 
-        const session = new Session(req.game.version);
+        const session = new Session(req.version);
         const sessionId = req.sid;
         const playersInCountry = await session.getCountryPlayers(pays);
 

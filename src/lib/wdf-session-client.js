@@ -51,15 +51,19 @@ module.exports.session = async (req, res, next) => {
 };
 
 module.exports.sessionJd5 = async (req, res, next) => {
-
     const sid = req.body.sid;
+    const version = req.game.version || req.version;
     
     if (!sid) return next({
         status: 401,
         message: `SessionId is required for session client!`
     });
+    if (!version) return next({
+        status: 401,
+        message: `Invalid version!`
+    });
 
-    const session = new Session(req.game.version || req.version || 2014);
+    const session = new Session(version);
 
     const userSession = await session.getSession(sid);
     if (!userSession) return next({
@@ -73,4 +77,33 @@ module.exports.sessionJd5 = async (req, res, next) => {
     req.session = userSession;
     req.profile = userSession.profile;
     return next();
+};
+
+module.exports.sessionJd5Auth = async (req, res, next) => {
+
+    const authorization = req.headers.authorization;
+    const auths = global.secrets.TRACKING_AUTH;
+    
+    if (!authorization) return next({
+        status: 401,
+        message: `Authorization is required!`
+    });
+
+    const b64auth = (req.headers.authorization).split(' ')[1] || null;
+    if (!b64auth) return next({
+        status: 401,
+        message: `Authorization is required!`
+    });
+    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+    if (auths.hasOwnProperty(login) && auths[login].pass === password) {
+        req.version = auths[login].version;
+        return next();
+    }
+    else {
+        return next({
+            status: 401,
+            message: `Authorization is required!`
+        });
+    }
 };

@@ -13,3 +13,14 @@ module.exports.API_KEYS = JSON.parse(process.env.API_KEYS || "[]");
 module.exports.TEST_TOKENS = [
     "test"
 ];
+
+module.exports.TRACKING_AUTH = {
+    wiitracking: {
+        pass: "AA2ieaYP",
+        version: 2014
+    },
+    jdjapantrkw: {
+        pass: "AA2ieaYP",
+        version: 1000
+    }
+};

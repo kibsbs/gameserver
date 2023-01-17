@@ -16,7 +16,7 @@ module.exports = {
         // TODO: would it be ok to detect if sid and token sid doesnt match and ban player? (means they are hijacking)
         const { sid } = req.body;
 
-        const session = new Session(req.game.version);
+        const session = new Session(req.version);
 
         await session.deleteSession(req.sid);
         await session.deleteSessionCache(req.sid);

@@ -19,8 +19,8 @@ module.exports = {
 
         const now = time.milliseconds();
 
-        const playlist = new Playlist(req.game.version);
-        const session = new Session(req.game.version);
+        const playlist = new Playlist(req.version);
+        const session = new Session(req.version);
 
         const durations = playlist.durations;
 
@@ -83,7 +83,16 @@ module.exports = {
             nextsong: next.map.songId,
 
             requestPlaylistTime: cur.timing.request_playlist_time,
-            interlude: "yes"
+            interlude: "yes",
+
+            last_song_unlocked: 23366640638,
+            next_unlocked_song_id:  24699558761,
+
+            current_star_count: 3040,
+            star_count_for_unlock: 50000,
+
+            happyhour: Date.now() + (60 * 1000 * 60),
+            happyhour_duration: 3600
         };
 
         // Depending on theme type, set extra information.
@@ -103,7 +112,7 @@ module.exports = {
         }
 
         // Times to parse
-        ["start", "end", "requestPlaylistTime", "vote_end"].forEach(t => {
+        ["start", "end", "requestPlaylistTime", "vote_end", "happyhour"].forEach(t => {
             playlistData[t] = utils.serverTime(playlistData[t]);
         });
 

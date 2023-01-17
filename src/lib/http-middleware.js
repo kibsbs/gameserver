@@ -4,13 +4,10 @@
 
 const uuid = require("uuid");
 const utils = require("utils");
-const ipRangeCheck = require("ip-range-check");
 
-function isSuccessful(status) {
-    return status >= 200 && status <= 300
-};
+const isSuccessful = (status) => status >= 200 && status <= 300;
 
-// Handles any server error and serves prettifies responses.
+// Handles any server error and serves prettifies responses
 module.exports.errorHandler = (err, req, res, next) => {
     let data = {};
 
@@ -31,20 +28,19 @@ module.exports.errorHandler = (err, req, res, next) => {
         });
     }
 
-    if (global.gs.SHOW_RESPONSE_MESSAGES)
+    // Only show error messages in response if it's true in config and if server is dev
+    if (global.gs.SHOW_RESPONSE_MESSAGES && utils.isDev())
         return res.status(data.status).json(data);
     else
         return res.status(data.status).send();
 };
 
-module.exports.notFound = (req, res, next) => {
-    if (utils.isDev()) return next();
-    else return res.status(404).send();
-};
-
+// Validates client's User Agent
 module.exports.agentCheck = (req, res, next) => {
     const userAgent = req.headers["user-agent"];
     const validAgent = global.gs.VALID_USER_AGENT;
+
+    if (utils.isDev()) return next();
     
     if (userAgent !== validAgent) {
         global.logger.warn({
@@ -58,19 +54,8 @@ module.exports.agentCheck = (req, res, next) => {
     return next();
 };
 
-const ipList = global.gs.BLOCKLIST.map(a => a.ips).flat(2);
-module.exports.ipBlocklist = (req, res, next) => {
-    const ip = req.ip;
-    const check = ipRangeCheck(ip, ipList);
-
-    if (check) {
-        global.logger.warn({
-            msg: `Blocked IP ${ip} tried to access ${req.originalUrl}!`,
-            headers: req.headers,
-            body: req.body
-        });
-        return res.status(403).send();
-    };
-
-    return next();
+// Used for returning 404 for unknown routes
+module.exports.notFound = (req, res, next) => {
+    if (utils.isDev()) return next();
+    else return res.status(404).send();
 };

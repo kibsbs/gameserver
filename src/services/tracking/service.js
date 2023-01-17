@@ -20,7 +20,6 @@ app.use(express.static(__dirname + "/static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(morganMiddleware);
 app.use(uenc.client);
 
 app.set("trust proxy", "loopback");
