@@ -3,6 +3,7 @@ const time = require("time")
 
 const Playlist = require("wdf-playlist");
 const Session = require("wdf-session");
+const Vote = require("wdf-vote");
 
 module.exports = {
 
@@ -16,12 +17,14 @@ module.exports = {
 
         const playlist = new Playlist(req.game.version);
         const session = new Session(req.game.version);
+        const vote = new Vote(req.game.version);
 
         const durations = playlist.durations;
 
         const { prev, cur, next } = await playlist.getScreens();
 
         const count = await session.sessionCount();
+        const voteResults = await vote.getResults();
 
         const now = time.milliseconds();
 
@@ -65,11 +68,37 @@ module.exports = {
             vote4_song: 0,
             votenumchoices: 0,
             vote_end: cur.timing.last_vote_time,
+
             next1: 0,
             next2: 0,
             next3: 0,
             next4: 0
         };
+
+        // If current screen is vote, setup few stuff
+        if (playlist.isThemeVote(cur.theme.id)) {
+            // Set vote choices
+            let choices = cur.voteChoices;
+            choices.forEach((c, i) => {
+                const songId = c.songId;
+                if (voteResults && voteResults[songId])
+                    voteData[`vote${i+1}`] = voteResults[songId] * 100;
+                voteData[`vote${i+1}_song`] = songId;
+            });
+            voteData.votenumresult = choices.length;
+        }
+
+        // If next screen is vote, setup few stuff
+        if (playlist.isThemeVote(next.theme.id)) {
+
+            voteData.votenumchoices = next.voteChoices.length
+
+            // Set next choices
+            let choices = next.voteChoices;
+            choices.forEach((c, i) => {
+                voteData[`next${i+1}`] = c.songId;
+            });
+        }
 
         let playlistData = {
             ...modeData,

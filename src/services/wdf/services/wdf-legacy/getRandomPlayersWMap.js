@@ -17,6 +17,12 @@ module.exports = {
         const sessionId = req.sid;
 
         const userCache = await session.getSessionCache(sessionId);
+        if (!userCache) {
+            return next({
+                status: 400,
+                message: "Session does not exist!"
+            })
+        }
 
         // Fetch random sessions, but exclude player's sid from list
         const sessions = await session.randomSession(nr_players, req.sid);

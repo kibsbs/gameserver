@@ -1,24 +1,4 @@
-module.exports.list = [
-    ["Boys", "Girls"],
-    ["Rock", "Pop"],
-    ["Beauty", "Beast"],
-    ["Rayman", "Rabbits"],
-    ["Robots", "Aliens"],
-    ["Dad", "Mom"],
-    ["Brother", "Sister"],
-    ["Dog", "Cat"],
-    ["Sun", "Moon"],
-    ["Day", "Night"],
-    ["Love", "War"],
-    ["Young", "Old"],
-    ["North", "South"],
-    ["West", "East"],
-    ["Fire", "Ice"],
-    ["Earth", "Wind"]
-    ["Princess", "Knight"]
-];
-
-module.exports.locs = {
+const locs = {
     Boys: {
         en: "Boys",
         fr: "Garçons",
@@ -412,5 +392,32 @@ module.exports.locs = {
         no: "Ridder",
         sv: "Riddare",
         da: "Ridder"
+    },
+    WiiLink: {
+        en: "WiiLink"
+    },
+    RiiConnect24: {
+        en: "RiiConnect24"
     }
-};  
+};
+
+const list = [
+    [locs.Boys, locs.Girls],
+    [locs.Rock, locs.Pop],
+    [locs.Beauty, locs.Beast],
+    [locs.Rayman, locs.Rabbits],
+    [locs.Robots, locs.Aliens],
+    [locs.Dad, locs.Mom],
+    [locs.Brother, locs.Sister],
+    [locs.Dog, locs.Cat],
+    [locs.Sun, locs.Moon],
+    [locs.Day, locs.Night],
+    [locs.Love, locs.War],
+    [locs.Young, locs.Old],
+    [locs.North, locs.South],
+    [locs.West, locs.East],
+    [locs.Fire, locs.Ice],
+    [locs.Earth, locs.Wind],
+    [locs.Princess, locs.Knight],
+    [locs.RiiConnect24, locs.WiiLink]
+]

@@ -4,7 +4,8 @@ const games = require("games");
 const songs = require("songs");
 const time = require("time");
 const scheduler = require("scheduler");
-const scores = require("wdf-score");
+
+const Vote = require("wdf-vote");
 
 class Playlist {
     constructor(version) {
@@ -20,6 +21,7 @@ class Playlist {
             cur: `playlist:${this.version}:cur`,
             next: `playlist:${this.version}:next`,
         };
+        this.vote = new Vote(this.version);
     }
 
     randomTheme(exclude = []) {
@@ -70,11 +72,10 @@ class Playlist {
         // If server has slept, this will reset cur and next
         // so that they can be created again
         if (
-            (playlist.cur && now > playlist.cur.timing.request_playlist_time) ||
-            (playlist.next && now > playlist.next.timing.request_playlist_time)
+            (playlist.cur && now > playlist.cur.timing.request_playlist_time) || 
+            (playlist.next && now > playlist.next.timing.base_time)
         ) {
-            global.logger.info(`Server was slept, reseting playlist...`)
-            playlist.prev = null;
+            global.logger.info(`Server was slept, reseting current...`)
             playlist.cur = null;
             playlist.next = null;
         }
@@ -121,7 +122,7 @@ class Playlist {
         //  1 - 2 - 1 (add cur only)
         //  1 - 2 - 3 (prev and cur) (if there are more than 2 themes available)
         //  3 - 3 - 3 (empty array)
-        let ignoredTheme = [cur?.theme.id];
+        let ignoredTheme = [];
 
         // Skips all prev cur next maps to avoid any 9 minutes of repetation
         let ignoredSongs = [prev?.map.mapName, cur?.map.mapName, next?.map.mapName];
@@ -143,6 +144,8 @@ class Playlist {
                 }
             }
         };
+
+        // Get a random map
         let map = await this.randomMap(1, ignoredSongs, mapFilter);
         map = map[0];
         if (!map) 
@@ -152,8 +155,8 @@ class Playlist {
         if (isNext && cur && cur.timing.request_playlist_time && this.isThemeVote(theme.id)) {
             baseTime = cur.timing.request_playlist_time
         }
-        else if (isNext && cur && cur.timing.request_playlist_time) {
-            baseTime = cur.timing.request_playlist_time
+        else if (isNext && cur && cur.timing.world_result_stop_time) {
+            baseTime = cur.timing.world_result_stop_time
         }
         else baseTime = now;
 
@@ -161,11 +164,23 @@ class Playlist {
         // (can happen if the server sleeps for a while)
         // if (baseTime < now)
         //     baseTime = now;
+
         
         let screen = {
             theme,
             map
         }
+
+        // If theme is voting, pick out random maps
+        if (this.isThemeVote(theme.id)) {
+            let choiceAmount = utils.randomNumber(2, 4);
+            // Don't make any map from prev cur and next as vote option
+            let choices = await this.randomMap(choiceAmount, [
+                prev?.map.mapName, cur?.map.mapName, next?.map.mapName
+            ]);
+            screen.voteChoices = choices;
+            global.logger.info(`Generated following maps for vote screen: ${choices.map(m => m.mapName)}`)
+        };
         
         let times = this.calculateTime(baseTime, screen, isNext);
         screen.timing = times.timing;
@@ -175,9 +190,10 @@ class Playlist {
         let rotationTime = screen.timing.request_playlist_time;
         let resetScoreTime = screen.timing.request_playlist_time - 5000;
 
-        // Rotate playlist 
+        // Rotate playlist and clear votes
         scheduler.newJob("Rotate playlist", rotationTime, async () => {
             await this.rotateScreens();
+            this.vote.resetVotes();
         });
 
         // Clear all scores for version
@@ -201,7 +217,7 @@ class Playlist {
         let start_song_time = presentation_start_time + durations["presentation_duration"];
 
         // Post-song
-        let stop_song_time = start_song_time + mapLength;
+        let stop_song_time = start_song_time + 5000 //mapLength;
         stop_song_time = Number((stop_song_time).toFixed(3));
         
         let recap_start_time = stop_song_time + (durations["waiting_recap_duration"] * 1);
@@ -258,8 +274,10 @@ class Playlist {
 
         let next_new_step_time = 0;
 
-        if (isNext && this.isThemeVote(themeType)) next_new_step_time = request_playlist_time;
-        else next_new_step_time = world_result_stop_time;
+        if (isNext && this.isThemeVote(themeType)) 
+            next_new_step_time = request_playlist_time;
+        else
+            next_new_step_time = world_result_stop_time;
         
         let next_presentation_start_time = next_new_step_time + this.computePreSongDuration(themeType)
         let next_start_song_time = next_presentation_start_time + durations["presentation_duration"]

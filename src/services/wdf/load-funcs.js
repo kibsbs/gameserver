@@ -40,6 +40,10 @@ const conf = {
             id: 1023,
             mid: [nasClient.require, gameClient]
         },
+        sendVote: {
+            id: 840,
+            mid: [nasClient.require, gameClient]
+        },
         getPlayListPos: {
             id: 1444,
             mid: [nasClient.require, gameClient]
