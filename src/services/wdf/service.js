@@ -39,7 +39,7 @@ app.use("/api", require("./api/service"));
 
 // app.post("/wdf", require("./load-funcs")("wdf-jd5"));
 
-app.post("/wdfjd15", mids.agentCheck, require("./load-funcs")("wdf-jd15"));
+app.post("/wdf15", mids.agentCheck, require("./load-funcs")("wdf-jd15"));
 
 app.post("/wdfjd6", mids.agentCheck, require("./load-funcs")("wdf-legacy"));
 
