@@ -76,6 +76,51 @@ const conf = {
             id: 1665,
             mid: [nasClient.require, gameClient]
         }
+    },
+    "wdf-jd15": {
+        getServerTime: {
+            id: 1350
+        },
+        checkToken: {
+            id: 1023,
+            mid: [nasClient.require, gameClient]
+        },
+        sendVote: {
+            id: 840,
+            mid: [nasClient.require, gameClient]
+        },
+        getPlayListPos: {
+            id: 1444,
+            mid: []
+        },
+        connectToWDF: {
+            id: 1166,
+            mid: [nasClient.require, gameClient]
+        },
+        getRandomPlayersWMap: {
+            id: 2038,
+            mid: []
+        },
+        getBloomBergs2: {
+            id: 1374,
+            mid: [nasClient.require, gameClient]
+        },
+        getPlayerScores: {
+            id: 1564,
+            mid: [] // no session or lobby client, it gets them itself
+        },
+        disconnectFromWDF: {
+            id: 1695,
+            mid: []
+        },
+        getMyRank: {
+            id: 914,
+            mid: [] // no session or lobby client, it gets them itself
+        },
+        getRandomPlayers: {
+            id: 1665,
+            mid: []
+        }
     }
 };
 
@@ -113,7 +158,7 @@ module.exports = (wdfName) => {
         let middleware;
 
 
-        if (funcs.hasOwnProperty(func)) {
+        if (funcs && funcs.hasOwnProperty(func)) {
             let funcData = funcs[func];
             let mids = funcData.mid || [];
 

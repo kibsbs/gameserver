@@ -36,12 +36,8 @@ class Playlist {
         // Get a random theme from list
         let random = utils.random(list);
         if (!random) random = utils.random(list);
-        let [ theme0, theme1 ] = random;
 
-        // Get loc of themes
-        theme0 = locs[theme0];
-        theme1 = locs[theme1];
-
+        const [ theme0, theme1 ] = random;
         return [theme0["en"], theme1["en"]];
     }
 
@@ -217,7 +213,7 @@ class Playlist {
         let start_song_time = presentation_start_time + durations["presentation_duration"];
 
         // Post-song
-        let stop_song_time = start_song_time + 5000 //mapLength;
+        let stop_song_time = start_song_time + mapLength;
         stop_song_time = Number((stop_song_time).toFixed(3));
         
         let recap_start_time = stop_song_time + (durations["waiting_recap_duration"] * 1);

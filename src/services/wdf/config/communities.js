@@ -420,4 +420,8 @@ const list = [
     [locs.Earth, locs.Wind],
     [locs.Princess, locs.Knight],
     [locs.RiiConnect24, locs.WiiLink]
-]
+];
+
+module.exports = {
+    list, locs
+};

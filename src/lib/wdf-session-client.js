@@ -50,6 +50,38 @@ module.exports.session = async (req, res, next) => {
     return next();
 };
 
+
+module.exports.sessionJd15 = async (req, res, next) => {
+
+    const sid = req.body.sid || req.body.player_sid;
+    const ip = req.ip;
+    
+    if (!sid) return next({
+        status: 401,
+        message: `SessionId is required for session client!`
+    });
+
+    const session = new Session(2015);
+
+    const userSession = await session.getSession(sid);
+    if (!userSession) return next({
+        status: 401,
+        message: `Player does not have a session!`
+    });
+
+    if (userSession.ip !== ip) return next({
+        status: 401,
+        message: `Player submitted unmatched session!`
+    });
+
+    // Ping session to avoid it from getting removed
+    await session.pingSession(sid);
+
+    req.session = userSession;
+    req.profile = userSession.profile;
+    return next();
+};
+
 module.exports.sessionJd5 = async (req, res, next) => {
     const sid = req.body.sid;
     const version = req.game.version || req.version;

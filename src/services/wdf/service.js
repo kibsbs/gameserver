@@ -36,8 +36,13 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", require("./api/service"));
-app.post("/wdf", require("./load-funcs")("wdf-jd5"));
+
+// app.post("/wdf", require("./load-funcs")("wdf-jd5"));
+
+app.post("/wdfjd15", mids.agentCheck, require("./load-funcs")("wdf-jd15"));
+
 app.post("/wdfjd6", mids.agentCheck, require("./load-funcs")("wdf-legacy"));
+
 app.post("/tracking", (req, res, next) => {
     return res.uenc({
         "activatekey": "",

@@ -30,9 +30,9 @@ class Session {
                 name: Joi.string().required(),
                 rank: Joi.number().required(),
                 country: Joi.number().required(),
-            }).required(),
-            isBot: Joi.boolean().default(false).optional()
-        });
+            }).unknown(true).required(),
+            isBot: Joi.boolean().default(false).optional(),
+        }).unknown(true);
 
         this.maxLobbyPlayers = global.gs.MAX_LOBBY_PLAYERS;
 
@@ -178,11 +178,23 @@ class Session {
         return await cache.set(this.cacheKey + ":" + sessionId, data, global.gs.TOKEN_EXPIRATION);
     }
 
-    async getSessionCache(sessionId) {
-        return await cache.get(this.cacheKey + ":" + sessionId);
+    async getSessionCache(sessionId, ip) {
+        const data = await cache.get(this.cacheKey + ":" + sessionId);
+
+        // If version is 2015, IP is provided but sid's cache data 
+        // does not match provided IP, return null so that funcs don't allow client.
+        if ((this.version == 2015 && ip) && (data && data.ip !== ip)) return;
+        
+        return data;
     }
 
-    async deleteSessionCache(sessionId) {
+    async deleteSessionCache(sessionId, ip) {
+        const data = await this.getSessionCache(sessionId, ip);
+
+        // If version is 2015, IP is provided but sid's cache data 
+        // does not match provided IP, return null so that funcs don't allow client.
+        if ((this.version == 2015 && ip) && (data && data.ip !== ip)) return;
+
         return await cache.set(this.cacheKey + ":" + sessionId, null);
     }
     
