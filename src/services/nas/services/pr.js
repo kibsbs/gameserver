@@ -20,8 +20,11 @@ module.exports = function (req, res, next) {
       return res.send(pr.data);
     })
     .catch(err => {
-      global.logger.error(`Can't connect to PR: ${err}`);
-      return res.sendStatus(500);
+      global.logger.error(`[PR] Error on Wiimmfi end: ${err.message}`);
+      return next({
+        status: 500,
+        message: `Can't connect to Wiimmfi`,
+        error: err.message
+      });
     });
-
 };

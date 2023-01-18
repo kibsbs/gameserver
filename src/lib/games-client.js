@@ -17,6 +17,16 @@ module.exports = async (req, res, next) => {
             message: `Game does not exist!`
         });
 
+    let path = req.path;
+    let wdfName = path.split("/")[1];
+    if (wdfName !== game.wdfName) {
+        global.logger.warn(`${req.uid} tried to access ${wdfName} with ${req.gid}!`);
+        return next({
+            status: 401,
+            message: `${game.version} cannot access ${wdfName} WDF!`
+        });
+    };
+
     req.game = game;
     req.game.id = req.gid;
     req.version = req.game.version;

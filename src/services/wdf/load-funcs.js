@@ -157,7 +157,6 @@ module.exports = (wdfName) => {
         let funcScript = await require(funcPath).init;
         let middleware;
 
-
         if (funcs && funcs.hasOwnProperty(func)) {
             let funcData = funcs[func];
             let mids = funcData.mid || [];

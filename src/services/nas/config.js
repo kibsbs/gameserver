@@ -1,2 +1,2 @@
 module.exports.PORT = 12000;
-module.exports.SERVER_IP = "54.237.192.50";
+module.exports.SERVER_IP = "185.245.183.36";

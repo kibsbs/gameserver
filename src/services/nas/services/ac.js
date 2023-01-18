@@ -5,6 +5,8 @@ const uuid = require("uuid");
 const nasToken = require("nas-token");
 const b64 = require("../lib/b64");
 
+const games = require("games");
+
 module.exports = function (req, res, next) {
 
   const { action } = req.body;
@@ -29,6 +31,14 @@ module.exports = function (req, res, next) {
 
           const { userid, lang, region, gamecd } = req.body;
 
+          const isGameAvailable = games.isGameAvailable(gamecd);
+          if (!isGameAvailable) {
+            return next({
+              status: 401,
+              message: `Unknown or unavailable game ${gamecd}`
+            });
+          };
+
           // Generate a random sessionId
           const sessionId = Math.floor(Math.random() * 100000000) + 999999999;
 
@@ -41,17 +51,23 @@ module.exports = function (req, res, next) {
             exp: Date.now() + (global.gs.TOKEN_EXPIRATION * 1000)
           });
 
-          global.logger.info(`${userid} created token for ${gamecd} // sid: ${sessionId} // reg: ${region}`)
+          global.logger.success(`[AC] ${userid} created token for ${gamecd} // sid: ${sessionId} // reg: ${region}`)
 
           response.token = newToken;
           response.servicetoken = newToken;
           break;
-      }
+      };
 
-      return res.send(b64.encode(response));
+      return res.send(
+        b64.encode(response)
+      );
     })
     .catch(err => {
-      global.logger.error(`Can't connect to AC: ${err}`);
-      return res.sendStatus(500);
+      global.logger.error(`[AC] Error on Wiimmfi end: ${err.message}`);
+      return next({
+        status: 500,
+        message: `Can't connect to Wiimmfi`,
+        error: err.message
+      });
     });
-}
+};
