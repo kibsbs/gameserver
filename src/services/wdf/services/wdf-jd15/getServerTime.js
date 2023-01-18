@@ -13,8 +13,17 @@ module.exports = {
         // If "sid" and "token" is provided, it means client has left party and went to pre wdf
         // so we should remove their session & remove from lobby
         if (sid && token) {
-            const session = new Session(req.game.version);
-            const sessionId = req.sid;
+            const session = new Session(2015);
+            const sessionId = sid;
+
+            const userSession = await session.getSession(sessionId);
+            const userCache = await session.getSessionCache(sessionId, req.ip);
+            if (!userCache) {
+                return next({
+                    status: 400,
+                    message: "Session does not exist!"
+                })
+            };
 
             await session.deleteSession(sessionId);
             global.logger.info("Deleted session of " + sessionId);

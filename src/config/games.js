@@ -63,7 +63,8 @@ const games = [{
         songsCount: 93,
         unlocksCount: 27
     },
-    maxStars: 5
+    maxStars: 5,
+    is2014: false
 }, {
     name: "Just Dance 2016",
     version: 2016,

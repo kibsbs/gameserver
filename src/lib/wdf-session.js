@@ -66,7 +66,7 @@ class Session {
         try {
             let sessionId = data.sessionId;
 
-            // Join user to a lobby
+            // Join user to a lobby if version is not 2014
             if (!this.game.is2014) {
                 const lobbyId = await this.joinLobby(sessionId);
                 data.lobbyId = lobbyId;

@@ -66,6 +66,7 @@ class Songs {
             {
                 $match: {
                     version,
+                    isAvailable: true,
                     mapName: { $nin: excludeMaps },
                     songId: { $nin: excludeMaps },
                     ...filters

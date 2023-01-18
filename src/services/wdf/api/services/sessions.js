@@ -48,8 +48,7 @@ router.post("/create-bots", validate("createBots"), async (req, res, next) => {
         }
 
         global.logger.info(`Created ${amount} amount of bots in ${version} WDF!`);
-        return next({
-            status: 200,
+        return res.json({
             message: `Created ${amount} amount of bots in ${version} WDF!`
         });
     }
@@ -75,8 +74,7 @@ router.post("/delete-bots", validate("deleteBots"), async (req, res, next) => {
         
         global.logger.info(`Deleted ${deletedCount} bots from ${version} WDF!`);
 
-        return next({
-            status: 200,
+        return res.json({
             message: `Deleted ${deletedCount} bots from ${version} WDF!`
         });
     }
