@@ -5,8 +5,9 @@ const router = express.Router({
     strict: true 
 });
 
-router.get("/test", (req, res) => {
-    res.send("test")
+router.use((req, res, next) => {
+    req.isApi = true;
+    return next();
 });
 
 router.use("/config", require("./services/config"));

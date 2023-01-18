@@ -43,13 +43,6 @@ app.post("/wdf15", mids.agentCheck, require("./load-funcs")("wdf-jd15"));
 
 app.post("/wdfjd6", mids.agentCheck, require("./load-funcs")("wdf-legacy"));
 
-app.post("/tracking", (req, res, next) => {
-    return res.uenc({
-        "activatekey": "",
-        "key": ""
-    });
-});
-
 app.use(mids.errorHandler);
 app.use(mids.notFound);
 

@@ -29,7 +29,7 @@ module.exports.errorHandler = (err, req, res, next) => {
     }
 
     // Only show error messages in response if it's true in config and if server is dev
-    if (global.gs.SHOW_RESPONSE_MESSAGES && utils.isDev())
+    if (global.gs.SHOW_RESPONSE_MESSAGES && utils.isDev() && !req.isApi)
         return res.status(data.status).json(data);
     else
         return res.status(data.status).send();
