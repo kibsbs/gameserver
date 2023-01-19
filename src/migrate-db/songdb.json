@@ -357,7 +357,7 @@
     "songId": "8657374806685",
     "songHash": "06d399e3-497e-49de-b3cf-1ef85f610b52",
     "length": 192212.45833333334,
-    "isAvailable": true
+    "isAvailable": false
   },
   {
     "mapName": "LetItGo",
@@ -405,7 +405,7 @@
     "songId": "8655600994301",
     "songHash": "59476c70-39b4-48f1-9c2d-742a60125bc2",
     "length": 210625.0,
-    "isAvailable": true
+    "isAvailable": false
   },
   {
     "mapName": "Macarena",

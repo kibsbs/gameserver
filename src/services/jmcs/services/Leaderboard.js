@@ -23,9 +23,9 @@ module.exports = {
         async (req, res, next) => {
             
             const { songId } = req.body;
-            const gameId = req.game.id;
+            const version = req.game.version;
             
-            const entries = await leaderboard.getBoard(songId, gameId);
+            const entries = await leaderboard.getBoard(songId, version);
 
             return res.uenc({
                 ...uenc.setIndex(entries),

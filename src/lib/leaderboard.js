@@ -69,15 +69,15 @@ class Leaderboard {
         }
     }
 
-    async createBoard(songId, gameId, country) {
+    async createBoard(songId, version, country, limit) {
 
         // Filter by songId and gameId and country if provided (for regional boards)
         let match = {
             songId: { $eq: songId },
-            "game.id": { $eq: gameId },
-            createdAt: {
-                $gt: new Date(Date.now() - global.gs.LEADERBOARD_RESET_INTERVAL) // only get 1 week old scores
-            }
+            "game.version": { $eq: version },
+            // createdAt: {
+            //     $gt: new Date(Date.now() - global.gs.LEADERBOARD_RESET_INTERVAL) // only get 1 week old scores
+            // }
         };
         if (country) match.userCountry = { $eq: country };
 
@@ -86,21 +86,20 @@ class Leaderboard {
             { $match: match },
             { $group: { _id: "$profileId", score: { $max: "$score" }, root: { $first: "$$ROOT" } } },
             { $sort: { score: -1 } },
-            { $limit: this.maxResult }
+            { $limit: limit || this.maxResult }
         ]);
         
         return result || [];
     }
 
-    async getBoard(songId, gameId, country) {
-        const board = await this.createBoard(songId, gameId, country);
+    async getBoard(songId, version, country, limit) {
+        const board = await this.createBoard(songId, version, country, limit);
 
         let entries = [];
         for (let i = 0; i < board.length; i++) {
 
             const entry = board[i].root;
             const profile = await dancercard.get({ profileId: entry.profileId });
-            if (!profile) continue;
 
             entries.push({
                 avatar: profile.avatar,
@@ -111,6 +110,15 @@ class Leaderboard {
         }
 
         return entries;
+    }
+
+    async getEntryCount(songId, version, country) {
+        let query = {
+            songId,
+            "game.version": version
+        }
+        if (country) query.userCountry = country;
+        return await this.db.count(query) || 0
     }
 }
 
