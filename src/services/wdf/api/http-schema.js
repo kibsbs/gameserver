@@ -1,11 +1,16 @@
 const Joi = require("joi");
 
+const version = Joi.number().required();
+
 module.exports = {
     createBots: {
         amount: Joi.number().min(1).required(),
-        version: Joi.number().required()
+        version
     },
     deleteBots: {
-        version: Joi.number().required()
+        version
+    },
+    sessionsStatus: {
+        version
     }
 };

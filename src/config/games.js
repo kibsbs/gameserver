@@ -135,7 +135,7 @@ const games = [{
 const mods = [{
     name: "Just Dance Japan",
     version: 1000,
-    isAvailable: true,
+    isAvailable: false,
     regions: {
         SJME: {
             region: PAL,

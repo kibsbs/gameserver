@@ -6,7 +6,9 @@ const utils = require("utils");
 const games = require("games");
 
 router.get("/games", (req, res) => {
-    return res.json(global.gs.GAMES);
+    return res.json({
+        games: global.gs.GAMES
+    });
 });
 
 router.get("/games/:idOrVersion", (req, res) => {

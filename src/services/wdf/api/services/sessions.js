@@ -16,15 +16,15 @@ const nameConfig = {
     style: "upperCase"
 };
 
-router.post("/status", async (req, res, next) => {
+router.post("/status", validate("sessionsStatus"), async (req, res, next) => {
 
     const { version } = req.body;
 
-    const session = new Session(version);
-    const playlist = new Playlist(version);
-    const scores = new Scores(version);
-
     try {
+
+        const session = new Session(version);
+        const playlist = new Playlist(version);
+        const scores = new Scores(version);
 
         const screens = await playlist.getScreens();
         const topScores = await scores.getRanks(10);
@@ -51,6 +51,7 @@ router.post("/status", async (req, res, next) => {
         for (const key in result.playlist) {
             if (Object.hasOwnProperty.call(result.playlist, key)) {
                 const screen = screens[key];
+                if (!screen) continue;
 
                 const { mapName, title, artist, numCoach, difficulty } = screen.map;
     
@@ -66,7 +67,9 @@ router.post("/status", async (req, res, next) => {
                         songStart: screen.timing.start_song_time,
                         songEnd: screen.timing.stop_song_time,
                         recapStart: screen.timing.recap_start_time,
-                        recapEnd: screen.timing.request_playlist_time
+                        recapEnd: screen.timing.request_playlist_time,
+                        preSongStart: screen.timing.base_time,
+                        preSongEnd: screen.timing.start_song_time
                     }
                 };
             };
@@ -75,6 +78,7 @@ router.post("/status", async (req, res, next) => {
         return res.json(result);
     }
     catch(err) {
+        console.log(err)
         return next({
             status: 500,
             message: "Can't fetch status",

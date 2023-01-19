@@ -123,7 +123,7 @@ class Playlist {
         //  1 - 2 - 1 (add cur only)
         //  1 - 2 - 3 (prev and cur) (if there are more than 2 themes available)
         //  3 - 3 - 3 (empty array)
-        let ignoredTheme = [];
+        let ignoredTheme = [prev?.theme.id];
 
         // Skips all prev cur next maps to avoid any 9 minutes of repetation
         let ignoredSongs = [prev?.map.mapName, cur?.map.mapName, next?.map.mapName];
