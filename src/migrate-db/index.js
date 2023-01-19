@@ -10,6 +10,7 @@ module.exports.migrateSongs = (cb) => {
         ...songdb2014
     ], (err, ok) => {
         if (err) {
+            console.log(err)
             let msg = err.message || "";
             if (msg.startsWith("E11000 duplicate key error collection"))
                 return cb();

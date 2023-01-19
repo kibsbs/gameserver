@@ -28,6 +28,8 @@ router.post("/status", validate("sessionsStatus"), async (req, res, next) => {
 
         const screens = await playlist.getScreens();
         const topScores = await scores.getRanks(10);
+        const themeResults = await scores.getThemeAndCoachResult();
+        const numberOfWinners = await scores.getNumberOfWinners(themeResults);
 
         let result = {
             count: await session.sessionCount(),
@@ -36,6 +38,8 @@ router.post("/status", validate("sessionsStatus"), async (req, res, next) => {
                 cur: {},
                 next: {}
             },
+            themeResults,
+            numberOfWinners,
             topScores: topScores.map(s => {
                 return {
                     profile: s.profile,
