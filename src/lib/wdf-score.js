@@ -162,26 +162,38 @@ class Score {
         return ranks;
     }
 
+    /**
+     * Returns number of scores of given community id.
+     * @param {Number} themeIndex 
+     * @returns 
+     */
     async getThemeResult(themeIndex = 0) {
         try {
             const result = await this.db.aggregate([
-                { $match: { "game.version": this.version, themeIndex: { $eq: themeIndex } } },
-                { $group: { _id: null, stars: { $sum: "$stars" } } }
-            ]);
-            return result[0] ? result[0].stars : 0
+                { $match: { "game.version": this.version, themeIndex } },
+                { $project: { _id: null, result: { $multiply: ["$stars", 2000] } } },
+                { $group: { _id: null, result: { $sum: "$result"} } }
+            ])
+            return result[0] ? result[0].result : 0
         }
         catch(err) {
             throw new Error(`Can't get theme results for ${this.version} index: ${themeIndex}: ${err}`)
         }
     }
 
+    /**
+     * Returns number of scores of given coach id.
+     * @param {Number} coachIndex 
+     * @returns
+     */
     async getCoachResult(coachIndex = 0) {
         try {
             const result = await this.db.aggregate([
-                { $match: { "game.version": this.version, coachIndex: { $eq: coachIndex } } },
-                { $group: { _id: null, stars: { $sum: "$stars" } } }
+                { $match: { "game.version": this.version, coachIndex } },
+                { $project: { _id: null, result: { $multiply: ["$stars", 2000] } } },
+                { $group: { _id: null, result: { $sum: "$result"} } }
             ])
-            return result[0] ? result[0].stars : 0
+            return result[0] ? result[0].result : 0
         }
         catch(err) {
             throw new Error(`Can't get coach results for ${this.version} index: ${themeIndex}: ${err}`)
@@ -192,19 +204,44 @@ class Score {
         const currentTheme = await this.playlist.getCurrentTheme();
         const isCommunity = this.playlist.isThemeCommunity(currentTheme);
         const isCoach = this.playlist.isThemeCoach(currentTheme);
+
+        let themeResults = {};
+        let indexes = {
+            theme: [
+                await this.getThemeResult(0),
+                await this.getThemeResult(1)
+            ],
+            coach: [
+                await this.getCoachResult(0),
+                await this.getCoachResult(1),
+                await this.getCoachResult(2),
+                await this.getCoachResult(3)
+            ]
+        };
+
+        // Set final keys and values
+        Object.keys(indexes).forEach(key => {
+            let arr = indexes[key];
+            arr.forEach((v, i) => {
+                let k = `${key}${i}`;
+                if (this.game.is2014) k = "score_" + k;
+                themeResults[k] = 0;
+                if (isCommunity && key == "theme")
+                    themeResults[k] = v;
+                if (isCoach && key == "coach")
+                    themeResults[k] = v;
+            });
+        });
+
+        let winner = Object.keys(themeResults).reduce(function(a, b){ return themeResults[a] > themeResults[b] ? a : b });
+
         return {
             currentTheme,
             isCommunity,
             isCoach,
-            themeResults: {
-                [this.game.is2014 ? "score_theme0" : "theme0"]: (isCommunity ? await this.getThemeResult(0) : 0) * 2000,
-                [this.game.is2014 ? "score_theme1" : "theme1"]: (isCommunity ? await this.getThemeResult(1) : 0) * 2000,
-                [this.game.is2014 ? "score_coach0" : "coach0"]: (isCoach ? await this.getCoachResult(0) : 0) * 2000,
-                [this.game.is2014 ? "score_coach1" : "coach1"]: (isCoach ? await this.getCoachResult(1) : 0) * 2000,
-                [this.game.is2014 ? "score_coach2" : "coach2"]: (isCoach ? await this.getCoachResult(2) : 0) * 2000,
-                [this.game.is2014 ? "score_coach3" : "coach3"]: (isCoach ? await this.getCoachResult(3) : 0) * 2000
-            }
-        }
+            themeResults,
+            winner
+        };
     }
 
     async getNumberOfWinners(results) {

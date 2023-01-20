@@ -29,7 +29,7 @@ module.exports = function (req, res, next) {
 
         case "svcloc":
 
-          const { userid, lang, region, gamecd } = req.body;
+          const { userid, lang, region, gamecd, cfc } = req.body;
 
           const isGameAvailable = games.isGameAvailable(gamecd);
           if (!isGameAvailable) {
@@ -43,9 +43,10 @@ module.exports = function (req, res, next) {
           const sessionId = Math.floor(Math.random() * 100000000) + 999999999;
 
           let newToken = nasToken.encrypt({
-            uid: userid.toString(),
             sid: sessionId.toString(),
-            gid: gamecd.toString(),
+            uid: userid,
+            gid: gamecd,
+            cfc: cfc,
             // loc: lang.toString(),
             // rgn: region.toString(),
             exp: Date.now() + (global.gs.TOKEN_EXPIRATION * 1000)

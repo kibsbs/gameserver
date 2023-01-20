@@ -12,6 +12,10 @@ const Schema = new mongoose.Schema(
       type: String,
       required: true
     },
+    cfc: {
+      type: String,
+      required: true
+    },
     userCountry: {
       type: Number,
       required: true

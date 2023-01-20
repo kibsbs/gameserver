@@ -15,7 +15,9 @@
       ]
    },
    {
-      "description": "Test IPs",
-      "ips": []
+      "description": "Suspicious activity",
+      "ips": [
+         "2804:431:c000::/37"
+      ]
    }
 ]

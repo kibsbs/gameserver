@@ -17,8 +17,8 @@ module.exports = {
          * Used for Worldwide Leaderboard for a song
          */
         router.post("/getWorldWideLeaderBoard", 
-            nas.require, 
-            gameClient, 
+            nas.require,
+            gameClient,
             songClient,
         async (req, res, next) => {
             

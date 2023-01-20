@@ -7,9 +7,10 @@ class DancerCard {
         this.schema = Joi.object({
             profileId: Joi.string().guid().required(),
             userId: Joi.string().required(),
+            cfc: Joi.string().required(),
             avatar: Joi.number().min(0).max(9999).required(),
             country: Joi.number().min(0).max(9999).default(9627).required(),
-            name: Joi.string().trim().required(),
+            name: Joi.string().trim().uppercase().required(),
             songsPlayed: Joi.number().required(),
             stars: Joi.number().required(),
             unlocks: Joi.number().required(),

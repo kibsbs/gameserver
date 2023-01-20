@@ -73,17 +73,18 @@ module.exports = {
             } = req.body;
 
             const userId = req.uid;
+            const cfc = req.cfc;
 
             // If client doesn't have a profile entry, create a new profile
             // but if client has a profile, update it with data from body
-            const profileExists = await dancercard.exists({ userId });
+            const profileExists = await dancercard.exists({ userId, cfc });
 
             // Profile doesn't exist, create one
             if (!profileExists) {
                 try {
                     const profileId = uuid.v4();
                     const profileEntry = await dancercard.new({
-                        profileId, userId, 
+                        profileId, userId, cfc,
                         avatar, country, name,
                         songsPlayed, stars, unlocks, wdfRank
                     });
@@ -110,7 +111,7 @@ module.exports = {
                 ["_id", "userId", "profileId"].forEach(k => { delete req.body[k]; });
 
                 try {
-                    const updatedProfile = await dancercard.update({ userId }, req.body);
+                    const updatedProfile = await dancercard.update({ userId, cfc }, req.body);
                     global.logger.info(`Updated Dancercard of '${name}' from '${country}' / UserId: ${userId}`);
                     
                     if (utils.isDev())

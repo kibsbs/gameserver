@@ -7,6 +7,7 @@ class Leaderboard {
         this.schema = Joi.object().keys({
             profileId: Joi.string().required(),
             userId: Joi.string().required(),
+            cfc: Joi.string().required(),
             userCountry: Joi.number().required(),
             coachId: Joi.number().min(0).max(3).required(),
             gameMode: Joi.number().required(),
@@ -75,17 +76,19 @@ class Leaderboard {
         let match = {
             songId: { $eq: songId },
             "game.version": { $eq: version },
-            // createdAt: {
-            //     $gt: new Date(Date.now() - global.gs.LEADERBOARD_RESET_INTERVAL) // only get 1 week old scores
-            // }
+            createdAt: {
+                $gt: new Date(Date.now() - global.gs.LEADERBOARD_RESET_INTERVAL) // only get 1 week old scores
+            }
         };
         if (country) match.userCountry = { $eq: country };
 
         // Get data from db and sort by score
         const result = await this.db.aggregate([
             { $match: match },
-            { $group: { _id: "$profileId", score: { $max: "$score" }, root: { $first: "$$ROOT" } } },
-            { $sort: { score: -1 } },
+            { $setWindowFields: { "partitionBy": "$profileId", "sortBy": { "totalScore": -1 }, "output": { "rank": { $rank: {} } } } },
+            { $match: { rank: 1 } },
+            { $unset: "rank" },
+            { $sort: { totalScore: -1 } },
             { $limit: limit || this.maxResult }
         ]);
         
@@ -98,8 +101,9 @@ class Leaderboard {
         let entries = [];
         for (let i = 0; i < board.length; i++) {
 
-            const entry = board[i].root;
+            const entry = board[i];
             const profile = await dancercard.get({ profileId: entry.profileId });
+            if (!profile) continue;
 
             entries.push({
                 avatar: profile.avatar,

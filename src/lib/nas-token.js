@@ -4,10 +4,11 @@ const crypto = require("crypto");
 const payloadSchema = Joi
     .object()
     .keys({
-        exp: Joi.number().required(), // Token expiration
+        sid: Joi.string().required(), // NAS Session ID
         uid: Joi.string().required(), // User ID
         gid: Joi.string().required(), // Game ID
-        sid: Joi.string().required(), // NAS Session ID
+        cfc: Joi.string().required(), // Wii CFC
+        exp: Joi.number().required(), // Token expiration
         // env: Joi.string().required(), // Enviroment
         // loc: Joi.string().required(), // Language
         // rgn: Joi.string().required() // Region

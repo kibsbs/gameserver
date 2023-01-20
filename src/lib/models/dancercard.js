@@ -10,6 +10,10 @@ const Schema = new mongoose.Schema(
     },
     userId: {
       type: String,
+      required: true
+    },
+    cfc: {
+      type: String,
       unique: true,
       required: true
     },

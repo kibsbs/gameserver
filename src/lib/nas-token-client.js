@@ -12,7 +12,7 @@ module.exports.permit = async (req, res, next) => {
     
     try {
         let payload = nasToken.decrypt(token);
-        let { gid, sid, uid } = payload;
+        let { gid, sid, uid, cfc } = payload;
 
         // Check if client's game is available to play
         if (!games.isGameAvailable(gid))
@@ -47,6 +47,7 @@ module.exports.permit = async (req, res, next) => {
         req.uid = uid;
         req.sid = sid;
         req.gid = gid;
+        req.cfc = cfc;
         req.isDev = utils.isDev() ? true : false;
         req.isTest = utils.isDev() ? true : false;
         return next();

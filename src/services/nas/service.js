@@ -15,11 +15,13 @@ global.logger = logger;
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
-app.use(morganMiddleware);
 
 app.set("trust proxy", "loopback");
 app.disable("x-powered-by");
 app.disable("etag");
+
+app.use(morganMiddleware);
+
 
 // Prepare all required services for the WebServer
 app.post("/ac", b64body, require("./services/ac"));
