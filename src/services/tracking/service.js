@@ -10,7 +10,7 @@ const app = express();
 const morganMiddleware = require("morgan-middleware");
 const validate = require("http-validate");
 const mids = require("http-middleware");
-const logger = require("logger");
+const logger = require("logger")("tracking");
 const uenc = require("uenc");
 
 global.logger = logger;

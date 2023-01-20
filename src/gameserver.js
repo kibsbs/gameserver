@@ -13,7 +13,7 @@ const path = require("path");
 const http = require("http");
 const async = require("async");
 const dotenv = require("dotenv");
-const logger = require("logger");
+const logger = require("logger")("gameserver");
 const migrateDb = require("./migrate-db");
 const securityWall = require("security-wall");
 

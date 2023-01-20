@@ -7,7 +7,7 @@ const app = express();
 
 const morganMiddleware = require("morgan-middleware");
 const mids = require("http-middleware");
-const logger = require("logger");
+const logger = require("logger")("nas");
 
 const b64body = require("./lib/middlewares/b64-body");
 

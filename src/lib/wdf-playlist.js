@@ -68,16 +68,12 @@ class Playlist {
         // If server has slept, this will reset cur and next
         // so that they can be created again
         if (
-            (playlist.cur && now > playlist.cur.timing.request_playlist_time)
-        ) {
-            global.logger.info(`Server was slept, reseting current...`)
-            playlist.cur = null;
-        }
-
-        if (
+            (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
             (playlist.next && now > playlist.next.timing.base_time)
         ) {
-            global.logger.info(`Server was slept, reseting next...`)
+            global.logger.info(`Server was slept, reseting playlist...`)
+            playlist.prev = null;
+            playlist.cur = null;
             playlist.next = null;
         }
         
