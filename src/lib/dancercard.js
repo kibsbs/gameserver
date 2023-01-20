@@ -9,7 +9,7 @@ class DancerCard {
         this.schema = Joi.object({
             profileId: Joi.string().guid().required(),
             userId: Joi.string().required(),
-            cfc: Joi.string().required(),
+            mac: Joi.string().required(),
             avatar: Joi.number().min(0).max(9999).required(),
             country: Joi.number().min(0).max(9999).default(9627).required(),
             name: Joi.string().regex(global.gs.NAME_REGEX).custom(utils.profane, 'profanity check').required(),

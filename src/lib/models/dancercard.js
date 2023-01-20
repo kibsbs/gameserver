@@ -12,7 +12,7 @@ const Schema = new mongoose.Schema(
       type: String,
       required: true
     },
-    cfc: {
+    mac: {
       type: String,
       unique: true,
       required: true

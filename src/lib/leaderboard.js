@@ -7,7 +7,7 @@ class Leaderboard {
         this.schema = Joi.object().keys({
             profileId: Joi.string().required(),
             userId: Joi.string().required(),
-            cfc: Joi.string().required(),
+            mac: Joi.string().required(),
             userCountry: Joi.number().required(),
             coachId: Joi.number().min(0).max(3).required(),
             gameMode: Joi.number().required(),

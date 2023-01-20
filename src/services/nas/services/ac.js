@@ -29,7 +29,7 @@ module.exports = function (req, res, next) {
 
         case "svcloc":
 
-          const { userid, lang, region, gamecd, cfc } = req.body;
+          const { userid, lang, region, gamecd, macadr } = req.body;
 
           const isGameAvailable = games.isGameAvailable(gamecd);
           if (!isGameAvailable) {
@@ -46,7 +46,7 @@ module.exports = function (req, res, next) {
             sid: sessionId.toString(),
             uid: userid,
             gid: gamecd,
-            cfc: cfc,
+            mac: macadr,
             // loc: lang.toString(),
             // rgn: region.toString(),
             exp: Date.now() + (global.gs.TOKEN_EXPIRATION * 1000)

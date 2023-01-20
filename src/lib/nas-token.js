@@ -7,7 +7,7 @@ const payloadSchema = Joi
         sid: Joi.string().required(), // NAS Session ID
         uid: Joi.string().required(), // User ID
         gid: Joi.string().required(), // Game ID
-        cfc: Joi.string().required(), // Wii CFC
+        mac: Joi.string().required(), // Wii MAC address
         exp: Joi.number().required(), // Token expiration
         // env: Joi.string().required(), // Enviroment
         // loc: Joi.string().required(), // Language

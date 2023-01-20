@@ -68,7 +68,7 @@ module.exports = {
             const newScore = await leaderboard.newScore({
                 profileId: req.pid,
                 userId: req.uid,
-                cfc: req.cfc,
+                mac: req.mac,
                 userCountry: req.profile.country,
                 coachId,
                 gameMode,
