@@ -27,7 +27,7 @@ class Session {
             }).required(),
             profile: Joi.object({
                 avatar: Joi.number().required(),
-                name: Joi.string().required(),
+                name: Joi.string().regex(global.gs.NAME_REGEX).required(),
                 rank: Joi.number().required(),
                 country: Joi.number().required(),
             }).unknown(true).required(),
