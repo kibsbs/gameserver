@@ -1,16 +1,16 @@
 const morgan = require("morgan");
-const logger = require("logger");
 const utils = require("utils");
 
-const stream = {
-  write: (message) => logger.http(message.trim()),
+module.exports = (logger = global.logger) => {
+  
+  const stream = {
+    write: (message) => logger.http(message.trim()),
+  };
+
+  return morgan(
+    ":remote-addr :method :url :status :res[content-length] - :response-time ms",
+    { 
+      stream
+    }
+  );
 };
-
-const morganMiddleware = morgan(
-  ":remote-addr :method :url :status :res[content-length] - :response-time ms",
-  { 
-    stream
-  }
-);
-
-module.exports = morganMiddleware;

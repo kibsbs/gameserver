@@ -11,24 +11,33 @@ module.exports = {
 
     async init(req, res, next) {
 
-        const { sid, song_id, vote: votes } = req.body;
+        try {
+            const { sid, song_id, vote: votes } = req.body;
 
-        const playlist = new Playlist(req.game.version);
-        const vote = new Vote(req.game.version);
+            const playlist = new Playlist(req.game.version);
+            const vote = new Vote(req.game.version);
 
-        const currentTheme = await playlist.getCurrentTheme();
-        const isVote = playlist.isThemeVote(currentTheme);
-        if (!isVote)
-            return next({
-                status: 400,
-                message: `Current theme is not voting, can't send vote.`
+            const currentTheme = await playlist.getCurrentTheme();
+            const isVote = playlist.isThemeVote(currentTheme);
+            if (!isVote)
+                return next({
+                    status: 400,
+                    message: `Current theme is not voting, can't send vote.`
+                });
+
+            await vote.registerVote(req.sid, song_id);
+
+            return res.uenc({
+                votes,
+                song_id
             });
-
-        await vote.registerVote(req.sid, song_id);
-
-        return res.uenc({
-            votes,
-            song_id
-        });
+        }
+        catch (err) {
+            return next({
+                status: 500,
+                message: `Can't send vote: ${err}`,
+                error: err.message
+            });
+        }
     }
 }

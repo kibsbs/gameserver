@@ -8,6 +8,15 @@ module.exports = {
 
     async init(req, res, next) {
         // TODO
-        return res.uenc()
+        try {
+            return res.uenc()
+        }
+        catch (err) {
+            return next({
+                status: 500,
+                message: `Can't fetch bloombergs: ${err}`,
+                error: err.message
+            });
+        }
     }
 }

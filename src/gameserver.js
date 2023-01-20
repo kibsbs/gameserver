@@ -17,6 +17,8 @@ const logger = require("logger")("gameserver");
 const migrateDb = require("./migrate-db");
 const securityWall = require("security-wall");
 
+global.logger = logger;
+
 let config;
 let service;
 let serviceConfig;

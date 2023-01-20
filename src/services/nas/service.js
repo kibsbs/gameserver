@@ -20,7 +20,7 @@ app.set("trust proxy", "loopback");
 app.disable("x-powered-by");
 app.disable("etag");
 
-app.use(morganMiddleware);
+app.use(morganMiddleware());
 
 
 // Prepare all required services for the WebServer

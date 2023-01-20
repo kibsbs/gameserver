@@ -1,6 +1,8 @@
 const Joi = require("joi");
 const uuid = require("uuid");
 
+const utils = require("utils");
+
 const games = require("games");
 const cheatDetection = require("cheat-detection");
 const cache = require("cache");
@@ -27,11 +29,18 @@ class Session {
             }).required(),
             profile: Joi.object({
                 avatar: Joi.number().required(),
-                name: Joi.string().regex(global.gs.NAME_REGEX).required(),
+                name: Joi.string().regex(global.gs.NAME_REGEX).custom(utils.profane, 'profanity check').required(),
                 rank: Joi.number().required(),
                 country: Joi.number().required(),
             }).unknown(true).required(),
             isBot: Joi.boolean().default(false).optional(),
+        }).unknown(true);
+
+        this.cacheSchema = Joi.object({
+            avatar: Joi.number().required(),
+            name: Joi.string().regex(global.gs.NAME_REGEX).custom(utils.profane, 'profanity check').required(),
+            rank: Joi.number().required(),
+            country: Joi.number().required()
         }).unknown(true);
 
         this.maxLobbyPlayers = global.gs.MAX_LOBBY_PLAYERS;
@@ -175,27 +184,44 @@ class Session {
     }
 
     async createSessionCache(sessionId, data) {
-        return await cache.set(this.cacheKey + ":" + sessionId, data, global.gs.TOKEN_EXPIRATION);
+        try {
+            // Validate session object
+            const value = await this.cacheSchema.validateAsync(data);
+            return await cache.set(`${this.cacheKey}:${sessionId}`, value, global.gs.TOKEN_EXPIRATION);
+        }
+        catch(err) {
+            throw new Error(`Can't create session cache for ${sessionId}: ${err}`);
+        }
     }
 
     async getSessionCache(sessionId, ip) {
-        const data = await cache.get(this.cacheKey + ":" + sessionId);
-
-        // If version is 2015, IP is provided but sid's cache data 
-        // does not match provided IP, return null so that funcs don't allow client.
-        if ((this.version == 2015 && ip) && (data && data.ip !== ip)) return;
-        
-        return data;
+        try {
+            const data = await cache.get(`${this.cacheKey}:${sessionId}`);
+    
+            // If version is 2015, IP is provided but sid's cache data 
+            // does not match provided IP, return null so that funcs don't allow client.
+            if ((this.version == 2015 && ip) && (data && data.ip !== ip)) return;
+            
+            return data;
+        }
+        catch(err) {
+            throw new Error(`Can't get session cache for ${sessionId}: ${err}`);
+        }
     }
 
     async deleteSessionCache(sessionId, ip) {
-        const data = await this.getSessionCache(sessionId, ip);
+        try {
+            const data = await this.getSessionCache(sessionId, ip);
+    
+            // If version is 2015, IP is provided but sid's cache data 
+            // does not match provided IP, return null so that funcs don't allow client.
+            if ((this.version == 2015 && ip) && (data && data.ip !== ip)) return;
 
-        // If version is 2015, IP is provided but sid's cache data 
-        // does not match provided IP, return null so that funcs don't allow client.
-        if ((this.version == 2015 && ip) && (data && data.ip !== ip)) return;
-
-        return await cache.set(this.cacheKey + ":" + sessionId, null);
+            return await cache.set(`${this.cacheKey}:${sessionId}`, null);
+        }
+        catch(err) {
+            throw new Error(`Can't delete session cache for ${sessionId}: ${err}`);
+        }
     }
     
     /**
