@@ -196,7 +196,7 @@ class Score {
             return result[0] ? result[0].result : 0
         }
         catch(err) {
-            throw new Error(`Can't get coach results for ${this.version} index: ${themeIndex}: ${err}`)
+            throw new Error(`Can't get coach results for ${this.version} index: ${coachIndex}: ${err}`)
         }
     }
 
@@ -261,6 +261,23 @@ class Score {
         
         return await this.db.count({ ...query, "game.version": this.version });
     }
+
+    async getStarCount() {
+        try {
+            const result = await this.db.aggregate([
+                { $match: { "game.version": this.version } },
+                { $group: { _id: null, stars: { $sum: "$stars"} } }
+            ]);
+            if (result && result[0] && result[0].stars)
+                return result[0].stars;
+            else return 0;
+        }
+        catch(err) {
+            throw new Error(`Can't get star count for ${this.version}: ${err}`)
+        }
+    }
+
 };
+
 
 module.exports = Score;

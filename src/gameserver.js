@@ -15,7 +15,6 @@ const async = require("async");
 const dotenv = require("dotenv");
 const logger = require("logger")("gameserver");
 const migrateDb = require("./migrate-db");
-const securityWall = require("security-wall");
 
 global.logger = logger;
 
@@ -130,7 +129,6 @@ async.waterfall(
         },
         (app, cb) => {
             // Start the service
-            app.use(securityWall);
             app.listen(global.PORT, "127.0.0.1");
             logger.success(`Service ${service.name} is listening on port ${global.PORT} in '${global.ENV}' enviroment successfully!`);
             return cb();

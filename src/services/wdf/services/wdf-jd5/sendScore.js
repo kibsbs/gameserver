@@ -14,63 +14,77 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
-        
-        const { song_id, score, stars, themeindex, coachindex, lastmove, total_score, sid } = req.body;
 
-        const userCache = await cache.get(`wdf-player-cache:${sid}`);
+        try {
+            const { song_id, score, stars, themeindex, coachindex, lastmove, total_score, sid } = req.body;
 
-        if (!userCache)
-            return next({
-                status: 401,
-                message: "User does not have a session!"
-            });
+            const userCache = await cache.get(`wdf-player-cache:${sid}`);
 
-        const session = new Session(userCache.game.version);
-        const scores = new Scores(userCache.game.version);
-        
-        let userSession = await session.getSession(sid);
+            if (!userCache)
+                return next({
+                    status: 401,
+                    message: "User does not have a session!"
+                });
 
-        if (!userSession) {
-            userSession = await session.newSession({
+            const session = new Session(userCache.game.version);
+            const scores = new Scores(userCache.game.version);
+
+            let userSession = await session.getSession(sid);
+
+            if (!userSession) {
+                userSession = await session.newSession({
+                    userId: userCache.userId,
+                    sessionId: userCache.sessionId,
+                    game: userCache.game,
+                    profile: {
+                        avatar: userCache.avatar,
+                        name: userCache.name,
+                        country: userCache.country,
+                        rank: userCache.rank
+                    }
+                });
+                global.logger.info(`${userCache.userId} // ${userCache.game.version} - ${userCache.game.id} // ${userSession.profile.name} created session and joined WDF!`);
+            }
+
+            const count = await session.sessionCount();
+            const total = await scores.scoreCount();
+
+            // Save client score to database
+            const userScore = await scores.updateScore(sid, {
                 userId: userCache.userId,
-                sessionId: userCache.sessionId,
+                sessionId: userCache.sid,
                 game: userCache.game,
-                profile: userCache.profile
+                profile: userSession.profile,
+                coachIndex: coachindex,
+                lastMove: lastmove,
+                score: score,
+                stars: stars,
+                themeIndex: themeindex,
+                totalScore: total_score
             });
-            global.logger.info(`${userCache.userId} // ${userCache.game.version} - ${userCache.game.id} // ${userSession.profile.name} created session and joined WDF!`);
+            const userRank = await scores.getRank(sid);
+
+            const { themeResults } = await scores.getThemeAndCoachResult();
+
+            await session.pingSession(sid);
+            return res.uenc({
+                num: 0,
+                count,
+                total,
+                score,
+                rank: userRank,
+
+                ...themeResults,
+
+                t: utils.serverTime()
+            });
         }
-        
-        const count = await session.sessionCount();
-        const total = await scores.scoreCount();
-
-        // Save client score to database
-        const userScore = await scores.updateScore(sid, {
-            userId: userCache.userId,
-            sessionId: userCache.sid,
-            game: userCache.game,
-            profile: userCache.profile,
-            coachIndex: coachindex,
-            lastMove: lastmove,
-            score: score,
-            stars: stars,
-            themeIndex: themeindex,
-            totalScore: total_score
-        });
-        const userRank = await scores.getRank(sid);
-
-        const { themeResults } = await scores.getThemeAndCoachResult();
-        
-        await session.pingSession(sid);
-        return res.uenc({
-            num: 0,
-            count,
-            total,
-            score,
-            rank: userRank,
-            
-            ...themeResults,
-
-            t: utils.serverTime()
-        });
+        catch (err) {
+            return next({
+                status: 500,
+                message: `Can't send score: ${err}`,
+                error: err.message
+            });
+        }
     }
 }

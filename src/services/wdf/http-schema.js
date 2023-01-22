@@ -45,7 +45,7 @@ module.exports.wdf = {
             song_id: songId, 
             score: Joi.number().required(), 
             stars: Joi.number().min(0).max(5).required(), 
-            themeindex: Joi.number().min(0).max(2).required(),
+            themeindex: Joi.number().min(0).max(3).required(),
             coachindex: Joi.number().min(0).max(3).required(),
             lastmove: Joi.boolean().truthy('1').falsy('0').optional(), 
             total_score: Joi.number().min(0).max(global.gs.MAX_SCORE).required(), 

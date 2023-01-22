@@ -10,8 +10,10 @@ const ipRangeCheck = require("ip-range-check");
 
 module.exports = (req, res, next) => {
 
+    const blockedIps = require("../config/ip-blocklist.json");
+    
     const ip = req.ip;
-    const blocklist = global.gs.BLOCKLIST.map(a => a.ips).flat(2);
+    const blocklist = blockedIps.map(a => a.ips).flat(2);
     const blockedCountries = global.gs.BLOCKED_COUNTRIES;
 
     async.waterfall([

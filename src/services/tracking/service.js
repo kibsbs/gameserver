@@ -12,6 +12,7 @@ const validate = require("http-validate");
 const mids = require("http-middleware");
 const logger = require("logger")("tracking");
 const uenc = require("uenc");
+const securityWall = require("security-wall");
 
 global.logger = logger;
 
@@ -20,6 +21,7 @@ app.use(express.static(__dirname + "/static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(securityWall);
 app.use(uenc.client);
 
 app.set("trust proxy", "loopback");

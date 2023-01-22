@@ -461,7 +461,7 @@ const list = [
     [locs.JDU, locs.JDP],
     [locs.Chaos, locs.Order],
     [locs.Cardi, locs.Nicki],
-    [locs.Rama, locs.Devd]
+    // [locs.Rama, locs.Devd]
 ];
 
 module.exports = {

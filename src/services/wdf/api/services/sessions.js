@@ -117,7 +117,7 @@ router.post("/create-bots", validate("createBots"), async (req, res, next) => {
                 },
                 profile: {
                     avatar: randomAvatar,
-                    name: randomName,
+                    name: randomName.slice(0, 8),
                     country: randomCountry,
                     rank: randomRank
                 },

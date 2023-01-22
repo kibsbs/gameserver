@@ -7,17 +7,26 @@ module.exports = {
     version: `1.0.1`,
     async init(req, res, next) {
 
-        const session = new Session(req.version);
+        try {
+            const session = new Session(req.version);
 
-        const canConnect = await session.canUserConnect(req.uid);
-        if (!canConnect) {
-            global.logger.info(`${req.uid} with ${req.game.id} received 401 from checkToken!`)
+            const canConnect = await session.canUserConnect(req.uid);
+            if (!canConnect) {
+                global.logger.info(`${req.uid} with ${req.game.id} received 401 from checkToken!`)
+                return next({
+                    status: 401,
+                    message: `User is not allowed to create connection to WDF!`
+                });
+            }
+
+            return res.uenc();
+        }
+        catch (err) {
             return next({
-                status: 401,
-                message: `User is not allowed to create connection to WDF!`
+                status: 500,
+                message: `Can't verify token: ${err}`,
+                error: err.message
             });
         }
-
-        return res.uenc();
     }
 }

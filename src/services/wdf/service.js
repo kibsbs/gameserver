@@ -13,6 +13,7 @@ const mids = require("http-middleware");
 const logger = require("logger")("wdf");
 const uenc = require("uenc");
 const scheduler = require("scheduler");
+const securityWall = require("security-wall");
 
 global.logger = logger;
 global.httpSchema = require("./http-schema");
@@ -22,6 +23,7 @@ app.use(express.static(__dirname + "/static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(securityWall);
 app.use(morganMiddleware());
 app.use(uenc.client);
 app.use(validate);
@@ -37,7 +39,7 @@ app.use((req, res, next) => {
 
 app.use("/api", require("./api/service"));
 
-// app.post("/wdf", require("./load-funcs")("wdf-jd5"));
+app.post("/wdf", require("./load-funcs")("wdf-jd5"));
 
 app.post("/wdf15", mids.agentCheck, require("./load-funcs")("wdf-jd15"));
 

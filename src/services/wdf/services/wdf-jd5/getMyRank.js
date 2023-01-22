@@ -19,66 +19,86 @@ module.exports = {
 
     async init(req, res, next) {
 
-        const { onlinescore, sid, song_id } = req.body;
+        try {
+            const { onlinescore, sid, song_id } = req.body;
 
-        const userCache = await cache.get(`wdf-player-cache:${sid}`);
+            const userCache = await cache.get(`wdf-player-cache:${sid}`);
 
-        if (!userCache)
-            return next({
-                status: 401,
-                message: "User does not have a session!"
+            if (!userCache)
+                return next({
+                    status: 401,
+                    message: "User does not have a session!"
+                });
+
+            const session = new Session(userCache.game.version);
+            const scores = new Scores(userCache.game.version);
+
+            // User's leveled up their WDF level, update it
+            // TODO: maybe have 1 function to updateRank OR
+            // remove profile from score and make session have it only
+            await session.updateRank(sid, onlinescore);
+            await scores.updateRank(sid, onlinescore);
+
+            const count = await session.sessionCount();
+            const total = await scores.scoreCount();
+
+            const userRank = await scores.getRank(sid);
+            const userScore = await scores.getScore(sid);
+
+            // Get theme results (coach/theme) and amount of winning side's player count
+            const { themeResults } = await scores.getThemeAndCoachResult();
+            const winners = await scores.getNumberOfWinners(themeResults);
+
+            // Get top 30 scores
+            const topTen = await scores.getRanks(30);
+            const mappedScores = topTen.map(s => {
+                return {
+                    score: s.totalScore,
+                    name: s.profile.name,
+                    pays: s.profile.country,
+                    avatar: s.profile.avatar,
+                    rank: s.profile.rank,
+                    sid: s.sessionId
+                };
             });
 
-        const session = new Session(userCache.game.version);
-        const scores = new Scores(userCache.game.version);
+            return res.uenc({
+                onlinescore,
 
-        // User's leveled up their WDF level, update it
-        // TODO: maybe have 1 function to updateRank OR
-        // remove profile from score and make session have it only
-        await session.updateRank(sid, onlinescore);
-        await scores.updateRank(sid, onlinescore);
+                ...uenc.setIndex(mappedScores),
 
-        const count = await session.sessionCount();
-        const total = await scores.scoreCount();
+                count,
+                total,
 
-        const userRank = await scores.getRank(sid);
-        const userScore = await scores.getScore(sid);
+                myrank: userRank || count,
+                myscore: userScore?.totalScore || 0,
+                song_id: song_id,
 
-        // Get theme results (coach/theme) and amount of winning side's player count
-        const { themeResults } = await scores.getThemeAndCoachResult();
-        const winners = await scores.getNumberOfWinners(themeResults);
+                ...themeResults,
 
-        // Get top 30 scores
-        const topTen = await scores.getRanks(30);
-        const mappedScores = topTen.map(s => {
-            return {
-                score: s.totalScore,
-                name: s.profile.name,
-                pays: s.profile.country,
-                avatar: s.profile.avatar,
-                rank: s.profile.rank,
-                sid: s.sessionId
-            };
-        });
+                nb_winners: winners,
+                numscores: mappedScores.length,
 
-        return res.uenc({
-            onlinescore,
+                // Locked songs
+                last_song_unlocked: global.config.LOCKED.lastSong,
+                next_unlocked_song_id: global.config.LOCKED.lastSong,
+                star_count_for_unlock: global.config.LOCKED.starCountToUnlock,
 
-            ...uenc.setIndex(mappedScores),
+                current_star_count: await scores.getStarCount(),
 
-            count,
-            total,
-            
-            myrank: userRank || count,
-            myscore: userScore?.totalScore || 0,
-            song_id: song_id,
+                happyhour: utils.serverTime(Date.now() + 86400000),
+                happyhour_duration: 3600000,
 
-            ...themeResults,
+                t: utils.serverTime()
+            });
+        }
+        catch (err) {
+            return next({
+                status: 500,
+                message: `Can't get ranking: ${err}`,
+                error: err.message
+            });
 
-            nb_winners: winners,
-            numscores: mappedScores.length,
-            
-            t: utils.serverTime()
-        });
+        }
     }
 }

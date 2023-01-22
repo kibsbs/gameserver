@@ -18,36 +18,44 @@ module.exports = {
 
     async init(req, res, next) {
 
-        const { avatar, name, onlinescore, pays } = req.body;
+        try {
+            const { avatar, name, onlinescore, pays } = req.body;
 
-        const session = new Session(req.version);
-        const sessionId = req.sid;
-        const playersInCountry = await session.getCountryPlayers(pays);
+            const session = new Session(req.version);
+            const sessionId = req.sid;
+            const playersInCountry = await session.getCountryPlayers(pays);
 
-        const cacheData = { 
-            profile: {
-                avatar, 
-                name, 
-                rank: onlinescore, 
+            const cacheData = {
+                avatar,
+                name,
+                rank: onlinescore,
                 country: pays,
-            },
-            userId: req.uid,
-            sessionId: req.sid,
-            game: {
-                id: req.game.id,
-                version: req.game.version
-            }
-        };
+                userId: req.uid,
+                sessionId: req.sid,
+                game: {
+                    id: req.game.id,
+                    version: req.game.version
+                }
+            };
 
-        // Create session cache for client
-        await session.createSessionCache(sessionId, cacheData);
-        
-        global.logger.info(`${req.uid} // ${name} connected WDF of ${req.game.version} - ${req.game.id}`);
+            // Create session cache for client
+            await session.createSessionCache(sessionId, cacheData);
 
-        return res.uenc({
-            sid: req.sid,
-            players_in_country: playersInCountry,
-            t: utils.serverTime()
-        });
+            global.logger.info(`${req.uid} // ${name} connected WDF of ${req.game.version} - ${req.game.id}`);
+
+            return res.uenc({
+                sid: req.sid,
+                players_in_country: playersInCountry,
+                t: utils.serverTime()
+            });
+        }
+        catch (err) {
+            return next({
+                status: 500,
+                message: `Can't connect to WDF: ${err}`,
+                error: err.message
+            });
+
+        }
     }
 }

@@ -120,6 +120,7 @@ class Playlist {
         //  1 - 2 - 3 (prev and cur) (if there are more than 2 themes available)
         //  3 - 3 - 3 (empty array)
         let ignoredTheme = [prev?.theme.id];
+        if (this.version == 2014) ignoredTheme = [cur?.theme.id];
 
         // Skips all prev cur next maps to avoid any 9 minutes of repetation
         let ignoredSongs = [prev?.map.mapName, cur?.map.mapName, next?.map.mapName];
@@ -184,8 +185,8 @@ class Playlist {
         screen.timingProgramming = times.timingProgramming;
         
         // Schedule the next rotation
-        let rotationTime = screen.timing.request_playlist_time;
-        let resetScoreTime = screen.timing.request_playlist_time - 5000;
+        let rotationTime = screen.timing.request_playlist_time - 5000;
+        let resetScoreTime = screen.timing.request_playlist_time - 6000;
 
         // Rotate playlist and clear votes
         scheduler.newJob("Rotate playlist", rotationTime, async () => {

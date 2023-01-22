@@ -12,6 +12,7 @@ const validate = require("http-validate");
 const mids = require("http-middleware");
 const logger = require("logger")("jmcs");
 const uenc = require("uenc");
+const securityWall = require("security-wall");
 
 global.logger = logger;
 global.httpSchema = require("./http-schema");
@@ -21,6 +22,7 @@ app.use(express.static(__dirname + "/static"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(securityWall);
 app.use(morganMiddleware());
 app.use(uenc.client);
 app.use(validate);

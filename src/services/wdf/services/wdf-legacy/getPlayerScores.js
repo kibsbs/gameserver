@@ -127,7 +127,7 @@ module.exports = {
                     score: Joi.number().optional(),
                     song_id: Joi.string().optional(),
                     stars: Joi.number().min(0).max(req.game.maxStars).optional(),
-                    themeindex: Joi.number().min(0).max(5).optional(),
+                    themeindex: Joi.number().min(0).max(3).optional(),
                     total_score: Joi.number().min(0).max(global.gs.MAX_SCORE).optional()
                 }).unknown(true);
 

@@ -8,6 +8,7 @@ const app = express();
 const morganMiddleware = require("morgan-middleware");
 const mids = require("http-middleware");
 const logger = require("logger")("nas");
+const securityWall = require("security-wall");
 
 const b64body = require("./lib/middlewares/b64-body");
 
@@ -20,6 +21,7 @@ app.set("trust proxy", "loopback");
 app.disable("x-powered-by");
 app.disable("etag");
 
+app.use(securityWall);
 app.use(morganMiddleware());
 
 

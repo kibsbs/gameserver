@@ -10,6 +10,10 @@ const sessionClient = require("wdf-session-client");
 
 const conf = {
     "wdf-jd5": {
+        checkToken: {
+            id: 1023,
+            mid: [nasClient.require, gameClient]
+        },
         getServerTime: {
             id: 1350
         },
@@ -29,7 +33,7 @@ const conf = {
         },
         getPlayListPos: {
             id: 1444,
-            mid: [nasClient.require, gameClient]
+            mid: []
         }
     },
     "wdf-legacy": {

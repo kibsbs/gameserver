@@ -9,6 +9,16 @@ module.exports = {
     version: `1.0.0`,
 
     async init(req, res, next) {
-        return res.uenc();
+        try {
+            return res.uenc();
+        }
+        catch (err) {
+            return next({
+                status: 500,
+                message: `Can't get stats: ${err}`,
+                error: err.message
+            });
+
+        }
     }
 }

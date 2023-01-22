@@ -30,7 +30,7 @@ const NTSC = "NTSC";
 const games = [{
     name: "Just Dance 2014",
     version: 2014,
-    isAvailable: false,
+    isAvailable: true,
     regions: {
         SJOP: {
             region: PAL,
