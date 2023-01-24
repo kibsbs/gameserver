@@ -112,9 +112,9 @@ class Bots {
             // Generate a random score, add it to totalScore and calculate stars
             const scoreRange = {
                 "bad": [0, 0],
-                "ok": [1, 90],
-                "good": [90, 120],
-                "perfect": [120, 200]
+                "ok": [1, 120],
+                "good": [120, 150],
+                "perfect": [150, 230]
             };
             let feedback = "";
 
