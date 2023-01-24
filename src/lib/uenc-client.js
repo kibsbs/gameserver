@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
     const uenc = require("uenc");
 
     // If isJson is true request will be sent in JSON (for testing purposes)
-    const isJson = ((utils.isDev() || req.headers.hasOwnProperty("x-show-resp")) && req.query.hasOwnProperty("json"));
+    const isJson = ((utils.isDev() || req.headers.hasOwnProperty(global.gs.HEADER_DEBUG)) && req.query.hasOwnProperty("json"));
     
     res.uenc = (data = {}, setIndex = false, offset = 0) => {
         if (global.service.id == "jmcs")

@@ -4,11 +4,12 @@ class Cache {
     }
 
     async set(key, value, expires) {
-        if (Array.isArray(value) || typeof value == "object")
-            value = JSON.stringify(value);
-        
         try {
-            await this.m.set(key, value, { expires });
+            let data = value;
+            if (Array.isArray(data) || typeof data == "object")
+                data = JSON.stringify(data);
+            await this.m.set(key, data, { expires });
+            return value;
         }
         catch(err) {
             throw new Error(`Can't save ${key} to cache: ${err}`);

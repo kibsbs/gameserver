@@ -47,9 +47,25 @@ class Playlist {
     }
 
     async getCurrentTheme() {
-        const cur = await cache.get(this.keys.cur);
+        const { cur } = await this.getScreens();
         if (!cur) return null;
         return cur.theme.id;
+    }
+
+    async getStatus() {
+        const now = time.milliseconds();
+        const { prev, cur, next } = await this.getScreens();
+        const currentTheme = cur.theme.id;
+
+        const isCommunity = this.isThemeCommunity(currentTheme);
+        const isVote = this.isThemeVote(currentTheme);
+        const isCoach = this.isThemeCoach(currentTheme);
+
+        const isSong = now > cur.timing.start_song_time && now < cur.timing.stop_song_time;
+        const isRecap = now > cur.timing.recap_start_time && now < cur.timing.request_unlock_time;
+        const isPreSong = (now >= cur.timing.base_time && now <= cur.timing.start_song_time) ? true : (!isRecap && !isSong);
+        
+        return { currentTheme, isSong, isRecap, isPreSong, isCommunity, isVote, isCoach, prev, cur, next };
     }
 
     /**
@@ -58,7 +74,7 @@ class Playlist {
      * @returns Playlist data
      */
     async getScreens(update = true) {
-        let now = time.milliseconds();
+        const now = time.milliseconds();
         let playlist = {
             prev: await cache.get(this.keys.prev),
             cur: await cache.get(this.keys.cur),
@@ -68,8 +84,6 @@ class Playlist {
 
         // If server has slept, this will reset cur and next
         // so that they can be created again
-        console.log("AAAAAA", (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000),
-        (playlist.next && now > playlist.next.timing.base_time))
         if (
             (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
             (playlist.next && now > playlist.next.timing.base_time)
@@ -81,14 +95,14 @@ class Playlist {
         }
         
         if (!playlist.cur) {
-            await cache.set(this.keys.cur, await this.createScreen("cur"));
-            playlist.cur = await cache.get(this.keys.cur);
+            const data = await cache.set(this.keys.cur, await this.createScreen("cur"));
+            playlist.cur = data;
             global.logger.info("CREATED CURRENT " + JSON.stringify(playlist.cur))
         };
     
         if (!playlist.next) {
-            await cache.set(this.keys.next, await this.createScreen("next"));
-            playlist.next = await cache.get(this.keys.next);
+            const data = await cache.set(this.keys.next, await this.createScreen("next"));
+            playlist.next = data;
             global.logger.info("CREATED NEXT " + JSON.stringify(playlist.next))
         };
     

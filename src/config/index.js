@@ -13,6 +13,9 @@ module.exports.BLOCKED_COUNTRIES = [
 ];
 
 module.exports.GAMES = require("./games");
+module.exports.AVATARS = require("./avatars");
+module.exports.COUNTRIES = require("./countries");
+
 module.exports.SECRETS = require("./secrets");
 module.exports.DATABASE = require("./database"); // Database loaded here but service and env are configured in service config
 module.exports.SERVICES = {
@@ -64,9 +67,16 @@ module.exports.EXPIRED_SESSION_INTERVAL_JD5 = (45 * 1000) // 45 seconds
 module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after creation
 
 // Headers
-module.exports.HEADER_FORCE_JSON = "X-Force-Json";
+module.exports.HEADER_FORCE_JSON = "x-force-json";
+module.exports.HEADER_DEBUG = "x-dp-debug";
 module.exports.TOKEN_KEY = "token";
 module.exports.VALID_USER_AGENT = "WiiDance";
+
+// Bots
+module.exports.MIN_BOT_NAME = 4;
+module.exports.MAX_BOT_NAME = 8;
+
+
 
 // --------------------
 

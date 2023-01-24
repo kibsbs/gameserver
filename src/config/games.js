@@ -30,6 +30,8 @@ const NTSC = "NTSC";
 const games = [{
     name: "Just Dance 2014",
     version: 2014,
+    ported: false,
+    mod: false,
     isAvailable: true,
     regions: {
         SJOP: {
@@ -43,11 +45,13 @@ const games = [{
     },
     stats: {},
     maxStars: 5,
-    isJD5: true,
-    wdfName: "wdf"
+    wdfName: "wdf",
+    isJD5: true
 }, {
     name: "Just Dance 2015",
     version: 2015,
+    ported: false,
+    mod: false,
     isAvailable: true,
     regions: {
         SE3P: {
@@ -69,6 +73,8 @@ const games = [{
 }, {
     name: "Just Dance 2016",
     version: 2016,
+    ported: false,
+    mod: false,
     isAvailable: true,
     regions: {
         SJNP: {
@@ -90,6 +96,8 @@ const games = [{
 }, {
     name: "Just Dance 2017",
     version: 2017,
+    ported: false,
+    mod: false,
     isAvailable: true,
     regions: {
         SZ7P: {
@@ -111,6 +119,8 @@ const games = [{
 }, {
     name: "Just Dance 2018",
     version: 2018,
+    ported: false,
+    mod: false,
     isAvailable: true,
     regions: {
         SE8P: {
@@ -134,7 +144,10 @@ const games = [{
 
 const mods = [{
     name: "Just Dance Japan",
+    author: "Yunyl",
     version: 1000,
+    ported: true,
+    mod: true,
     isAvailable: true,
     regions: {
         SJME: {
@@ -142,34 +155,27 @@ const mods = [{
             isAvailable: true
         }
     },
-    stats: {
-        totalStars: 200,
-        songsCount: 0,
-        unlocksCount: 0
-    },
     stats: {},
     maxStars: 5,
-    isJD5: true,
-    wdfName: "wdf"
+    wdfName: "wdf",
+    isJD5: true
 }, {
     name: "Just Dance Beats",
+    author: "SquareJDBR",
     version: 2000,
-    isAvailable: false,
+    ported: false,
+    mod: true,
+    isAvailable: true,
     regions: {
-        SJME: {
-            region: PAL,
+        SQRE: {
+            region: NTSC,
             isAvailable: true
         }
     },
-    stats: {
-        totalStars: 200,
-        songsCount: 0,
-        unlocksCount: 0
-    },
     stats: {},
     maxStars: 5,
+    wdfName: "wdf",
     isJD5: true,
-    wdfName: "wdf"
 }];
 
 module.exports = [

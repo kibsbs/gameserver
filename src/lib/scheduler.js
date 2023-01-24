@@ -16,6 +16,13 @@ class Scheduler {
         return job.start();
     }
 
+    async botScoreJob(sid, fn) {
+        const def = `update bot score ${sid}`;
+        this.agenda.define(def, fn);
+        await this.agenda.start();
+        await this.agenda.every("5 seconds", def);;
+    }
+
     /**
      * Creates a new job and deletes dead session
      * We use this because MongoDB's TTL function only gets called every 60s
@@ -24,8 +31,7 @@ class Scheduler {
     async sessionJob() {
         this.agenda.define("remove inactive sessions", async (job) => {
             // Find any session that has passed 30 seconds of inactivity
-            const sessions = await sessionDb.find({ 
-                isBot: false, 
+            const sessions = await sessionDb.find({
                 updatedAt: { $lt: new Date( Date.now() - (global.gs.EXPIRED_SESSION_INTERVAL) ) },
                 isJD5: false
             });
@@ -41,19 +47,23 @@ class Scheduler {
         });
         this.agenda.define("remove inactive sessions JD5", async (job) => {
             // Find any session that has passed 30 seconds of inactivity
-            const sessions = await sessionDb.find({ 
-                isBot: false, 
+            const sessions = await sessionDb.find({
                 updatedAt: { $lt: new Date( Date.now() - (global.gs.EXPIRED_SESSION_INTERVAL_JD5) ) },
                 isJD5: true
             });
-            if (sessions.length > 0) {
+            const scores = await wdfScoreDb.find({
+                updatedAt: { $lt: new Date( Date.now() - (global.gs.EXPIRED_SESSION_INTERVAL_JD5) ) },
+                isJD5: true
+            });
+            if (sessions.length > 0 || scores.length > 0) {
                 // Delete all inactive sessions and their score entries
-                const sessionIds = sessions.map(s => s.sessionId);
+                const toDelete = [...sessions, ...scores]
+                const sessionIds = toDelete.map(s => s.sessionId);
 
                 await sessionDb.deleteMany({ sessionId: sessionIds });
                 await wdfScoreDb.deleteMany({ sessionId: sessionIds });
 
-                global.logger.info(`Scheduler: Deleted ${sessions.length} inactive sessions and their scores from JD5 games`);
+                global.logger.info(`Scheduler: Deleted ${sessions.length} inactive sessions and ${scores.length} scores from JD5 games`);
             }
         });
         await this.agenda.start();

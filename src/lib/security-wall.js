@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
 
     async.waterfall([
 
-        // Block any IP on our blocklist, for Ubisoft IPs.
+        // Block any IP on our blocklist, mainly for Ubisoft & hijacker IPs.
         (cb) => {
             const isBlocked = ipRangeCheck(ip, blocklist);
 
@@ -36,7 +36,7 @@ module.exports = (req, res, next) => {
             return cb();
         },
 
-        // Block any forbidden country from access
+        // Block any forbidden country from access.
         (cb) => {
             const country = req.headers["cf-ipcountry"]
             if (!country) {
@@ -63,6 +63,5 @@ module.exports = (req, res, next) => {
         () => {
             return next();
         }
-
     ]);
 };

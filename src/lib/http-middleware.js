@@ -7,7 +7,16 @@ const utils = require("utils");
 
 const isSuccessful = (status) => status >= 200 && status <= 300;
 
-// Handles any server error and serves prettifies responses
+/**
+ * Handles all errors that happen in the server and returns error responses.
+ * If server is dev or a special header is given, it will show the error in response.
+ * otherwise, message won't show up in prod envs.
+ * @param {*} err 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 module.exports.errorHandler = (err, req, res, next) => {
     let data = {};
 
@@ -29,13 +38,20 @@ module.exports.errorHandler = (err, req, res, next) => {
     }
 
     // Only show error messages in response if it's true in config and if server is dev
-    if (utils.isDev() || req.headers.hasOwnProperty("x-show-resp"))
+    if (utils.isDev() || req.headers.hasOwnProperty(global.gs.HEADER_DEBUG))
         return res.status(data.status).json(data);
     else
         return res.status(data.status).send();
 };
 
-// Validates client's User Agent
+/**
+ * All games we support use "WiiDance" user-agent so this helps
+ * blocking any request with invalid agent.
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 module.exports.agentCheck = (req, res, next) => {
     const userAgent = req.headers["user-agent"];
     const validAgent = global.gs.VALID_USER_AGENT;
@@ -44,7 +60,7 @@ module.exports.agentCheck = (req, res, next) => {
     
     if (userAgent !== validAgent) {
         global.logger.warn({
-            msg: `${req.ip} tried to access ${req.originalUrl} with invalid agent!`,
+            msg: `${req.ip} tried to access ${req.originalUrl} with invalid agent "${userAgent}"!`,
             headers: req.headers,
             body: req.body
         });
@@ -54,7 +70,13 @@ module.exports.agentCheck = (req, res, next) => {
     return next();
 };
 
-// Used for returning 404 for unknown routes
+/**
+ * 404 helper
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 module.exports.notFound = (req, res, next) => {
     if (utils.isDev()) return next();
     else return res.status(404).send();
