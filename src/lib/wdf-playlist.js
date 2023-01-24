@@ -68,6 +68,8 @@ class Playlist {
 
         // If server has slept, this will reset cur and next
         // so that they can be created again
+        console.log("AAAAAA", (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000),
+        (playlist.next && now > playlist.next.timing.base_time))
         if (
             (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
             (playlist.next && now > playlist.next.timing.base_time)
@@ -161,10 +163,9 @@ class Playlist {
 
         // Make sure that the baseTime is bigger than the current epoch 
         // (can happen if the server sleeps for a while)
-        // if (baseTime < now)
-        //     baseTime = now;
+        if (baseTime < now)
+            baseTime = now;
 
-        
         let screen = {
             theme,
             map

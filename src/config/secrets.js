@@ -21,6 +21,8 @@ module.exports.TRACKING_AUTH = {
     },
     jdjapantrkw: {
         pass: "AA2ieaYP",
-        version: 1000
+        version: 1000,
+        productId: "a09302313bd087b88a54fe1a010eb62ea3edbfad",
+        productPass: "DFe3qab8"
     }
 };

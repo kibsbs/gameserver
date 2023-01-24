@@ -34,7 +34,7 @@ class Session {
                 country: Joi.number().required(),
             }).unknown(true).required(),
             isBot: Joi.boolean().default(false).optional(),
-            isJD5: Joi.boolean().default(this.game.isJD5)
+            isJD5: Joi.boolean().default(this.game.isJD5 || false)
         }).unknown(true);
 
         this.cacheSchema = Joi.object({
@@ -42,7 +42,7 @@ class Session {
             name: Joi.string().regex(global.gs.NAME_REGEX).custom(utils.profane, 'profanity check').required(),
             rank: Joi.number().required(),
             country: Joi.number().required(),
-            isJD5: Joi.boolean().default(this.game.isJD5)
+            isJD5: Joi.boolean().default(this.game.isJD5 || false)
         }).unknown(true);
 
         this.maxLobbyPlayers = global.gs.MAX_LOBBY_PLAYERS;

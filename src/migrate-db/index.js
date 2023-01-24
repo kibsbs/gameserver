@@ -4,10 +4,12 @@ module.exports.migrateSongs = (cb) => {
 
     const songdb = require("./songdb.json");
     const songdb2014 = require("./songdb-2014.json");
+    const songdbJDJ = require("./songdb-jdjapan.json");
 
     model.insertMany([
         ...songdb,
-        ...songdb2014
+        ...songdb2014,
+        ...songdbJDJ
     ], (err, ok) => {
         if (err) {
             let msg = err.message || "";

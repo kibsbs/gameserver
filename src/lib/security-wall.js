@@ -16,6 +16,8 @@ module.exports = (req, res, next) => {
     const blocklist = blockedIps.map(a => a.ips).flat(2);
     const blockedCountries = global.gs.BLOCKED_COUNTRIES;
 
+    if (ip == "127.0.0.1") return next();
+
     async.waterfall([
 
         // Block any IP on our blocklist, for Ubisoft IPs.
@@ -36,25 +38,28 @@ module.exports = (req, res, next) => {
 
         // Block any forbidden country from access
         (cb) => {
-            return cb();
-            global.maxmind.country('176.88.93.39').then(response => {
+            const country = req.headers["cf-ipcountry"]
+            if (!country) {
+                return next({
+                    status: 403,
+                    message: "Country header is missing!"
+                });
+            };
 
-                const iso = response.country.isoCode;
-                if (blockedCountries.includes(iso)) {
-                    global.logger.warn({
-                        msg: `Blocked country ${iso} tried to access ${req.originalUrl}!`,
-                        headers: req.headers,
-                        body: req.body
-                    });
-                    return res.status(403).send();
-                }
-                else return cb();
+            if (blockedCountries.includes(country)) {
+                global.logger.warn({
+                    msg: `Blocked country ${country} from ${ip} tried to access ${req.originalUrl}!`,
+                    headers: req.headers,
+                    body: req.body
+                });
+                return next({
+                    status: 403,
+                    message: `Country "${country}" cannot access this server.`
+                });
+            }
+            else return cb();
 
-            }).catch(err => {
-                throw new Error(err);
-            });
         },
-
         () => {
             return next();
         }

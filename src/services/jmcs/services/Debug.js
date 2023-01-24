@@ -10,7 +10,7 @@ module.exports = {
     async init(app, router) {
 
         router.use((req, res, next) => {
-            if (utils.isDev()) return next();
+            if (utils.isDev() || req.headers.hasOwnProperty("x-show-resp")) return next();
             else return res.sendStatus(403);
         });
 

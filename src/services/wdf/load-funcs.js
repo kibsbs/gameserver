@@ -12,28 +12,31 @@ const conf = {
     "wdf-jd5": {
         checkToken: {
             id: 1023,
-            mid: [nasClient.require, gameClient]
+            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
         },
         getServerTime: {
-            id: 1350
+            id: 1350,
+            mid: [sessionClient.sessionJd5Auth]
         },
         sendScore: {
-            id: 934
+            id: 934,
+            mid: [sessionClient.sessionJd5Auth]
         },
         getMyRank: {
-            id: 914
+            id: 914,
+            mid: [sessionClient.sessionJd5Auth]
         },
         connectToWDF: {
             id: 1166,
-            mid: [nasClient.require, gameClient]
+            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
         },
         disconnectFromWDF: {
             id: 1695,
-            mid: [nasClient.require, gameClient]
+            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
         },
         getPlayListPos: {
             id: 1444,
-            mid: []
+            mid: [sessionClient.sessionJd5Auth]
         },
         getCommunityStats: {
             id: 1812,

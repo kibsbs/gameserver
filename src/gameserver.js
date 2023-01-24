@@ -97,6 +97,7 @@ async.waterfall(
             return cb();
         },
         (cb) => {
+            return cb();
             // If DB exists, call database migration
             if (service.clients.includes("db")) {
                 migrateDb.migrateSongs((err, ok) => {

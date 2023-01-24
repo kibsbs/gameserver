@@ -21,9 +21,9 @@ module.exports = {
 
             const now = time.milliseconds();
 
-            const playlist = new Playlist(2014);
-            const session = new Session(2014);
-            const scores = new Score(2014);
+            const playlist = new Playlist(req.version);
+            const session = new Session(req.version);
+            const scores = new Score(req.version);
 
             const durations = playlist.durations;
 

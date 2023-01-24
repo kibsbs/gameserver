@@ -135,6 +135,25 @@ const games = [{
 const mods = [{
     name: "Just Dance Japan",
     version: 1000,
+    isAvailable: true,
+    regions: {
+        SJME: {
+            region: PAL,
+            isAvailable: true
+        }
+    },
+    stats: {
+        totalStars: 200,
+        songsCount: 0,
+        unlocksCount: 0
+    },
+    stats: {},
+    maxStars: 5,
+    isJD5: true,
+    wdfName: "wdf"
+}, {
+    name: "Just Dance Beats",
+    version: 2000,
     isAvailable: false,
     regions: {
         SJME: {
@@ -147,7 +166,9 @@ const mods = [{
         songsCount: 0,
         unlocksCount: 0
     },
+    stats: {},
     maxStars: 5,
+    isJD5: true,
     wdfName: "wdf"
 }];
 
