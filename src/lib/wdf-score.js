@@ -25,7 +25,8 @@ class Score {
             sendScore: Joi.boolean().truthy('1').falsy('0').required(),
             stars: Joi.number().required(),
             themeIndex: Joi.number().required(),
-            totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
+            totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required(),
+            isBot: Joi.boolean().default(false)
         });
         const schema2014 = Joi.object({
             userId: Joi.string().required(),
@@ -37,7 +38,8 @@ class Score {
             score: Joi.number().required(),
             stars: Joi.number().required(),
             themeIndex: Joi.number().required(),
-            totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
+            totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required(),
+            isBot: Joi.boolean().default(false)
         });
         this.schema = this.game.isJD5 ? schema2014 : schema;
     }

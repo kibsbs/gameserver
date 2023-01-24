@@ -52,6 +52,9 @@ const Schema = new mongoose.Schema(
     totalScore: {
       type: Number,
       required: true
+    },
+    isBot: {
+      type: Boolean
     }
   },
   { timestamps: true, versionKey: false }

@@ -29,7 +29,7 @@ class Bots {
             const country = this.randomCountry().id;
             const avatar = this.randomAvatar().id;
             const userId = utils.randomNumber(1000000000000, 9999999999999);
-            const sessionId = utils.randomNumber(1000000, 9999999);
+            const sessionId = utils.randomNumber(1000000000000, 9999999999999);
             const onlinescore = utils.randomNumber(global.gs.MIN_WDF_LEVEL, global.gs.MAX_WDF_LEVEL);
             let data = {
                 userId: userId.toString(),
@@ -57,10 +57,12 @@ class Bots {
     }
 
     async clearBots() {
-        const sessionCount = await this.session.deleteManySessions({
+        const sessionCount = await this.session.db.deleteMany({
+            "game.version": this.version,
             isBot: true
         });
-        const scoreCount = await this.score.deleteScore({
+        const scoreCount = await this.score.db.deleteMany({
+            "game.version": this.version,
             isBot: true
         });
         return { scoreCount, sessionCount };
@@ -89,7 +91,8 @@ class Bots {
                 sendScore: true,
                 stars: 0,
                 themeIndex: 0,
-                totalScore: 0
+                totalScore: 0,
+                isBot: true
             };
     
             const prevScore = await this.score.getScore(sessionId);
@@ -112,9 +115,9 @@ class Bots {
             // Generate a random score, add it to totalScore and calculate stars
             const scoreRange = {
                 "bad": [0, 0],
-                "ok": [1, 120],
-                "good": [120, 150],
-                "perfect": [150, 230]
+                "ok": [1, 90],
+                "good": [90, 120],
+                "perfect": [120, 200]
             };
             let feedback = "";
 
@@ -131,8 +134,9 @@ class Bots {
             // Add the score and totalScore
             let score = utils.randomNumber(scoreRange[feedback][0], scoreRange[feedback][1]);
             let totalScore = data.totalScore + score;
-            if (totalScore > global.gs.MAX_SCORE)
+            if (totalScore > global.gs.MAX_SCORE) {
                 totalScore = global.gs.MAX_SCORE;
+            }
             
             data.score = score;
             data.totalScore = totalScore;
@@ -141,7 +145,7 @@ class Bots {
             let stars = data.totalScore / 2000;
             if (stars > this.game.maxStars)
                 stars = this.game.maxStars;
-            data.stars = stars;
+            data.stars = parseInt(stars);
 
             await this.score.updateScore(sessionId, data);
             await this.session.pingSession(sessionId);
@@ -154,7 +158,7 @@ class Bots {
     };
     
     randomAvatar() {
-        let result = this.avatars.filter(a => (a.version == this.version || a.version == 100));
+        let result = this.avatars.filter(a => (a.version == this.version));
         return result[Math.floor((Math.random()*result.length))];
     };
     

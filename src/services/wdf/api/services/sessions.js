@@ -18,19 +18,21 @@ const nameConfig = {
     style: "upperCase"
 };
 
-router.post("/create-bots", validate("createBots"), async (req, res, next) => {
+router.post("/delete-bots", validate("deleteBots"), async (req, res, next) => {
 
     const { amount, version } = req.body;
 
+    const session = new Session(version);
+
     try {
-        const wdfBots = new Bots(version);
+        const { deletedCount } = await session.deleteManySessions({
+            isBot: true
+        });
+        
+        global.logger.info(`Deleted ${deletedCount} bots from ${version} WDF!`);
 
-        const bots = wdfBots.createBots(amount)
-
-        global.logger.info(`Created ${amount} amount of bots in ${version} WDF!`);
         return res.json({
-            message: `Created ${amount} amount of bots in ${version} WDF!`,
-            bots
+            message: `Deleted ${deletedCount} bots from ${version} WDF!`
         });
     }
     catch(err) {
@@ -87,7 +89,8 @@ router.post("/status", validate("sessionsStatus"), async (req, res, next) => {
                     themeIndex: s.themeIndex,
                     totalScore: s.totalScore,
                     stars: s.stars,
-                    rank: s.rank
+                    rank: s.rank,
+                    isBot: s.isBot
                 }
             })
         };

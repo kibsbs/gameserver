@@ -82,9 +82,9 @@ app.use(mids.notFound);
         // Remove previous bots and create new ones
         const { scoreCount, sessionCount } = await wdfBots.clearBots();
         if (sessionCount > 0)
-            global.logger.info(`Cleared ${deletedBots} bots from ${name} after server restart.`);
+            global.logger.info(`Cleared ${sessionCount} bots from ${name} after server restart.`);
         if (scoreCount > 0)
-            global.logger.info(`Cleared ${deletedBots} bot scores from ${name} after server restart.`);
+            global.logger.info(`Cleared ${scoreCount} bot scores from ${name} after server restart.`);
 
         const randomAmount = utils.randomNumber(10, 25);
         const bots = await wdfBots.createBots(randomAmount);
