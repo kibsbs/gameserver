@@ -4,6 +4,7 @@ const router = express.Router();
 
 const utils = require("utils");
 const validate = require("../validator");
+const games = require("games");
 
 const Session = require("wdf-session");
 const Playlist = require("wdf-playlist");
@@ -15,6 +16,20 @@ const nameConfig = {
     separator: "",
     style: "upperCase"
 };
+
+router.get("/ccu", async(req, res, next) => {
+
+    const gameList = games.getGames();
+    let data = {};
+    for (let i = 0; i < gameList.length; i++) {
+        const game = gameList[i];   
+        const version = game.version;
+        const session = new Session(version);
+        data[version] = await session.sessionCount() || 0;
+    }
+
+    return res.send(data);
+});
 
 router.post("/status", validate("sessionsStatus"), async (req, res, next) => {
 

@@ -39,7 +39,7 @@ class Score {
             themeIndex: Joi.number().required(),
             totalScore: Joi.number().min(0).max(global.gs.MAX_SCORE).required()
         });
-        this.schema = this.game.is2014 ? schema2014 : schema;
+        this.schema = this.game.isJD5 ? schema2014 : schema;
     }
 
     async updateScore(sessionId, scoreData) {
@@ -129,9 +129,9 @@ class Score {
         return result[0].rank;
     }
 
-    async getRanks(limit) {
+    async getRanks(limit, excludeSid) {
         let pipeline = [
-            { $match: { "game.version": this.version } },
+            { $match: { "game.version": this.version, sessionId: { $ne: excludeSid } } },
             { $sort: { totalScore: -1 } },
             {
                 $group: {
@@ -169,12 +169,18 @@ class Score {
      */
     async getThemeResult(themeIndex = 0) {
         try {
-            const result = await this.db.aggregate([
-                { $match: { "game.version": this.version, themeIndex } },
-                { $project: { _id: null, result: { $multiply: ["$stars", 2000] } } },
-                { $group: { _id: null, result: { $sum: "$result"} } }
-            ])
-            return result[0] ? result[0].result : 0
+            const entries = await this.db.find({
+                "game.version": this.version,
+                themeIndex
+            })
+            let stars = 0;
+            for (let i = 0; i < entries.length; i++) {
+                const entry = entries[i];
+                let starAmount = entry.totalScore / 2000;
+                if (starAmount > 5) starAmount = 5;
+                stars += parseInt(starAmount);
+            }
+            return (stars || 0) * 2000;
         }
         catch(err) {
             throw new Error(`Can't get theme results for ${this.version} index: ${themeIndex}: ${err}`)
@@ -188,12 +194,18 @@ class Score {
      */
     async getCoachResult(coachIndex = 0) {
         try {
-            const result = await this.db.aggregate([
-                { $match: { "game.version": this.version, coachIndex } },
-                { $project: { _id: null, result: { $multiply: ["$stars", 2000] } } },
-                { $group: { _id: null, result: { $sum: "$result"} } }
-            ])
-            return result[0] ? result[0].result : 0
+            const entries = await this.db.find({
+                "game.version": this.version,
+                coachIndex
+            });
+            let stars = 0;
+            for (let i = 0; i < entries.length; i++) {
+                const entry = entries[i];
+                let starAmount = entry.totalScore / 2000;
+                if (starAmount > 5) starAmount = 5;
+                stars += parseInt(starAmount);
+            }
+            return (stars || 0) * 2000;
         }
         catch(err) {
             throw new Error(`Can't get coach results for ${this.version} index: ${coachIndex}: ${err}`)
@@ -224,7 +236,7 @@ class Score {
             let arr = indexes[key];
             arr.forEach((v, i) => {
                 let k = `${key}${i}`;
-                if (this.game.is2014) k = "score_" + k;
+                if (this.game.isJD5) k = "score_" + k;
                 themeResults[k] = 0;
                 if (isCommunity && key == "theme")
                     themeResults[k] = v;
@@ -264,13 +276,17 @@ class Score {
 
     async getStarCount() {
         try {
-            const result = await this.db.aggregate([
-                { $match: { "game.version": this.version } },
-                { $group: { _id: null, stars: { $sum: "$stars"} } }
-            ]);
-            if (result && result[0] && result[0].stars)
-                return result[0].stars;
-            else return 0;
+            const entries = await this.db.find({
+                "game.version": this.version
+            });
+            let stars = 0;
+            for (let i = 0; i < entries.length; i++) {
+                const entry = entries[i];
+                let starAmount = entry.totalScore / 2000;
+                if (starAmount > 5) starAmount = 5;
+                stars += parseInt(starAmount);
+            }
+            return stars || 0;
         }
         catch(err) {
             throw new Error(`Can't get star count for ${this.version}: ${err}`)

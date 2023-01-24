@@ -57,6 +57,10 @@ module.exports.BYPASS_AUTH = false; // Bypasses authorization on API
 module.exports.SHOW_RESPONSE_MESSAGES = true; // Shows direct server responds
 module.exports.LOG_SERVER_ERRORS = true; // Logs server errors
 
+// Interval of removing dead sessions who haven't been pinged in x seconds
+module.exports.EXPIRED_SESSION_INTERVAL = (30 * 1000) // 30 seconds
+module.exports.EXPIRED_SESSION_INTERVAL_JD5 = (45 * 1000) // 45 seconds
+
 module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after creation
 
 // Headers

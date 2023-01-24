@@ -34,7 +34,15 @@ const conf = {
         getPlayListPos: {
             id: 1444,
             mid: []
-        }
+        },
+        getCommunityStats: {
+            id: 1812,
+            mid: [sessionClient.sessionJd5Auth]
+        },
+        getBloomBergs2: {
+            id: 1374,
+            mid: [sessionClient.sessionJd5Auth]
+        },
     },
     "wdf-legacy": {
         getServerTime: {
@@ -151,7 +159,7 @@ module.exports = (wdfName) => {
             });
 
         // Check if the func's script file exists
-        let funcPath = path.resolve(__dirname, "services/", wdfName, func + ".js");
+        let funcPath = path.resolve(__dirname, "rooms/", wdfName, func + ".js");
         if (!fs.existsSync(funcPath))
             return next({
                 status: 404,
@@ -168,7 +176,7 @@ module.exports = (wdfName) => {
             req.func = {
                 id: funcData.id,
                 name: func,
-                is2014: wdfName === "wdf-jd5"
+                isJD5: wdfName === "wdf-jd5"
             };
 
             // for getServerTime, if "sid" and "token" is given in body

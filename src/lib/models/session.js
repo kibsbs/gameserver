@@ -30,6 +30,9 @@ const Schema = new mongoose.Schema(
     },
     isBot: {
       type: Boolean
+    },
+    isJD5: {
+      type: Boolean
     }
   },
   { versionKey: false, timestamps: true }

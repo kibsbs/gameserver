@@ -112,7 +112,6 @@ module.exports.sessionJd5 = async (req, res, next) => {
 };
 
 module.exports.sessionJd5Auth = async (req, res, next) => {
-
     const authorization = req.headers.authorization;
     const auths = global.secrets.TRACKING_AUTH;
     

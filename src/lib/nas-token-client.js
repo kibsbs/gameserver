@@ -32,8 +32,8 @@ module.exports.permit = async (req, res, next) => {
 
         // If request comes from WDF and if it's 2014
         // only accept 2014 games
-        if (req.func && req.func.is2014) {
-            if (!game.is2014) {
+        if (req.func && req.func.isJD5) {
+            if (!game.isJD5) {
                 return next({
                     status: 401,
                     message: `This game is not allowed to access JD5 WDF!`

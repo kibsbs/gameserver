@@ -23,7 +23,6 @@ module.exports = {
 
             const session = new Session(req.version);
             const sessionId = req.sid;
-            const playersInCountry = await session.getCountryPlayers(pays);
 
             const cacheData = {
                 avatar,
@@ -45,7 +44,6 @@ module.exports = {
 
             return res.uenc({
                 sid: req.sid,
-                players_in_country: playersInCountry,
                 t: utils.serverTime()
             });
         }

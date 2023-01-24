@@ -15,6 +15,7 @@ module.exports = (req, res, next) => {
             data = {
                 method_id: req.func?.id || 0,
                 ...data,
+                err: 0,
                 stat: 1
             };
         };

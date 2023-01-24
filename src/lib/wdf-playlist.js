@@ -22,6 +22,7 @@ class Playlist {
             next: `playlist:${this.version}:next`,
         };
         this.vote = new Vote(this.version);
+        this.game = games.getGameByVersion(this.version);
     }
 
     randomTheme(exclude = []) {
@@ -204,6 +205,13 @@ class Playlist {
         return screen;
     }
 
+    async resetScreens() {
+        await cache.set(this.keys.prev, null);
+        await cache.set(this.keys.cur, null);
+        await cache.set(this.keys.next, null);
+        return;
+    }
+
     calculateTime(baseTime, screen, isNext) {
 
         let durations = this.durations;
@@ -218,9 +226,13 @@ class Playlist {
         let stop_song_time = start_song_time + mapLength;
         stop_song_time = Number((stop_song_time).toFixed(3));
         
-        let recap_start_time = stop_song_time + (durations["waiting_recap_duration"] * 1);
+        let recap_start_time = stop_song_time + durations["waiting_recap_duration"];
+
         let session_result_start_time = recap_start_time + this.computeThemeResultDuration(themeType);
+
         let session_to_world_result_time = session_result_start_time + durations["session_result_duration"];
+        if (this.game.isJD5) session_to_world_result_time = session_result_start_time;
+
         let world_result_stop_time = session_to_world_result_time + durations["world_result_duration"];
             
         let merge_computation_time = session_to_world_result_time + durations["world_result_duration"] / 4;

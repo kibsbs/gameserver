@@ -14,8 +14,8 @@ module.exports = {
                 t: utils.serverTime(),
                 sendscore_interval: global.config.DURATIONS.send_stars_delay / 1000,
 
-                happyhour: utils.serverTime(Date.now() + 86400000),
-                happyhour_duration: 3600000
+                happyhour: utils.serverTime(global.config.HAPPYHOUR.time),
+                happyhour_duration: global.config.HAPPYHOUR.duration
             });
         }
         catch (err) {

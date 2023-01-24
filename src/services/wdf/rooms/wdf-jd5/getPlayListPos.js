@@ -48,7 +48,6 @@ module.exports = {
 
                 sessionToWorldResultTime: durations.world_result_duration / 1000, // Duration from map end till world result screen
                 display_next_song_time: durations.display_next_song_duration / 1000, // The duration of "next song" popup on right side
-                session_recap_time: durations.session_result_duration / 1000, // Duration of lobby/party recap time
 
                 // Theme durations
                 theme_choice_duration: 0,
@@ -90,13 +89,13 @@ module.exports = {
 
                 // Locked songs
                 last_song_unlocked: global.config.LOCKED.lastSong,
-                next_unlocked_song_id: global.config.LOCKED.lastSong,
-                star_count_for_unlock: global.config.LOCKED.starCountToUnlock,
+                next_unlocked_song_id: global.config.LOCKED.nextSong,
 
                 current_star_count: await scores.getStarCount(),
+                star_count_for_unlock: global.config.LOCKED.starCountToUnlock,
 
-                happyhour: Date.now() + 86400000,
-                happyhour_duration: 3600000
+                happyhour: utils.serverTime(global.config.HAPPYHOUR.time),
+                happyhour_duration: global.config.HAPPYHOUR.duration
             };
 
             // Depending on theme type, set extra information.

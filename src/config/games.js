@@ -43,7 +43,7 @@ const games = [{
     },
     stats: {},
     maxStars: 5,
-    is2014: true,
+    isJD5: true,
     wdfName: "wdf"
 }, {
     name: "Just Dance 2015",

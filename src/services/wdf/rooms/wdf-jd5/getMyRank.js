@@ -53,41 +53,43 @@ module.exports = {
             const topTen = await scores.getRanks(30);
             const mappedScores = topTen.map(s => {
                 return {
-                    score: s.totalScore,
+                    avatar: s.profile.avatar,
                     name: s.profile.name,
                     pays: s.profile.country,
-                    avatar: s.profile.avatar,
-                    rank: s.profile.rank,
+                    score: s.totalScore,
+                    rank: s.rank,
+                    onlinescore: s.profile.rank,
                     sid: s.sessionId
                 };
             });
 
             return res.uenc({
                 onlinescore,
+                onlinescore_updated: onlinescore,
 
                 ...uenc.setIndex(mappedScores),
+                
+                numscores: mappedScores.length,
 
                 count,
                 total,
 
                 myrank: userRank || count,
                 myscore: userScore?.totalScore || 0,
-                song_id: song_id,
+                star_score: userScore?.stars || 0,
 
                 ...themeResults,
-
-                nb_winners: winners,
-                numscores: mappedScores.length,
+                song_id: song_id,
 
                 // Locked songs
                 last_song_unlocked: global.config.LOCKED.lastSong,
-                next_unlocked_song_id: global.config.LOCKED.lastSong,
-                star_count_for_unlock: global.config.LOCKED.starCountToUnlock,
+                next_unlocked_song_id: global.config.LOCKED.nextSong,
 
                 current_star_count: await scores.getStarCount(),
+                star_count_for_unlock: global.config.LOCKED.starCountToUnlock,
 
-                happyhour: utils.serverTime(Date.now() + 86400000),
-                happyhour_duration: 3600000,
+                happyhour: utils.serverTime(global.config.HAPPYHOUR.time),
+                happyhour_duration: global.config.HAPPYHOUR.duration,
 
                 t: utils.serverTime()
             });

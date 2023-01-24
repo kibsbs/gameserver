@@ -3,6 +3,10 @@ class Games {
         this.games = global.gs.GAMES;
     }
 
+    getGames(availability = true) {
+        return this.games.filter(g => g.isAvailable == availability);
+    }
+
     /**
      * Find game by your own filter function
      * @param {*} fn 

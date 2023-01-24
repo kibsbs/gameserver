@@ -22,7 +22,7 @@ class Session {
             // profileId: Joi.string().guid().required(),
             userId: Joi.string().required(),
             sessionId: Joi.string().required(),
-            lobbyId: this.game.is2014 ? Joi.string().guid().optional() : Joi.string().guid().required(),
+            lobbyId: this.game.isJD5 ? Joi.string().guid().optional() : Joi.string().guid().required(),
             game: Joi.object({
                 id: Joi.string().required(),
                 version: Joi.number().required()
@@ -34,13 +34,15 @@ class Session {
                 country: Joi.number().required(),
             }).unknown(true).required(),
             isBot: Joi.boolean().default(false).optional(),
+            isJD5: Joi.boolean().default(this.game.isJD5)
         }).unknown(true);
 
         this.cacheSchema = Joi.object({
             avatar: Joi.number().required(),
             name: Joi.string().regex(global.gs.NAME_REGEX).custom(utils.profane, 'profanity check').required(),
             rank: Joi.number().required(),
-            country: Joi.number().required()
+            country: Joi.number().required(),
+            isJD5: Joi.boolean().default(this.game.isJD5)
         }).unknown(true);
 
         this.maxLobbyPlayers = global.gs.MAX_LOBBY_PLAYERS;
@@ -59,7 +61,7 @@ class Session {
                     }
                 }
         }];
-        this.cacheKey = !this.game.is2014 ? 
+        this.cacheKey = !this.game.isJD5 ? 
         `wdf-player-cache:${this.version}` : `wdf-player-cache`
     }
 
@@ -76,7 +78,7 @@ class Session {
             let sessionId = data.sessionId;
 
             // Join user to a lobby if version is not 2014
-            if (!this.game.is2014) {
+            if (!this.game.isJD5) {
                 const lobbyId = await this.joinLobby(sessionId);
                 data.lobbyId = lobbyId;
             }

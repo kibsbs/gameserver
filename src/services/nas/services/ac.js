@@ -65,6 +65,7 @@ module.exports = function (req, res, next) {
     })
     .catch(err => {
       global.logger.error(`[AC] Error on Wiimmfi end: ${err.message}`);
+      console.log(err.response.data)
       return next({
         status: 500,
         message: `Can't connect to Wiimmfi`,
