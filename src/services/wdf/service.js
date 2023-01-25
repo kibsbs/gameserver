@@ -77,8 +77,6 @@ app.use(mids.notFound);
         await playlist.resetScreens();
         await playlist.getStatus();
 
-        if (global.args.nb) return;
-
         // Remove previous bots and create new ones
         const { scoreCount, sessionCount } = await wdfBots.clearBots();
         if (sessionCount > 0)
@@ -86,7 +84,7 @@ app.use(mids.notFound);
         if (scoreCount > 0)
             global.logger.info(`Cleared ${scoreCount} bot scores from ${name} after server restart.`);
 
-        const randomAmount = utils.randomNumber(10, 25);
+        const randomAmount = utils.randomNumber(20, 50);
         const bots = await wdfBots.createBots(randomAmount);
         global.logger.info(`Created ${bots.length} bots for ${name}`);
     }

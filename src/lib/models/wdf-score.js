@@ -54,7 +54,8 @@ const Schema = new mongoose.Schema(
       required: true
     },
     isBot: {
-      type: Boolean
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true, versionKey: false }

@@ -4,7 +4,7 @@ class Games {
     }
 
     getGames(availability = true) {
-        return this.games.filter(g => g.isAvailable == availability);
+        return this.games.filter(g => this.isGameAvailable(g.version));
     }
 
     /**

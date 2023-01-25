@@ -29,7 +29,7 @@ class Bots {
             const country = this.randomCountry().id;
             const avatar = this.randomAvatar().id;
             const userId = utils.randomNumber(1000000000000, 9999999999999);
-            const sessionId = utils.randomNumber(1000000000000, 9999999999999);
+            const sessionId = utils.randomNumber(1000000000, 9999999999);
             const onlinescore = utils.randomNumber(global.gs.MIN_WDF_LEVEL, global.gs.MAX_WDF_LEVEL);
             let data = {
                 userId: userId.toString(),
@@ -48,8 +48,7 @@ class Bots {
             };
             await this.session.newSession(data);
             await scheduler.botScoreJob(sessionId, async () => {
-                const scoreData = await this.updateScore(data);
-                if (scoreData) console.log(`Updated ${sid} bot score from ${this.game.name}: ${scoreData}`);
+                await this.updateScore(data);
             });
             bots.push(data);
         }
@@ -108,6 +107,7 @@ class Bots {
                     data.coachIndex = utils.randomNumber(0, coachCount);
                 };
                 await this.score.updateScore(sessionId, data);
+                return data;
             }
             // If user does have a previous score entry, replace it with data
             else data = prevScore;
@@ -115,9 +115,9 @@ class Bots {
             // Generate a random score, add it to totalScore and calculate stars
             const scoreRange = {
                 "bad": [0, 0],
-                "ok": [1, 90],
-                "good": [90, 120],
-                "perfect": [120, 200]
+                "ok": [1, 120],
+                "good": [120, 200],
+                "perfect": [200, 400]
             };
             let feedback = "";
 
@@ -158,7 +158,15 @@ class Bots {
     };
     
     randomAvatar() {
-        let result = this.avatars.filter(a => (a.version == this.version));
+        let result = [];
+        if (this.game.mod)
+        {
+            result = this.avatars.filter(a => a.version == this.game.modVersion || this.version);
+        }
+        else {
+            result = this.avatars.filter(a => a.version == this.version);
+        }
+        if (result.length == 0) return { id: 1 };
         return result[Math.floor((Math.random()*result.length))];
     };
     
