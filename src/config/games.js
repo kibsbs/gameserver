@@ -69,7 +69,8 @@ const games = [{
         unlocksCount: 27
     },
     maxStars: 5,
-    wdfName: "wdf15"
+    wdfName: "wdf15",
+    isJD15: true
 }, {
     name: "Just Dance 2016",
     version: 2016,

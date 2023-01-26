@@ -134,4 +134,19 @@ router.post("/status", validate("sessionsStatus"), async (req, res, next) => {
     };
 });
 
+router.get("/lobbies", async (req, res, next) => {
+    const { version } = req.query;
+
+    try {
+        const session = new Session(Number(version));
+        return res.json(await session.getLobbies());
+    }
+    catch(err) {
+        return next({
+            status: 500,
+            message: err.message
+        });
+    };
+});
+
 module.exports = router;

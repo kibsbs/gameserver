@@ -73,14 +73,19 @@ class Session {
      * if a player hasn't pinged in certain time, their session gets erased
      * which automatically removes from their lobby too
      */
-    async newSession(data) {
+    async newSession(data, forcedLobbyId) {
         try {
             let sessionId = data.sessionId;
 
             // Join user to a lobby if version is not 2014
             if (!this.game.isJD5) {
-                const lobbyId = await this.joinLobby(sessionId);
-                data.lobbyId = lobbyId;
+                // If a forced lobby id was given, join user to that lobby
+                if (forcedLobbyId) data.lobbyId = forcedLobbyId;
+                // If not, join user to an available lobby.
+                else {
+                    const lobbyId = await this.joinLobby(sessionId);
+                    data.lobbyId = lobbyId;
+                }
             }
 
             const value = await this.schema.validateAsync(data);
@@ -291,6 +296,15 @@ class Session {
         ]);
         if (result && result[0]) return result[0];
         else return null;
+    }
+
+    async isLobbyAvailable(lobbyId) {
+        const lobbies = await this.getLobbies();
+        const result = lobbies.filter(l => l._id === lobbyId);
+        if (!result || !result[0]) return false;
+
+        if (result.sessions.length < this.maxLobbyPlayers) return true;
+        return false;
     }
 
     async joinLobby(sessionId) {

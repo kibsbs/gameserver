@@ -24,6 +24,13 @@ module.exports = {
             const session = new Session(req.version);
             const sessionId = req.sid;
 
+            // Delete previous session & cache
+            const prevSession = await session.getSession(sessionId);
+            if (prevSession) {
+                await session.deleteSession(sessionId, req.ip);
+                await session.deleteSessionCache(sessionId, req.ip);
+            };
+
             const cacheData = {
                 avatar,
                 name,
