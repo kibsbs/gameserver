@@ -2,7 +2,7 @@ var offset = 0;
 
 class Time {
     constructor() {
-        this.offset = global.config.TIME_OFFSET || 0;
+        this.offset = global.config?.TIME_OFFSET || 0;
     }
     
     milliseconds() {

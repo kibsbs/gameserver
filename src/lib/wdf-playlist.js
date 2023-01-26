@@ -84,15 +84,15 @@ class Playlist {
 
         // If server has slept, this will reset cur and next
         // so that they can be created again
-        if (
-            (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
-            (playlist.next && now > playlist.next.timing.base_time)
-        ) {
-            global.logger.info(`Server was slept, reseting playlist...`)
-            playlist.prev = null;
-            playlist.cur = null;
-            playlist.next = null;
-        }
+        // if (
+        //     (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
+        //     (playlist.next && now > playlist.next.timing.base_time)
+        // ) {
+        //     global.logger.info(`Server was slept, reseting playlist...`)
+        //     playlist.prev = null;
+        //     playlist.cur = null;
+        //     playlist.next = null;
+        // }
         
         if (!playlist.cur) {
             const data = await cache.set(this.keys.cur, await this.createScreen("cur"));
@@ -115,8 +115,41 @@ class Playlist {
         // cur -> prev
         // next -> cur
         // next = new map
-        await cache.set(this.keys.prev, await cache.get(this.keys.cur));
-        await cache.set(this.keys.cur, await cache.get(this.keys.next));
+        const prev = await cache.get(this.keys.prev);
+        const cur = await cache.get(this.keys.cur);
+        const next = await cache.get(this.keys.next);
+        const now = time.milliseconds();
+
+        const isCurSlept = now > cur.timing.base_time && now > cur.timing.request_playlist_time;
+
+        // If the server was slept, or playlist was never request
+        // we re-calculate the time of timing of each screen (except prev)
+        if (cur && cur.timing && isCurSlept) {
+            let base = now;
+            let diff = base - cur.timing.base_time;
+            console.log("PLAYLIST CUR SLEPT!", "PLAYLIST WAS", diff, "SECONDS OFF! RECALCULATING...")
+          
+            Object.keys(cur.timing).forEach(k => {
+              let t = cur.timing[k];
+              let a = diff - (base - t);
+              t = base + a;
+              cur.timing[k] = t;
+            });
+        }
+        if (next && next.timing) {
+            let base = cur.timing.request_playlist_time;
+            console.log("PLAYLIST NEXT SLEPT!", "RECALCULATING...")
+          
+            Object.keys(next.timing).forEach(k => {
+              let t = next.timing[k];
+              let a = (base - t);
+              t = base + a;
+              next.timing[k] = t;
+            });
+        }
+        
+        await cache.set(this.keys.prev, cur);
+        await cache.set(this.keys.cur, next);
         await cache.set(this.keys.next, await this.createScreen("next"));
     }
 
@@ -204,18 +237,24 @@ class Playlist {
         let rotationTime = screen.timing.request_playlist_time - 5000;
         let resetScoreTime = screen.timing.request_playlist_time - 6000;
 
-        // Rotate playlist and clear votes
-        scheduler.newJob("Rotate playlist", rotationTime, async () => {
-            await this.rotateScreens();
-            this.vote.resetVotes();
+        console.log("aa", map.mapName, isNext, rotationTime)
+        scheduler.schedule(new Date(rotationTime), "Playlist rotation", {
+            version: this.version,
+            rotationTime,
+            isNext
         });
+        // Rotate playlist and clear votes
+        // scheduler.playlistRotationJob(rotationTime, async () => {
+        //     await this.rotateScreens();
+        //     // this.vote.resetVotes();
+        // });
 
         // Clear all scores for version
-        scheduler.newJob("Clear scores after playlist rotation", resetScoreTime, async () => {
-            const db = require("./models/wdf-score");
-            const { deletedCount } = await db.deleteMany({ "game.version": this.version });
-            global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
-        });
+        // scheduler.newJob("Clear scores after playlist rotation", resetScoreTime, async () => {
+        //     const db = require("./models/wdf-score");
+        //     const { deletedCount } = await db.deleteMany({ "game.version": this.version });
+        //     global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
+        // });
         
         return screen;
     }

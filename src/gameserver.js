@@ -15,6 +15,7 @@ const async = require("async");
 const dotenv = require("dotenv");
 const logger = require("logger")("gameserver");
 const migrateDb = require("./migrate-db");
+const Agenda = require("agenda");
 
 global.logger = logger;
 
@@ -122,11 +123,14 @@ async.waterfall(
             global.config = serviceConfig;
             global.config.service = global.service;
             global.gs = config;
+            // If test game exists and args has test-game argument, only include test game in games.
+            if (global.gs.GAMES && global.args.tg)
+                global.gs.GAMES = global.gs.GAMES.filter(g => g.version == global.gs.TEST_GAME);
             // -
             global.project = require("../package.json");
             
             const app = require(script);
-            return cb(null, app)
+            return cb(null, app);
         },
         (app, cb) => {
             // Start the service
