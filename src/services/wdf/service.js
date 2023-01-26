@@ -83,11 +83,11 @@ app.use(mids.notFound);
         if (scoreCount > 0)
             global.logger.info(`Cleared ${scoreCount} bot scores from ${name} after server restart.`);
 
-        if (global.args.nb) return;
-        
-        const randomAmount = utils.randomNumber(20, 50);
-        const bots = await wdfBots.createBots(randomAmount);
-        global.logger.info(`Created ${bots.length} bots for ${name}`);
+        if (!global.args.nb) {
+            const randomAmount = utils.randomNumber(20, 50);
+            const bots = await wdfBots.createBots(randomAmount);
+            global.logger.info(`Created ${bots.length} bots for ${name}`);
+        }
     }
 })();
 
