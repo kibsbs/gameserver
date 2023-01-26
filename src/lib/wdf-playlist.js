@@ -133,11 +133,13 @@ class Playlist {
             next: newScreen.map.mapName
         });
         
-        require("fs").writeFileSync("./playlist-data/" + now + ".json", JSON.stringify({
-            prev: cur,
-            cur: next,
-            next: newScreen
-        }, null, 2));
+        if (utils.isDev()) {
+            require("fs").writeFileSync("./playlist-data/" + now + ".json", JSON.stringify({
+                prev: cur,
+                cur: next,
+                next: newScreen
+            }, null, 2));
+        }
 
         await cache.set(this.keys.prev, cur);
         await cache.set(this.keys.cur, next);

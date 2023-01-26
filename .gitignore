@@ -1,5 +1,6 @@
 node_modules/
 logs/
+playlist-data/
 
 .env
 !.env.example
