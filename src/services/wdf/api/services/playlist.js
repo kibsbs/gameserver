@@ -15,7 +15,11 @@ router.get("/get", async (req, res, next) => {
     try {
         const playlist = new Playlist(version);
         const screens = await playlist.getScreens();
-        return res.send(screens);
+        const history = await playlist.getHistory();
+        return res.send({
+            screens,
+            history
+        });
     }
     catch(err) {
         return next({
@@ -37,9 +41,11 @@ router.get("/rotate", async (req, res, next) => {
         const before = await playlist.getScreens();
         const screens = await playlist.rotateScreens();
         const after = await playlist.getScreens();
+        const history = await playlist.getHistory();
         return res.send({
             before,
-            after
+            after,
+            history
         });
     }
     catch(err) {
@@ -60,6 +66,7 @@ router.get("/reset", async (req, res, next) => {
     try {
         const playlist = new Playlist(version);
         await playlist.resetScreens();
+        await playlist.resetHistory();
         return res.sendStatus(200);
     }
     catch(err) {

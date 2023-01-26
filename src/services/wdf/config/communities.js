@@ -455,10 +455,10 @@ const list = [
     [locs.Fire, locs.Ice],
     [locs.Earth, locs.Wind],
     [locs.Princess, locs.Knight],
-    [locs.RiiConnect24, locs.WiiLink],
-    [locs.Top, locs.Bottom],
+    //[locs.RiiConnect24, locs.WiiLink],
+    //[locs.Top, locs.Bottom],
     [locs.Jennie, locs.Lisa],
-    [locs.JDU, locs.JDP],
+    //[locs.JDU, locs.JDP],
     [locs.Chaos, locs.Order],
     [locs.Cardi, locs.Nicki],
     // [locs.Rama, locs.Devd]

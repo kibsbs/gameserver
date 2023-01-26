@@ -21,6 +21,16 @@ module.exports = {
                     message: "No session!"
                 });
 
+            const query = {
+                userId: req.uid,
+                sessionId: req.sid,
+                game: {
+                    id: req.game.id,
+                    version: req.game.version
+                },
+                profile: userCache
+            };
+
             let userSession = await session.getSession(req.sid);
             // User doesn't have a session, create one and join to a lobby
             if (!userSession) {

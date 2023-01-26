@@ -303,7 +303,7 @@ class Session {
         const result = lobbies.filter(l => l._id === lobbyId);
         if (!result || !result[0]) return false;
 
-        if (result.sessions.length < this.maxLobbyPlayers) return true;
+        if (result[0].sessions.length < this.maxLobbyPlayers) return true;
         return false;
     }
 

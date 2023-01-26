@@ -30,6 +30,11 @@ module.exports = () => {
         alias: "nb",
         description: "Don't create bots"
     })
+    .option("test-mode", {
+        type: "boolean",
+        alias: "tm",
+        description: "Start server in a test mode, it will only work with API connections."
+    })
     .demandCommand()
     .showHelpOnFail()
     .parse()

@@ -64,7 +64,10 @@ class Bots {
             "game.version": this.version,
             isBot: true
         });
-        return { scoreCount, sessionCount };
+        return { 
+            scoreCount: scoreCount.deletedCount, 
+            sessionCount: scoreCount.deletedCount
+        };
     }
 
     async updateScore(botData) {

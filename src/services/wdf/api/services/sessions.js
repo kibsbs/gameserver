@@ -19,20 +19,16 @@ const nameConfig = {
 };
 
 router.post("/delete-bots", validate("deleteBots"), async (req, res, next) => {
-
     const { amount, version } = req.body;
 
-    const session = new Session(version);
-
     try {
-        const { deletedCount } = await session.deleteManySessions({
-            isBot: true
-        });
+        const bots = new Bots(version);
+        const { scoreCount, sessionCount } = await bots.clearBots();
         
-        global.logger.info(`Deleted ${deletedCount} bots from ${version} WDF!`);
+        global.logger.info(`Deleted ${sessionCount} bots and ${scoreCount} bot scores from ${version} WDF!`);
 
         return res.json({
-            message: `Deleted ${deletedCount} bots from ${version} WDF!`
+            message: `Deleted ${sessionCount} bots and ${scoreCount} bot scores from ${version} WDF!`
         });
     }
     catch(err) {

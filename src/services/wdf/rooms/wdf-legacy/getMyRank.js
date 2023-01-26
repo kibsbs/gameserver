@@ -37,7 +37,7 @@ module.exports = {
             const winners = await scores.getNumberOfWinners(themeResults);
 
             // Get top 10 scores
-            const topTen = await scores.getRanks(10);
+            const topTen = await scores.getRanks(20);
             const mappedScores = topTen.map(s => {
                 return {
                     score: s.totalScore,

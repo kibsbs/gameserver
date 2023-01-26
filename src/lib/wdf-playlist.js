@@ -24,6 +24,7 @@ class Playlist {
             prev: `playlist:${this.version}:${PREV}`,
             cur: `playlist:${this.version}:${CUR}`,
             next: `playlist:${this.version}:${NEXT}`,
+            history: `playlist:${this.version}:history`
         };
         this.vote = new Vote(this.version);
         this.game = games.getGameByVersion(this.version);
@@ -47,7 +48,7 @@ class Playlist {
     }
 
     async randomMap(amount = 1, mapsToExclude = [], filter = {}) {
-        const result = await songs.random(this.version, amount, [mapsToExclude], filter);
+        const result = await songs.random(this.version, amount, mapsToExclude, filter);
         return result[0] ? result[0] : null;
     }
 
@@ -73,6 +74,33 @@ class Playlist {
         return { currentTheme, isSong, isRecap, isPreSong, isCommunity, isVote, isCoach, prev, cur, next };
     }
 
+    async getHistory() {
+        const history = await cache.get(this.keys.history);
+        if (!history) return [];
+        return history;
+    }
+
+    async updateHistory(map) {
+        const mapName = map.mapName;
+        const history = await cache.get(this.keys.history);
+        // History doesn't exist? Create an empty one
+        if (!history) {
+            const newHistory = [];
+            newHistory.unshift(mapName);
+            await cache.set(this.keys.history, newHistory);
+            return;
+        }
+        else {
+            if (!history.includes(mapName))
+                history.unshift(mapName);
+            await cache.set(this.keys.history, history.slice(0, global.gs.PLAYLIST_HISTORY_SIZE));
+        }
+    }
+
+    async resetHistory() {
+        await cache.set(this.keys.history, []);
+    }
+
     /**
      * Get current playlist screens
      * @param {Boolean} update If true, returns playlist without any creation/check
@@ -90,10 +118,9 @@ class Playlist {
         // If server has slept, this will reset cur and next
         // so that they can be created again
         if (
-            (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
-            (playlist.next && now > playlist.next.timing.base_time)
+            (playlist.cur && this.isScreenSlept(playlist.cur)) ||
+            (playlist.next && this.isScreenSlept(playlist.next))
         ) {
-            console.log("CUR", playlist.cur, "NEXT", playlist.next)
             global.logger.info(`Server was slept, rotating playlist for ${this.version}...`)
             await this.rotateScreens();
         }
@@ -111,6 +138,15 @@ class Playlist {
         };
     
         return playlist;
+    }
+
+    isScreenSlept(screen) {
+        const now = time.milliseconds();
+        const { timing } = screen;
+        const { request_playlist_time, base_time } = timing;
+        // If now passed base time and request playlist time, screen was slept.
+        if (now > base_time && now > request_playlist_time) return true;
+        else return false;
     }
 
     async rotateScreens() {
@@ -177,12 +213,13 @@ class Playlist {
 
         const now = time.milliseconds();
         const init = (!prev && !cur && !next);
+        const history = await this.getHistory();
 
         let baseTime = 0;
         let screen = {};
 
         let ignoredThemes = [];
-        let ignoredSongs = [];
+        let ignoredSongs = [...history];
         let ignoredCommunities = [];
 
         let voteCandidates = [];
@@ -269,6 +306,8 @@ class Playlist {
             global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
         });
         
+        // Update history for no repetation!
+        await this.updateHistory(map);
         return screen;
     }
 
