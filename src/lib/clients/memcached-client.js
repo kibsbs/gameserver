@@ -4,9 +4,9 @@ module.exports = (cb) => {
     try {
         const client = Client.create();
         global.memcached = client;
-        return cb();
+        return;
     }
     catch(err) {
-        return cb(err)
+        throw new Error(`Can't connect to Memcached: ${err}`);
     }
 };

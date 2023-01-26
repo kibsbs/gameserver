@@ -25,6 +25,31 @@ router.get("/get", async (req, res, next) => {
     }
 });
 
+router.get("/rotate", async (req, res, next) => {
+    const version = Number(req.query.version);
+    if (!version) return next({
+        status: 400,
+        message: "Version query needed"
+    });
+
+    try {
+        const playlist = new Playlist(version);
+        const before = await playlist.getScreens();
+        const screens = await playlist.rotateScreens();
+        const after = await playlist.getScreens();
+        return res.send({
+            before,
+            after
+        });
+    }
+    catch(err) {
+        return next({
+            status: 400,
+            message: err.message
+        });
+    }
+});
+
 router.get("/reset", async (req, res, next) => {
     const version = Number(req.query.version);
     if (!version) return next({
@@ -45,4 +70,17 @@ router.get("/reset", async (req, res, next) => {
     }
 });
 
+
+router.get("/reset-all", async (req, res, next) => {
+    const games = require("games");
+    const gamesList = games.getGames();
+
+    // Reset playlist of all games
+    for (let i = 0; i < gamesList.length; i++) {
+        const { version } = gamesList[i];
+        const playlist = new Playlist(version);
+        await playlist.resetScreens();
+    }
+    return res.sendStatus(200);
+});
 module.exports = router;

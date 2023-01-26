@@ -17,7 +17,8 @@ module.exports.AVATARS = require("./avatars");
 module.exports.COUNTRIES = require("./countries");
 
 module.exports.SECRETS = require("./secrets");
-module.exports.DATABASE = require("./database"); // Database loaded here but service and env are configured in service config
+module.exports.DATABASE = require("./database");
+module.exports.REDIS = require("./redis");
 module.exports.SERVICES = {
 
     // --- Legacy services
@@ -69,6 +70,7 @@ module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after
 // Headers
 module.exports.HEADER_FORCE_JSON = "x-force-json";
 module.exports.HEADER_DEBUG = "x-dp-debug";
+module.exports.HEADER_API_KEY = "x-api-token";
 module.exports.TOKEN_KEY = "token";
 module.exports.VALID_USER_AGENT = "WiiDance";
 

@@ -7,6 +7,10 @@ const scheduler = require("scheduler");
 
 const Vote = require("wdf-vote");
 
+const PREV = "prev";
+const CUR = "cur";
+const NEXT = "next";
+
 class Playlist {
     constructor(version) {
         this.version = version;
@@ -17,9 +21,9 @@ class Playlist {
         this.durations = global.config.DURATIONS;
         this.themes = global.config.THEMES;
         this.keys = {
-            prev: `playlist:${this.version}:prev`,
-            cur: `playlist:${this.version}:cur`,
-            next: `playlist:${this.version}:next`,
+            prev: `playlist:${this.version}:${PREV}`,
+            cur: `playlist:${this.version}:${CUR}`,
+            next: `playlist:${this.version}:${NEXT}`,
         };
         this.vote = new Vote(this.version);
         this.game = games.getGameByVersion(this.version);
@@ -43,7 +47,8 @@ class Playlist {
     }
 
     async randomMap(amount = 1, mapsToExclude = [], filter = {}) {
-        return await songs.random(this.version, amount, mapsToExclude, filter);
+        const result = await songs.random(this.version, amount, [mapsToExclude], filter);
+        return result[0] ? result[0] : null;
     }
 
     async getCurrentTheme() {
@@ -88,20 +93,19 @@ class Playlist {
             (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000) ||
             (playlist.next && now > playlist.next.timing.base_time)
         ) {
-            global.logger.info(`Server was slept, reseting playlist...`)
-            playlist.prev = null;
-            playlist.cur = null;
-            playlist.next = null;
+            console.log("CUR", playlist.cur, "NEXT", playlist.next)
+            global.logger.info(`Server was slept, rotating playlist for ${this.version}...`)
+            await this.rotateScreens();
         }
         
         if (!playlist.cur) {
-            const data = await cache.set(this.keys.cur, await this.createScreen("cur"));
+            const data = await cache.set(this.keys.cur, await this.createScreen(CUR));
             playlist.cur = data;
             global.logger.info("CREATED CURRENT " + JSON.stringify(playlist.cur))
         };
     
         if (!playlist.next) {
-            const data = await cache.set(this.keys.next, await this.createScreen("next"));
+            const data = await cache.set(this.keys.next, await this.createScreen(NEXT));
             playlist.next = data;
             global.logger.info("CREATED NEXT " + JSON.stringify(playlist.next))
         };
@@ -110,99 +114,145 @@ class Playlist {
     }
 
     async rotateScreens() {
-        // Rotate playlists
-        // prev -> destroyed
-        // cur -> prev
-        // next -> cur
-        // next = new map
-        await cache.set(this.keys.prev, await cache.get(this.keys.cur));
-        await cache.set(this.keys.cur, await cache.get(this.keys.next));
-        await cache.set(this.keys.next, await this.createScreen("next"));
+        const now = time.milliseconds();
+        const prev = await cache.get(this.keys.prev);
+        const cur = await cache.get(this.keys.cur);
+        let next = await cache.get(this.keys.next);
+
+        // "next" will be "cur" so re-calculate it's time so that we make sure
+        // the server hasn't slept and the screen is in sync.
+        next = this.syncScreen(next, now);
+
+        // Create a new screen with it's base time as the new base time from "cur"
+        const newScreen = await this.createScreen(NEXT, next);
+
+        global.logger.info({
+            msg: `Rotated screens for ${this.version}: ${now}`,
+            prev: cur.map.mapName,
+            cur: next.map.mapName,
+            next: newScreen.map.mapName
+        });
+        
+        require("fs").writeFileSync("./playlist-data/" + now + ".json", JSON.stringify({
+            prev: cur,
+            cur: next,
+            next: newScreen
+        }, null, 2));
+
+        await cache.set(this.keys.prev, cur);
+        await cache.set(this.keys.cur, next);
+        await cache.set(this.keys.next, newScreen);
     }
 
-    async createScreen(type) {
-        
-        let now = time.milliseconds();
+    /**
+     * Syncs given screen to current time. 
+     * If given screen was 10 minutes ago, this will sync it to now.
+     * @param {*} type 
+     * @param {*} screen 
+     * @returns 
+     */
+    syncScreen(screen, now = time.milliseconds()) {
+        const base = now;
+        const diff = base - screen.timing.base_time;
+      
+        Object.keys(screen.timing).forEach(k => {
+          let time = screen.timing[k];
+          let difference = diff - (base - time);
+          time = base + difference;
+          screen.timing[k] = time;
+        });
+        return screen;
+    }
+
+    getFilterForTheme(themeId) {
+        if (this.isThemeCoach(themeId))
+            return { numCoach: { $gt: 1 } };
+        else return {};
+    }
+
+    async createScreen(type, prevScreen) {
+        const { prev, cur, next } = await this.getScreens(false);
+
+        const now = time.milliseconds();
+        const init = (!prev && !cur && !next);
+
         let baseTime = 0;
-        let isNext = (type == "next");
+        let screen = {};
 
-        let { prev, cur, next } = await this.getScreens(false);
+        let ignoredThemes = [];
+        let ignoredSongs = [];
+        let ignoredCommunities = [];
 
-        // To avoid any repetation, we can pass theme and map pick 
-        // to exclude themes/maps from previous screens
+        let voteCandidates = [];
 
-        // Ignore current screen's theme only
-        // (p - c - n)
-        //  1 - 2 - 1 (add cur only)
-        //  1 - 2 - 3 (prev and cur) (if there are more than 2 themes available)
-        //  3 - 3 - 3 (empty array)
-        let ignoredTheme = [prev?.theme.id];
-        if (this.version == 2014) ignoredTheme = [cur?.theme.id];
+        let prevThemeId;
 
-        // Skips all prev cur next maps to avoid any 9 minutes of repetation
-        let ignoredSongs = [prev?.map.mapName, cur?.map.mapName, next?.map.mapName];
-    
-        let theme = this.randomTheme(ignoredTheme);
-        if (this.isThemeCommunity(theme.id)) {
-            let randomTheme = this.randomCommunity();
-            theme.communities = [randomTheme[0], randomTheme[1]];
+        // First screen
+        if (init) {
+            prevThemeId = -1;
+            baseTime = now;
+            // First screen should never be vote!
+            ignoredThemes.push(2);
         }
+        else {
+            prevThemeId = cur.theme.id;
+            baseTime = cur.timing.world_result_stop_time;
 
-        // To filter maps depending on theme type
-        let mapFilter = {};
+            // If a previous screen was provided (probably for syncing) set base time from it
+            if (prevScreen)
+                baseTime = prevScreen.timing.world_result_stop_time;
 
-        // Theme 3 is coach pick and map filter should be non-solo maps
-        if (this.isThemeCoach(theme.id)) {
-            mapFilter = {
-                numCoach: {
-                    $gt: 1
-                }
-            }
+            // Always ignore previous and current's map
+            ignoredSongs.push(prev?.map.mapName, cur?.map.mapName);
+            ignoredThemes.push();
+
+            // Was previous screen vote? Set the vote winner as map.
+            const isVote = this.isThemeVote(prevThemeId);
+            if (isVote) {
+                const candidates = cur.candidates;
+                const candidateCount = candidates.length;
+                baseTime = 0; // set to request playlist time
+                // TODO
+            };
         };
 
-        // Get a random map
-        let map = await this.randomMap(1, ignoredSongs, mapFilter);
-        map = map[0];
-        if (!map) 
+        // Create theme & map
+        const theme = this.randomTheme(ignoredThemes);
+        const map = await this.randomMap(1, ignoredSongs, this.getFilterForTheme(theme.id));
+        if (!map)
             throw new Error(`Playlist couldn't find a map to create screen for, is the song database empty?`);
-    
-        // Set baseTime depending on theme type
-        if (isNext && cur && cur.timing.request_playlist_time && this.isThemeVote(theme.id)) {
-            baseTime = cur.timing.request_playlist_time
-        }
-        else if (isNext && cur && cur.timing.world_result_stop_time) {
-            baseTime = cur.timing.world_result_stop_time
-        }
-        else baseTime = now;
 
-        // Make sure that the baseTime is bigger than the current epoch 
-        // (can happen if the server sleeps for a while)
-        if (baseTime < now)
-            baseTime = now;
+        screen.theme = theme;
+        screen.map = map;
 
-        let screen = {
-            theme,
-            map
+        // If theme is community, pick out 2 communities
+        if (this.isThemeCommunity(theme.id)) {
+            let randomTheme = this.randomCommunity();
+            screen.theme.communities = [randomTheme[0], randomTheme[1]];
         }
-
-        // If theme is voting, pick out random maps
-        if (this.isThemeVote(theme.id)) {
+        // If theme is voting, pick out 2-4 random candidates
+        else if (this.isThemeVote(theme.id)) {
             let choiceAmount = utils.randomNumber(2, 4);
             // Don't make any map from prev cur and next as vote option
             let choices = await this.randomMap(choiceAmount, [
                 prev?.map.mapName, cur?.map.mapName, next?.map.mapName
             ]);
-            screen.voteChoices = choices;
+            screen.theme.candidates = choices;
             global.logger.info(`Generated following maps for vote screen: ${choices.map(m => m.mapName)}`)
         };
+
+        // Make sure that the baseTime is bigger than the current epoch 
+        // (can happen if the server sleeps for a while)
+        if (baseTime < now)
+            baseTime = now;
         
-        let times = this.calculateTime(baseTime, screen, isNext);
-        screen.timing = times.timing;
-        screen.timingProgramming = times.timingProgramming;
+        let { timing, timingProgramming } = this.calculateTime(baseTime, screen, init);
+        screen.timing = timing;
+        screen.timingProgramming = timingProgramming;
         
         // Schedule the next rotation
         let rotationTime = screen.timing.request_playlist_time - 5000;
-        let resetScoreTime = screen.timing.request_playlist_time - 6000;
+        let resetScoreTime = rotationTime;
 
         // Rotate playlist and clear votes
         scheduler.newJob("Rotate playlist", rotationTime, async () => {

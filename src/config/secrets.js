@@ -7,7 +7,7 @@ module.exports.NAS_TOKEN = {
 };
 
 // Keys which are allowed to access the API.
-module.exports.API_KEYS = JSON.parse(process.env.API_KEYS || "[]");
+module.exports.API_KEYS = process.env.API_KEYS.split(",") || [];
 
 // Used in development.
 module.exports.TEST_TOKENS = [

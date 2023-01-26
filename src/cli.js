@@ -25,6 +25,11 @@ module.exports = () => {
         alias: "ns",
         description: "Don't schedule any session / score removal"
     })
+    .option("no-bots", {
+        type: "boolean",
+        alias: "nb",
+        description: "Don't create bots"
+    })
     .demandCommand()
     .showHelpOnFail()
     .parse()

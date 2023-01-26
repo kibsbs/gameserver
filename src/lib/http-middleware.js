@@ -81,3 +81,16 @@ module.exports.notFound = (req, res, next) => {
     if (utils.isDev()) return next();
     else return res.status(404).send();
 };
+
+module.exports.apiAuth = (req, res, next) => {
+    const apiKeys = global.secrets.API_KEYS;
+
+    const auth = req.headers[global.gs.HEADER_API_KEY];
+    if (!auth || !apiKeys.includes(auth)) 
+        return next({
+            status: 401,
+            message: "Unauthorized"
+        });
+    
+    return next();
+};

@@ -5,10 +5,14 @@ const router = express.Router({
     strict: true 
 });
 
+const mids = require("http-middleware");
+
 router.use((req, res, next) => {
     req.isApi = true;
     return next();
 });
+
+router.use(mids.apiAuth);
 
 router.use("/config", require("./services/config"));
 router.use("/leaderboard", require("./services/leaderboard"));
