@@ -55,6 +55,7 @@ app.use(mids.notFound);
 
 (async() => {
 
+    return;
     if (!global.args.ns) {
         global.logger.info(`Starting schedule deletion job...`);
         await scheduler.sessionJob();
@@ -74,8 +75,8 @@ app.use(mids.notFound);
         const wdfBots = new Bots(version);
 
         // Reset playlist and set a new one
-        await playlist.resetScreens();
-        await playlist.getStatus();
+        // await playlist.resetScreens();
+        // await playlist.getStatus();
 
         // Remove previous bots and create new ones
         const { scoreCount, sessionCount } = await wdfBots.clearBots();
@@ -84,6 +85,7 @@ app.use(mids.notFound);
         if (scoreCount > 0)
             global.logger.info(`Cleared ${scoreCount} bot scores from ${name} after server restart.`);
 
+        if (global.args.nb) return;
         const randomAmount = utils.randomNumber(20, 50);
         const bots = await wdfBots.createBots(randomAmount);
         global.logger.info(`Created ${bots.length} bots for ${name}`);

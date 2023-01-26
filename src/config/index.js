@@ -12,6 +12,7 @@ module.exports.BLOCKED_COUNTRIES = [
     "RU", "BY"
 ];
 
+module.exports.TEST_GAME = 2014;
 module.exports.GAMES = require("./games");
 module.exports.AVATARS = require("./avatars");
 module.exports.COUNTRIES = require("./countries");
