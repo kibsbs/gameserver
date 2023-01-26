@@ -434,7 +434,31 @@ const locs = {
     },
     Devd: {
         en: "devd"
-    }
+    },
+    Love: {
+        en: "Love"
+    },
+    Hate: {
+        en: "Hate"
+    },
+    IVE: {
+        en: "IVE"
+    },
+    LSR: {
+        en: "LESSERAFIM"
+    },
+    Kebab: {
+        en: "Kebab"
+    },
+    Delight: {
+        en: "Turkish Delight"
+    },
+    Eighties: {
+        en: "1980s"
+    },
+    TwentyTens: {
+        en: "2010s"
+    },
 };
 
 const list = [
@@ -455,12 +479,16 @@ const list = [
     [locs.Fire, locs.Ice],
     [locs.Earth, locs.Wind],
     [locs.Princess, locs.Knight],
-    //[locs.RiiConnect24, locs.WiiLink],
-    //[locs.Top, locs.Bottom],
     [locs.Jennie, locs.Lisa],
-    //[locs.JDU, locs.JDP],
     [locs.Chaos, locs.Order],
     [locs.Cardi, locs.Nicki],
+    [locs.Love, locs.Hate],
+    [locs.IVE, locs.LSR],
+    [locs.Kebab, locs.Delight],
+    [locs.Eighties, locs.TwentyTens],
+    //[locs.RiiConnect24, locs.WiiLink],
+    //[locs.Top, locs.Bottom],
+    //[locs.JDU, locs.JDP],
     // [locs.Rama, locs.Devd]
 ];
 
