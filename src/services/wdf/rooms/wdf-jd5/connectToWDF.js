@@ -15,33 +15,28 @@ module.exports = {
     name: `connectToWDF`,
     description: `Connects user to WDF, creating session and adding user to a lobby.`,
     version: `1.5.0`,
+    token: true,
 
     async init(req, res, next) {
-
         try {
             const { avatar, name, onlinescore, pays } = req.body;
 
-            const session = new Session(req.version);
+            const session = new Session(req.version, req.ip);
             const sessionId = req.sid;
 
-            // Delete previous session & cache
-            const prevSession = await session.getSession(sessionId);
-            if (prevSession) {
-                await session.deleteSession(sessionId, req.ip);
-                await session.deleteSessionCache(sessionId, req.ip);
-            };
+            // Delete previous session
+            await session.deleteSession(sessionId);
 
             const cacheData = {
                 avatar,
                 name,
                 rank: onlinescore,
                 country: pays,
+                // only on jd5 and jd15
                 userId: req.uid,
                 sessionId: req.sid,
-                game: {
-                    id: req.game.id,
-                    version: req.game.version
-                }
+                game: req.game,
+                ip: req.ip
             };
 
             // Create session cache for client
@@ -60,7 +55,6 @@ module.exports = {
                 message: `Can't connect to WDF: ${err}`,
                 error: err.message
             });
-
         }
     }
 }

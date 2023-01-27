@@ -11,19 +11,22 @@ module.exports = {
     version: `1.5.0`,
 
     async init(req, res, next) {
-
         try {
             const { avatar, name, onlinescore, pays } = req.body;
 
-            const session = new Session(2015);
+            const session = new Session(2015, req.ip);
             const sessionId = req.sid;
             const playersInCountry = await session.getCountryPlayers(pays);
 
-            const cacheData = { 
+            // Delete previous session
+            await session.deleteSession(sessionId);
+
+            const cacheData = {
                 avatar,
                 name,
                 rank: onlinescore,
                 country: pays,
+                // only on jd5 and jd15
                 sessionId: req.sid,
                 userId: req.uid,
                 game: req.game,

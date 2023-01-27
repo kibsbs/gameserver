@@ -19,29 +19,15 @@ module.exports = {
             let { event, sid: _sid, sid_list, send_score } = req.body;
             event = decodeURIComponent(event);
 
-            const session = new Session(2015);
-            const scores = new Score(2015);
+            const session = new Session(2015, req.ip);
+            const scores = new Score(2015, req.ip);
             const sessionId = _sid;
 
             const userSession = await session.getSession(sessionId);
-            const userCache = await session.getSessionCache(sessionId, req.ip);
             const count = await session.sessionCount();
             const total = await scores.scoreCount();
 
-
             const { themeResults, isCoach } = await scores.getThemeAndCoachResult();
-
-            if (!userCache) {
-                return next({
-                    status: 400,
-                    message: "Session does not exist!"
-                })
-            };
-            // temp
-            req.sid = sessionId
-            req.uid = userCache.userId
-            req.game = userCache.game
-
             const t = utils.serverTime();
 
             let result = {
@@ -78,7 +64,7 @@ module.exports = {
 
                     const sid = sids[i];
                     const rank = await scores.getRank(sid);
-                    const sessionData = await session.getSession(sid);
+                    const sessionData = await session.getOtherSession(sid);
                     const scoreData = await scores.getScore(sid);
                     const isInLobby = lobbySessions.some(s => s === sid);
 

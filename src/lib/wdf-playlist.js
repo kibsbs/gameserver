@@ -115,14 +115,20 @@ class Playlist {
         };
         if (!update) return playlist;
 
-        // If server has slept, this will reset cur and next
-        // so that they can be created again
-        if (
-            (playlist.cur && this.isScreenSlept(playlist.cur)) ||
-            (playlist.next && this.isScreenSlept(playlist.next))
-        ) {
+        // If server has slept, this will reset cur and next so that they can be created again
+        const isCurSlept = (
+            (playlist.cur && now > playlist.cur.timing.request_playlist_time + 5000)
+        );
+        const isNextSlept = (
+            playlist.next && 
+            (now > playlist.next.timing.base_time) && 
+            (now > playlist.next.timing.start_song_time || now > playlist.next.timing.request_playlist_time)
+        );
+        if (isCurSlept || isNextSlept) {
+            console.log(isCurSlept, isNextSlept)
             global.logger.info(`Server was slept, rotating playlist for ${this.version}...`)
-            await this.rotateScreens();
+            await this.rotateScreens(true);
+            return await this.getScreens(false);
         }
         
         if (!playlist.cur) {
@@ -149,17 +155,26 @@ class Playlist {
         else return false;
     }
 
-    async rotateScreens() {
+    async rotateScreens(isOffSync = false) {
         const now = time.milliseconds();
         const prev = await cache.get(this.keys.prev);
         const cur = await cache.get(this.keys.cur);
         let next = await cache.get(this.keys.next);
 
-        // "next" will be "cur" so re-calculate it's time so that we make sure
-        // the server hasn't slept and the screen is in sync.
+        // Before syncing, make sure to cancel next's scheduled rotation & reset score
+        // because there is a bug where if we sync next, playlist will go fine
+        // and in middle of the song, the playlist will rotate because of the schedule
+        next.jobs.forEach(job => {
+            scheduler.cancelJob(job)
+        });
+        // Compute next's timing and sync it to "now"
         next = this.syncScreen(next, now);
+        // Re-schedule "next" after deleting its off-sync rotation job
+        jobs = this.scheduleScreen(next);
+        next.jobs = jobs;
 
-        // Create a new screen with it's base time as the new base time from "cur"
+        // Create a new next with the base time from next 
+        // (we pass "next" as argument to make sure it's in sync)
         const newScreen = await this.createScreen(NEXT, next);
 
         global.logger.info({
@@ -201,6 +216,29 @@ class Playlist {
         });
         return screen;
     }
+
+    scheduleScreen(screen) {
+        const rotationTime = screen.timing.request_playlist_time - 5000;
+        const resetScoreTime = rotationTime;
+
+        const { rotateScreens, resetScores } = this.getRotationDefinition(screen);
+
+        // Rotate playlist and clear votes
+        scheduler.newJob(rotateScreens, rotationTime, async () => {
+            global.logger.info(`Rotating playlist of ${this.version}...`)
+            await this.rotateScreens();
+            // this.vote.resetVotes();
+        });
+
+        // Clear all scores for version
+        scheduler.newJob(resetScores, resetScoreTime, async () => {
+            const db = require("./models/wdf-score");
+            const { deletedCount } = await db.deleteMany({ "game.version": this.version });
+            global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
+        });
+
+        return [rotateScreens, resetScores];
+    };
 
     getFilterForTheme(themeId) {
         if (this.isThemeCoach(themeId))
@@ -285,30 +323,26 @@ class Playlist {
         if (baseTime < now)
             baseTime = now;
         
-        let { timing, timingProgramming } = this.calculateTime(baseTime, screen, init);
+        let { timing, timingProgramming } = this.calculateTime(baseTime, screen, !init);
         screen.timing = timing;
         screen.timingProgramming = timingProgramming;
-        
+
         // Schedule the next rotation
-        let rotationTime = screen.timing.request_playlist_time - 5000;
-        let resetScoreTime = rotationTime;
-
-        // Rotate playlist and clear votes
-        scheduler.newJob("Rotate playlist", rotationTime, async () => {
-            await this.rotateScreens();
-            this.vote.resetVotes();
-        });
-
-        // Clear all scores for version
-        scheduler.newJob("Clear scores after playlist rotation", resetScoreTime, async () => {
-            const db = require("./models/wdf-score");
-            const { deletedCount } = await db.deleteMany({ "game.version": this.version });
-            global.logger.info(`Erased ${deletedCount} scores from ${this.version} after rotation`)
-        });
+        const jobs = this.scheduleScreen(screen);
+        screen.jobs = jobs;
         
         // Update history for no repetation!
         await this.updateHistory(map);
         return screen;
+    }
+
+    getRotationDefinition(screen) {
+        const { mapName } = screen.map;
+        const { request_playlist_time } = screen.timing;
+        return {
+            rotateScreens: `rotate-playlist:${mapName}:${request_playlist_time}`,
+            resetScores: `reset-scores:${mapName}:${request_playlist_time}`,
+        }
     }
 
     async resetScreens() {

@@ -18,24 +18,21 @@ module.exports = {
         try {
             const { song_id, score, stars, themeindex, coachindex, lastmove, total_score, sid } = req.body;
 
-            const userCache = await cache.get(`wdf-player-cache:${sid}`);
+            const session = new Session(req.version, req.ip);
+            const scores = new Scores(req.version);
 
-            if (!userCache)
-                return next({
-                    status: 401,
-                    message: "User does not have a session!"
-                });
-
-            const session = new Session(userCache.game.version);
-            const scores = new Scores(userCache.game.version);
-
-            let userSession = await session.getSession(sid);
-
-            if (!userSession) {
+            let userSession;
+            const userCache = req.cache;
+            const sessionExists = await session.exists(sid);
+            // User does not have a session create it.
+            if (!sessionExists) {
                 userSession = await session.newSession({
                     userId: userCache.userId,
                     sessionId: userCache.sessionId,
-                    game: userCache.game,
+                    game: {
+                        id: userCache.game.id,
+                        version: userCache.game.version
+                    },
                     profile: {
                         avatar: userCache.avatar,
                         name: userCache.name,
@@ -80,6 +77,7 @@ module.exports = {
             });
         }
         catch (err) {
+            console.error(err)
             return next({
                 status: 500,
                 message: `Can't send score: ${err}`,

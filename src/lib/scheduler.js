@@ -1,4 +1,5 @@
-const cron = require("cron");
+const schedule = require('node-schedule');
+
 const Agenda = require("agenda");
 
 const time = require("time");
@@ -7,20 +8,41 @@ const wdfScoreDb = require("./models/wdf-score");
 
 class Scheduler {
     constructor() {
-        this.agenda = new Agenda({ mongo: global.dbClient.db("scheduler") });
+        this.agenda = new Agenda({ 
+            mongo: global.dbClient.db("scheduler"),
+            lockLimit: 5000
+        });
+        this.agenda.on('ready', async () => {
+            global.logger.success(`Scheduler is ready!`)
+        });
     }
 
     newJob(def = "No definiton", time, fn) {
-        global.logger.info(`Scheduler: New job assigned for ${time}: ${def}`)
-        const job = new cron.CronJob(new Date(time), fn);
-        return job.start();
+        const date = new Date(time);
+
+        schedule.scheduleJob(def, date, fn);
+
+        global.logger.info(`Scheduler: New job assigned for ${time}: ${def}`);
+        return;
+
+    }
+
+    cancelJob(def) {
+        const jobs = schedule.scheduledJobs || [];
+        if (!jobs[def]) {
+            global.logger.warn(`Scheduler: ${def} is not an existing job, can't cancel!`);
+            return;
+        }
+        const job = jobs[def];
+        job.cancel();
+        global.logger.info(`Scheduler: Canceled ${def} job!`)
     }
 
     async botScoreJob(sid, fn) {
         const def = `update bot score ${sid}`;
         this.agenda.define(def, fn);
         await this.agenda.start();
-        await this.agenda.every("5 seconds", def);;
+        await this.agenda.every("5 seconds", def);
     }
 
     /**
@@ -29,49 +51,40 @@ class Scheduler {
      * and our session TTL is 30 seconds
      */
     async sessionJob() {
-        const query = {
-            updatedAt: { $lt: new Date( Date.now() - (global.gs.EXPIRED_SESSION_INTERVAL) ) },
-            isJD5: false,
-            isBot: false
-        }
-        const queryJD5 = {
-            updatedAt: { $lt: new Date( Date.now() - (global.gs.EXPIRED_SESSION_INTERVAL_JD5) ) },
-            isJD5: true,
-            isBot: false
-        }
-        this.agenda.define("remove inactive sessions", async (job) => {
-            // Find any session that has passed 30 seconds of inactivity
-            const sessions = await sessionDb.find(query);
-            const scores = await wdfScoreDb.find(query);
-            if (sessions.length > 0 || scores.length > 0) {
-                // Delete all inactive sessions and their score entries
-                const toDelete = [...sessions, ...scores]
-                const sessionIds = toDelete.map(s => s.sessionId);
+        const def = `remove dead sessions`;
+        const defJD5 = `remove dead sessions JD5`;
+        const score = `remove inactive sessions JD5`;
 
-                await sessionDb.deleteMany({ sessionId: sessionIds });
-                await wdfScoreDb.deleteMany({ sessionId: sessionIds });
+        this.agenda.define(def, async (job, done) => {
+            const now = Date.now();
+            const expiration = new Date(now - global.gs.EXPIRED_SESSION_INTERVAL);
+            
+            const sessions = await sessionDb.find({
+                updatedAt: { $lt: expiration }
+            });
+            const scores = await wdfScoreDb.find({
+                updatedAt: { $lt: expiration }
+            });
+            const sessionIds = sessions.map(s => s.sessionId);
 
-                global.logger.info(`Scheduler: Deleted ${sessions.length} inactive sessions and ${scores.length} scores from JD5 games`);
-            }
-        });
-        this.agenda.define("remove inactive sessions JD5", async (job) => {
-            // Find any session that has passed 30 seconds of inactivity
-            const sessions = await sessionDb.find(queryJD5);
-            const scores = await wdfScoreDb.find(queryJD5);
-            if (sessions.length > 0 || scores.length > 0) {
-                // Delete all inactive sessions and their score entries
-                const toDelete = [...sessions, ...scores]
-                const sessionIds = toDelete.map(s => s.sessionId);
+            const { deletedCount: sessionCount } = await sessionDb.deleteMany({
+                sessionId: sessions.map(s => s.sessionId)
+            });
 
-                await sessionDb.deleteMany({ sessionId: sessionIds });
-                await wdfScoreDb.deleteMany({ sessionId: sessionIds });
+            const { deletedCount: scoreCount } = await wdfScoreDb.deleteMany({
+                sessionId: scores.map(s => s.sessionId)
+            });
 
-                global.logger.info(`Scheduler: Deleted ${sessions.length} inactive sessions and ${scores.length} scores from JD5 games`);
-            }
+            if (sessionCount > 0)
+                global.logger.info(`Scheduler deleted ${sessionCount} inactive sessions.`);
+            if (scoreCount > 0)
+                global.logger.info(`Scheduler deleted ${scoreCount} inactive scores.`);
+            
+
+            done();
         });
         await this.agenda.start();
-        await this.agenda.every("30 seconds", "remove inactive sessions");
-        await this.agenda.every("45 seconds", "remove inactive sessions JD5");
+        await this.agenda.every("30 seconds", def);
     }
 }
 

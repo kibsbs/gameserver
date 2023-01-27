@@ -5,10 +5,12 @@ module.exports = {
     name: `checkToken`,
     description: `Verifies player's token and checks if they can connect online.`,
     version: `1.0.1`,
+    token: true,
+    
     async init(req, res, next) {
 
         try {
-            const session = new Session(req.version);
+            const session = new Session(req.version, req.ip);
 
             const canConnect = await session.canUserConnect(req.uid);
             if (!canConnect) {
@@ -17,7 +19,7 @@ module.exports = {
                     status: 401,
                     message: `User is not allowed to create connection to WDF!`
                 });
-            }
+            };
 
             return res.uenc();
         }

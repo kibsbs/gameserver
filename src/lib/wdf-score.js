@@ -68,24 +68,6 @@ class Score {
         };
     }
 
-    async deleteScore(filter) {
-        try {
-            return await this.db.deleteMany({ ...filter, "game.version": this.version });
-        }
-        catch (err) {
-            throw new Error(`Can't delete WDF Scores with ${JSON.stringify(filter)}: ${err}`);
-        }
-    }
-
-    async getScore(sessionId) {
-        try {
-            return await this.db.findOne({ sessionId, "game.version": this.version });
-        }
-        catch (err) {
-            throw new Error(`Can't get WDF Score for ${sessionId}: ${err}`);
-        }
-    }
-
     async get(filter) {
         try {
             return await this.db.findOne(filter);
@@ -101,6 +83,24 @@ class Score {
         }
         catch (err) {
             throw new Error(`Can't get many WDF Scores with ${JSON.stringify(filter)}: ${err}`);
+        }
+    }
+
+    async getScore(sessionId) {
+        try {
+            return await this.db.findOne({ sessionId, "game.version": this.version });
+        }
+        catch (err) {
+            throw new Error(`Can't get WDF Score for ${sessionId}: ${err}`);
+        }
+    }
+
+    async deleteScore(filter) {
+        try {
+            return await this.db.deleteMany({ ...filter, "game.version": this.version });
+        }
+        catch (err) {
+            throw new Error(`Can't delete WDF Scores with ${JSON.stringify(filter)}: ${err}`);
         }
     }
 

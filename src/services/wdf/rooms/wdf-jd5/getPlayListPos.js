@@ -14,7 +14,7 @@ module.exports = {
     description: ``,
     version: `1.0.0`,
 
-    async init(req, res, /* next */) {
+    async init(req, res, _next) {
 
         try {
             const { lang } = req.body;
@@ -126,7 +126,7 @@ module.exports = {
             });
         }
         catch (err) {
-            return next({
+            return _next({
                 status: 500,
                 message: `Can't get playlist: ${err}`,
                 error: err.message

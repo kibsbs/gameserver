@@ -9,6 +9,7 @@ module.exports = {
     name: `disconnectFromWDF`,
     description: `Disconnects user from WDF, removing their session and from their lobby`,
     version: `1.0.0`,
+    token: true,
 
     async init(req, res, next) {
 
@@ -17,13 +18,11 @@ module.exports = {
             // TODO: would it be ok to detect if sid and token sid doesnt match and ban player? (means they are hijacking)
             const { sid } = req.body;
 
-            const session = new Session(req.version);
+            const session = new Session(req.version, req.ip);
 
             await session.deleteSession(req.sid);
-            await session.deleteSessionCache(req.sid);
 
             global.logger.success(`${req.uid} disconnected from WDF of ${req.game.id}!`);
-
             return res.uenc();
         }
         catch (err) {

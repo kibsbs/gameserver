@@ -43,15 +43,18 @@ module.exports = {
                 // if "follow_sid" is given, it means player is requesting to join specific session's lobby
                 if (follow_sid) {
                     const sidSession = await session.getSession(follow_sid);
+
                     if (!sidSession) return next({
                         status: 400,
                         message: `${follow_sid} does not have a session, cant join their lobby!`
                     });
+
                     const { lobbyId } = sidSession;
                     if (!await session.isLobbyAvailable(lobbyId)) return next({
                         status: 400,
                         message: `The lobby you're trying to enter is empty.`
                     });
+                    
                     userSession = await session.newSession(query, lobbyId);
                 }
                 else {

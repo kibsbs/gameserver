@@ -63,6 +63,7 @@ let serviceConfig;
     global.gs = config;
     global.secrets = config.SECRETS;
     global.project = require("../package.json");
+    global.jobs = [];
 
     // If service has any clients, initalize them
     const clients = service.clients || [];

@@ -22,22 +22,14 @@ module.exports = {
         try {
             const { onlinescore, sid, song_id } = req.body;
 
-            const userCache = await cache.get(`wdf-player-cache:${sid}`);
-
-            if (!userCache)
-                return next({
-                    status: 401,
-                    message: "User does not have a session!"
-                });
-
-            const session = new Session(userCache.game.version);
-            const scores = new Scores(userCache.game.version);
+            const session = new Session(req.version, req.ip);
+            const scores = new Scores(req.version, req.ip);
 
             // User's leveled up their WDF level, update it
-            // TODO: maybe have 1 function to updateRank OR
+            // TODO: maybe have 1 function to updateLevel OR
             // remove profile from score and make session have it only
-            await session.updateRank(sid, onlinescore);
-            await scores.updateRank(sid, onlinescore);
+            await session.updateLevel(sid, onlinescore);
+            await scores.updateLevel(sid, onlinescore);
 
             const count = await session.sessionCount();
             const total = await scores.scoreCount();
@@ -51,25 +43,31 @@ module.exports = {
 
             // Get top 30 scores
             const topTen = await scores.getRanks(30);
-            const mappedScores = topTen.map(s => {
-                return {
-                    avatar: s.profile.avatar,
-                    name: s.profile.name,
-                    pays: s.profile.country,
-                    score: s.totalScore,
-                    rank: s.rank,
-                    onlinescore: s.profile.rank,
-                    sid: s.sessionId
-                };
-            });
+            const entries = [];
+            for (let i = 0; i < topTen.length; i++) {
+                const entry = topTen[i];
+
+                // If any of the top scores don't have a session don't include them
+                // (which means they left wdf right before ranking)
+                const entrySession = await session.getOtherSession(entry.sessionId);
+                if (!entrySession) continue;
+
+                entries.push({
+                    sid: entry.sid,
+                    score: entry.totalScore,
+                    name: entrySession.profile.name,
+                    pays: entrySession.profile.country,
+                    avatar: entrySession.profile.avatar,
+                    onlinescore: entrySession.profile.rank,
+                });
+            };
 
             return res.uenc({
                 onlinescore,
                 onlinescore_updated: onlinescore,
 
-                ...uenc.setIndex(mappedScores),
-                
-                numscores: mappedScores.length,
+                ...uenc.setIndex(entries),
+                numscores: entries.length,
 
                 count,
                 total,

@@ -71,7 +71,7 @@ module.exports = {
 
                     const sid = sids[i];
                     const rank = await scores.getRank(sid);
-                    const sessionData = await session.getSession(sid);
+                    const sessionData = await session.getOtherSession(sid);
                     const scoreData = await scores.getScore(sid);
                     const isInLobby = lobbySessions.some(s => s === sid);
 

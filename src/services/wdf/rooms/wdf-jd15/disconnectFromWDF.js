@@ -14,20 +14,12 @@ module.exports = {
             // TODO: would it be ok to detect if sid and token sid doesnt match and ban player? (means they are hijacking)
             const { sid } = req.body;
 
-            const session = new Session(2015);
-            const sessionId = sid;
+            const session = new Session(2015, req.ip);
+            const sessionId = req.sid;
 
-            const userSession = await session.getSession(sessionId);
-            const userCache = await session.getSessionCache(sessionId, req.ip);
-            if (!userCache) {
-                return next({
-                    status: 400,
-                    message: "Session does not exist!"
-                })
-            };
+            const userCache = await session.getSessionCache(sessionId);
 
             await session.deleteSession(sid);
-            await session.deleteSessionCache(sid);
 
             global.logger.success(`${userCache.userId} disconnected from WDF of 2015!`);
 

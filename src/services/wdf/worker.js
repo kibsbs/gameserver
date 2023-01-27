@@ -1,9 +1,9 @@
 const Bots = require("wdf-bots");
 const Playlist = require("wdf-playlist");
 
-const scheduler = require("scheduler");
 const games = require("games");
 const utils = require("utils");
+const scheduler = require("scheduler");
 
 /**
  * This is where we start all jobs after service starts.

@@ -28,14 +28,13 @@ module.exports.errorHandler = (err, req, res, next) => {
     data.requestId = uuid.v4();
     data.serverTime = new Date();
 
-    if (err.error) {
-        global.logger.error({
-            path: req.originalUrl,
-            ip: req.ip,
-            body: JSON.stringify(req.body || {}),
-            error: err.error
-        });
-    }
+    global.logger.error({
+        path: req.originalUrl,
+        ip: req.ip,
+        body: JSON.stringify(req.body || {}),
+        msg: err.message,
+        error: err.error
+    });
 
     // Only show error messages in response if it's true in config and if server is dev
     if (utils.isDev() || req.headers.hasOwnProperty(global.gs.HEADER_DEBUG))

@@ -13,8 +13,8 @@ module.exports = {
 
             // If "sid" and "token" is provided, it means client has left party and went to pre wdf
             // so we should remove their session & remove from lobby
-            if (sid && token) {
-                const session = new Session(2015);
+            if (sid) {
+                const session = new Session(2015, req.ip);
                 const sessionId = sid;
 
                 const userSession = await session.getSession(sessionId);
@@ -23,11 +23,13 @@ module.exports = {
                     return next({
                         status: 400,
                         message: "Session does not exist!"
-                    })
+                    });
                 };
 
-                await session.deleteSession(sessionId);
-                global.logger.info("Deleted session of " + sessionId);
+                if (userSession) {
+                    await session.deleteSession(sessionId);
+                    global.logger.info("Deleted session of " + sessionId);
+                };
             }
 
             return res.uenc({

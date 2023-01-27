@@ -33,6 +33,9 @@ const Schema = new mongoose.Schema(
     },
     isJD5: {
       type: Boolean
+    },
+    ip: {
+      type: String
     }
   },
   { versionKey: false, timestamps: true }

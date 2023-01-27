@@ -10,42 +10,46 @@ const sessionClient = require("wdf-session-client");
 
 const conf = {
     "wdf-jd5": {
+        sendVote: {
+            id: 840,
+            mid: [sessionClient.sessionJd5Auth, sessionClient.sessionCache]
+        },
+        getMyRank: {
+            id: 914,
+            mid: [sessionClient.sessionJd5Auth, sessionClient.sessionCache]
+        },
+        sendScore: {
+            id: 934,
+            mid: [sessionClient.sessionJd5Auth, sessionClient.sessionCache]
+        },
         checkToken: {
             id: 1023,
+            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
+        },
+        connectToWDF: {
+            id: 1166,
             mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
         },
         getServerTime: {
             id: 1350,
             mid: [sessionClient.sessionJd5Auth]
         },
-        sendScore: {
-            id: 934,
+        getBloomBergs2: {
+            id: 1374,
             mid: [sessionClient.sessionJd5Auth]
-        },
-        getMyRank: {
-            id: 914,
-            mid: [sessionClient.sessionJd5Auth]
-        },
-        connectToWDF: {
-            id: 1166,
-            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
-        },
-        disconnectFromWDF: {
-            id: 1695,
-            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient]
         },
         getPlayListPos: {
             id: 1444,
             mid: [sessionClient.sessionJd5Auth]
         },
+        disconnectFromWDF: {
+            id: 1695,
+            mid: [sessionClient.sessionJd5Auth, nasClient.require, gameClient, sessionClient.sessionCache]
+        },
         getCommunityStats: {
             id: 1812,
             mid: [sessionClient.sessionJd5Auth]
-        },
-        getBloomBergs2: {
-            id: 1374,
-            mid: [sessionClient.sessionJd5Auth]
-        },
+        }
     },
     "wdf-legacy": {
         getServerTime: {
@@ -73,7 +77,7 @@ const conf = {
         },
         getBloomBergs2: {
             id: 1374,
-            mid: [nasClient.require, gameClient]
+            mid: []
         },
         getPlayerScores: {
             id: 1564,
@@ -93,48 +97,48 @@ const conf = {
         }
     },
     "wdf-jd15": {
-        getServerTime: {
-            id: 1350
+        sendVote: {
+            id: 840,
+            mid: [nasClient.require, gameClient, sessionClient.sessionCache]
+        },
+        getMyRank: {
+            id: 914,
+            mid: [sessionClient.sessionCache] // no session or lobby client, it gets them itself
         },
         checkToken: {
             id: 1023,
             mid: [nasClient.require, gameClient]
         },
-        sendVote: {
-            id: 840,
+        connectToWDF: {
+            id: 1166,
             mid: [nasClient.require, gameClient]
+        },
+        getServerTime: {
+            id: 1350
+        },
+        getBloomBergs2: {
+            id: 1374,
+            mid: [nasClient.require, gameClient, sessionClient.sessionCache]
         },
         getPlayListPos: {
             id: 1444,
             mid: []
         },
-        connectToWDF: {
-            id: 1166,
-            mid: [nasClient.require, gameClient]
-        },
-        getRandomPlayersWMap: {
-            id: 2038,
-            mid: []
-        },
-        getBloomBergs2: {
-            id: 1374,
-            mid: [nasClient.require, gameClient]
-        },
         getPlayerScores: {
             id: 1564,
-            mid: [] // no session or lobby client, it gets them itself
-        },
-        disconnectFromWDF: {
-            id: 1695,
-            mid: []
-        },
-        getMyRank: {
-            id: 914,
-            mid: [] // no session or lobby client, it gets them itself
+            mid: [sessionClient.sessionCache]
         },
         getRandomPlayers: {
             id: 1665,
-            mid: []
+            mid: [sessionClient.sessionCache]
+        },
+        disconnectFromWDF: {
+            id: 1695,
+            mid: [sessionClient.sessionCache]
+        },
+        getRandomPlayersWMap: {
+            id: 2038,
+            mid: [sessionClient.sessionCache]
         }
     }
 };

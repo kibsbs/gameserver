@@ -17,10 +17,8 @@ module.exports = {
             const session = new Session(req.game.version);
 
             await session.deleteSession(req.sid);
-            await session.deleteSessionCache(req.sid);
 
             global.logger.success(`${req.uid} disconnected from WDF of ${req.game.id}!`);
-
             return res.uenc();
         }
         catch (err) {
