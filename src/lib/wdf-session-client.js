@@ -129,6 +129,7 @@ module.exports.sessionJd5Auth = async (req, res, next) => {
 
     if (auths.hasOwnProperty(login) && auths[login].pass === password) {
         req.version = auths[login].version;
+        req.authVersion = req.version;
         return next();
     }
     else {
@@ -204,7 +205,7 @@ module.exports.sessionCache = async (req, res, next) => {
     if (userCache.game.version !== version) {
         return next({
             status: 401,
-            message: `Player's user cache version does not match auth version!`
+            message: `Player's user cache version does not match auth version! ${userCache.game.version} & ${userCache.game.id} != ${version}`
         });
     }
 

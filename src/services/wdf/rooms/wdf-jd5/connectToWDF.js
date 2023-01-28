@@ -24,6 +24,11 @@ module.exports = {
             const session = new Session(req.version, req.ip);
             const sessionId = req.sid;
 
+            // User's Authorization version does not match token version
+            if (req.authVersion !== req.version) {
+                throw new Error(`Tracking version and token version don't match!`)
+            };
+
             // Delete previous session
             await session.deleteSession(sessionId);
 
@@ -53,6 +58,7 @@ module.exports = {
             });
         }
         catch (err) {
+            return res.uenc({}, err.message)
             return next({
                 status: 500,
                 message: `Can't connect to WDF: ${err}`,

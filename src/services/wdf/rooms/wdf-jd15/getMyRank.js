@@ -50,6 +50,7 @@ module.exports = {
                 entries.push({
                     sid: entry.sessionId,
                     score: entry.totalScore,
+                    rank: entry.rank,
                     name: entrySession.profile.name,
                     pays: entrySession.profile.country,
                     avatar: entrySession.profile.avatar,

@@ -16,6 +16,6 @@ module.exports.HAPPYHOUR = {
 // Temporary unlocked songs
 module.exports.LOCKED = {
     starCountToUnlock: 500000,
-    lastSong: 21832538071, // Zagreb (available in songdb)
+    lastSong: 25259885272, // ItsYouSWT (testing if alts need to be last unlocked to be played by game)
     nextSong: 21624006940 // PrinceAli (also unavailable in songdb)
 };

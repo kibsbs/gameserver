@@ -65,6 +65,10 @@ module.exports.LOG_SERVER_ERRORS = true; // Logs server errors
 module.exports.EXPIRED_SESSION_INTERVAL = (35 * 1000); // 30 seconds
 module.exports.EXPIRED_SESSION_INTERVAL_JD5 = (35 * 1000); // 1 minute
 module.exports.EXPIRED_SCORE_INTERVAL = (45 * 1000); // 45 seconds
+module.exports.WORLD_RESULT_LIMIT = 15;
+module.exports.WORLD_RESULT_LIMIT_JD5 = 25;
+
+
 
 module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after creation
 

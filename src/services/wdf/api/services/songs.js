@@ -13,12 +13,12 @@ function getSubTitle(map) {
     const isOnStage = mapName.endsWith("OSC");
   
     if (isAlt && difficulty == 4) return "EXTREME";
-    if (isAlt) return "ALTERNATE";
-    if (isSweat) return "SWEAT";
-    if (isOnStage) return "ON-STAGE";
+    else if (isAlt) return "ALTERNATE";
+    else if (isSweat) return "SWEAT";
+    else if (isOnStage) return "ON-STAGE";
     
-    return;
-  }
+    return "";
+};
 
 router.get("/all", async(req, res, next) => {
     const songs = await songsDb.find({});

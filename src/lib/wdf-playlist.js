@@ -297,7 +297,7 @@ class Playlist {
         const theme = this.randomTheme(ignoredThemes);
         const map = await this.randomMap(1, ignoredSongs, this.getFilterForTheme(theme.id));
         if (!map)
-            throw new Error(`Playlist couldn't find a map to create screen for, is the song database empty?`);
+            throw new Error(`Playlist couldn't find a map to create screen for ${this.game.version}, is the song database empty?`);
 
         screen.theme = theme;
         screen.map = map;

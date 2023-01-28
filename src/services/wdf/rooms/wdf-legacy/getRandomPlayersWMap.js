@@ -43,6 +43,7 @@ module.exports = {
             });
         }
         catch (err) {
+            console.error(err)
             return next({
                 status: 500,
                 message: `Can't get random players for backstage: ${err}`,

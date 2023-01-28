@@ -29,7 +29,6 @@ module.exports = {
             // TODO: maybe have 1 function to updateLevel OR
             // remove profile from score and make session have it only
             await session.updateLevel(sid, onlinescore);
-            await scores.updateLevel(sid, onlinescore);
 
             const count = await session.sessionCount();
             const total = await scores.scoreCount();
@@ -42,7 +41,7 @@ module.exports = {
             const winners = await scores.getNumberOfWinners(themeResults);
 
             // Get top 30 scores
-            const topTen = await scores.getRanks(30);
+            const topTen = await scores.getRanks(global.gs.WORLD_RESULT_LIMIT_JD5);
             const entries = [];
             for (let i = 0; i < topTen.length; i++) {
                 const entry = topTen[i];
@@ -53,8 +52,9 @@ module.exports = {
                 if (!entrySession) continue;
 
                 entries.push({
-                    sid: entry.sid,
+                    sid: entry.sessionId,
                     score: entry.totalScore,
+                    rank: entry.rank,
                     name: entrySession.profile.name,
                     pays: entrySession.profile.country,
                     avatar: entrySession.profile.avatar,
