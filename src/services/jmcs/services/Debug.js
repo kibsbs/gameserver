@@ -26,12 +26,13 @@ module.exports = {
             return res.send({ payload });
         });
 
-        router.get("/testToken", (req, res) => {
+        router.post("/testToken", (req, res) => {
             let token = nasToken.encrypt({
                 exp: Date.now(),
-                gid: req.query.gid || "SE3E",
-                uid: "0",
-                sid: "0",
+                gid: req.body.gid || "SE3E",
+                uid: req.body.uid || "0",
+                sid: req.body.sid || "0",
+                mac: "0"
             });
             global.logger.info(`Generated test token ${token}`);
             

@@ -42,17 +42,17 @@ class Score {
             isBot: Joi.boolean().default(false)
         });
         this.schema = this.game.isJD5 ? schema2014 : schema;
+        this.baseQuery = {
+            "game.version": this.version
+        };
     }
 
     async updateScore(sessionId, scoreData) {
         try {
             return await this.db.findOneAndUpdate({
-                sessionId,
-                "game.version": this.version
-            },
-                scoreData,
-                { upsert: true }
-            );
+                ...this.baseQuery,
+                sessionId
+            }, scoreData, { upsert: true });
         }
         catch (err) {
             throw new Error(`Can't upsert WDF Score: ${err}`);
@@ -61,7 +61,10 @@ class Score {
 
     async updateRank(sessionId, rank) {
         try {
-            return await this.db.findOneAndUpdate({ sessionId, "game.version": this.version }, { "profile.rank": rank });
+            return await this.db.findOneAndUpdate({ 
+                ...this.baseQuery,
+                sessionId
+             }, { "profile.rank": rank });
         }
         catch (err) {
             throw new Error(`Can't update WDF rank of ${sessionId} / rank: ${rank}: ${err}`);
@@ -88,7 +91,7 @@ class Score {
 
     async getScore(sessionId) {
         try {
-            return await this.db.findOne({ sessionId, "game.version": this.version });
+            return await this.db.findOne({ ...this.baseQuery, sessionId });
         }
         catch (err) {
             throw new Error(`Can't get WDF Score for ${sessionId}: ${err}`);
@@ -97,7 +100,7 @@ class Score {
 
     async deleteScore(filter) {
         try {
-            return await this.db.deleteMany({ ...filter, "game.version": this.version });
+            return await this.db.deleteMany({ ...this.baseQuery, ...filter });
         }
         catch (err) {
             throw new Error(`Can't delete WDF Scores with ${JSON.stringify(filter)}: ${err}`);
@@ -107,7 +110,7 @@ class Score {
     async resetScores() {
         try {
             return await this.db.deleteMany({
-                "game.version": this.version
+                ...this.baseQuery
             });
         }
         catch (err) {
@@ -120,7 +123,7 @@ class Score {
     }
 
     async scoreCount() {
-        return await this.db.count({ "game.version": this.version }) || 0;
+        return await this.db.count({ ...this.baseQuery }) || 0;
     }
 
     async getRank(sid) {
@@ -133,7 +136,7 @@ class Score {
 
     async getRanks(limit, excludeSid) {
         let pipeline = [
-            { $match: { "game.version": this.version, sessionId: { $ne: excludeSid } } },
+            { $match: { ...this.baseQuery, sessionId: { $ne: excludeSid } } },
             { $sort: { totalScore: -1 } },
             {
                 $group: {
@@ -172,7 +175,7 @@ class Score {
     async getThemeResult(themeIndex = 0) {
         try {
             const entries = await this.db.find({
-                "game.version": this.version,
+                ...this.baseQuery,
                 themeIndex
             })
             let stars = 0;
@@ -197,7 +200,7 @@ class Score {
     async getCoachResult(coachIndex = 0) {
         try {
             const entries = await this.db.find({
-                "game.version": this.version,
+                ...this.baseQuery,
                 coachIndex
             });
             let stars = 0;

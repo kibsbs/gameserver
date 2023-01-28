@@ -10,7 +10,7 @@ class Scheduler {
     constructor() {
         this.agenda = new Agenda({ 
             mongo: global.dbClient.db("scheduler"),
-            lockLimit: 5000
+            lockLimit: 1000
         });
         this.agenda.on('ready', async () => {
             global.logger.success(`Scheduler is ready!`)
@@ -51,13 +51,8 @@ class Scheduler {
      * and our session TTL is 30 seconds
      */
     async sessionJob() {
-        const def = `remove dead sessions`;
-        const defJD5 = `remove dead sessions JD5`;
-        const score = `remove inactive sessions JD5`;
-
-        this.agenda.define(def, async (job, done) => {
-            const now = Date.now();
-            const expiration = new Date(now - global.gs.EXPIRED_SESSION_INTERVAL);
+        this.agenda.define(`remove dead sessions`, async (job, done) => {
+            const expiration = new Date(Date.now() - global.gs.EXPIRED_SESSION_INTERVAL);
             
             const sessions = await sessionDb.find({
                 updatedAt: { $lt: expiration }
@@ -84,7 +79,7 @@ class Scheduler {
             done();
         });
         await this.agenda.start();
-        await this.agenda.every("30 seconds", def);
+        await this.agenda.every("30 seconds", `remove dead sessions`);
     }
 }
 

@@ -201,9 +201,18 @@ module.exports.sessionCache = async (req, res, next) => {
         message: `Player does not have a session!`
     });
 
+    if (userCache.game.version !== version) {
+        return next({
+            status: 401,
+            message: `Player's user cache version does not match auth version!`
+        });
+    }
+
     req.sid = sid;
     req.cache = userCache;
     req.uid = userCache.userId;
     req.game = userCache.game;
+    req.game.id = userCache.game.id;
+    req.game.version = userCache.game.version;
     return next();
 };

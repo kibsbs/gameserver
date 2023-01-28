@@ -35,7 +35,10 @@ module.exports = {
                 // only on jd5 and jd15
                 userId: req.uid,
                 sessionId: req.sid,
-                game: req.game,
+                game: {
+                    id: req.game.id,
+                    version: req.game.version
+                },
                 ip: req.ip
             };
 

@@ -21,14 +21,15 @@ module.exports = {
             const session = new Session(req.version, req.ip);
             const scores = new Scores(req.version);
 
-            let userSession;
             const userCache = req.cache;
-            const sessionExists = await session.exists(sid);
+            const sessionId = userCache.sessionId;
+
+            let userSession = await session.getSession(sessionId);
             // User does not have a session create it.
-            if (!sessionExists) {
+            if (!userSession) {
                 userSession = await session.newSession({
                     userId: userCache.userId,
-                    sessionId: userCache.sessionId,
+                    sessionId: sessionId,
                     game: {
                         id: userCache.game.id,
                         version: userCache.game.version

@@ -72,10 +72,8 @@ class Session {
         this.baseQuery = {
             "game.version": this.version
         };
-        this.cacheKey = !this.game.isJD5 ? 
-        `wdf-player-cache:${this.version}` : `wdf-player-cache`
+        this.cacheKey = !this.game.isJD5 ? `wdf-player-cache:${this.version}` : `wdf-player-cache`
     }
-
     
     /**
      * Sessions
@@ -112,8 +110,8 @@ class Session {
 
             const value = await this.schema.validateAsync(data);
             const entry = new this.db(value);
-
-            return await entry.save();
+            const saved = await entry.save();
+            return saved;
         }
         catch (err) {
             throw new Error(`Can't create Session: ${err}`);
@@ -126,8 +124,10 @@ class Session {
 
             // If game is IP authorized but found session IP is not equal to given IP
             // we return null so that clients who calls this can't return http error to client.
-            if (session && this.ipAuth && this.ip && session.ip !== this.ip)
+            if (session && this.ipAuth && this.ip && session.ip !== this.ip) {
+                global.logger.warn(`${this.ip} tried to access session of ${sessionId}!`);
                 return;
+            }
             
             return session;
         }
