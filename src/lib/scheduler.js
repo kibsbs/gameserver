@@ -1,6 +1,7 @@
 const schedule = require('node-schedule');
 
 const Agenda = require("agenda");
+const uuid = require("uuid");
 
 const time = require("time");
 const sessionDb = require("./models/session");
@@ -10,7 +11,7 @@ class Scheduler {
     constructor() {
         this.agenda = new Agenda({ 
             mongo: global.dbClient.db("scheduler"),
-            lockLimit: 1000
+            lockLimit: 0
         });
         this.agenda.on('ready', async () => {
             global.logger.success(`Scheduler is ready!`)
@@ -51,7 +52,8 @@ class Scheduler {
      * and our session TTL is 30 seconds
      */
     async sessionJob() {
-        this.agenda.define(`remove dead sessions`, async (job, done) => {
+        const hash = uuid.v4();
+        this.agenda.define(`remove dead sessions ${hash}`, async (job, done) => {
             const expiration = new Date(Date.now() - global.gs.EXPIRED_SESSION_INTERVAL);
             
             const sessions = await sessionDb.find({
@@ -79,7 +81,7 @@ class Scheduler {
             done();
         });
         await this.agenda.start();
-        await this.agenda.every("30 seconds", `remove dead sessions`);
+        await this.agenda.every("30 seconds", `remove dead sessions ${hash}`);
     }
 }
 
