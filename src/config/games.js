@@ -45,7 +45,7 @@ const games = [{
     },
     stats: {},
     maxStars: 5,
-    wdfName: "wdf",
+    wdfName: "jd5",
     isJD5: true
 }, {
     name: "Just Dance 2015",
@@ -69,7 +69,7 @@ const games = [{
         unlocksCount: 27
     },
     maxStars: 5,
-    wdfName: "wdf15",
+    wdfName: "jd2015",
     isJD15: true
 }, {
     name: "Just Dance 2016",
@@ -93,7 +93,7 @@ const games = [{
         unlocksCount: 32
     },
     maxStars: 5,
-    wdfName: "wdfjd6"
+    wdfName: "legacy"
 }, {
     name: "Just Dance 2017",
     version: 2017,
@@ -116,7 +116,7 @@ const games = [{
         unlocksCount: 24
     },
     maxStars: 6,
-    wdfName: "wdfjd6"
+    wdfName: "legacy"
 }, {
     name: "Just Dance 2018",
     version: 2018,
@@ -139,7 +139,7 @@ const games = [{
         unlocksCount: 12
     },
     maxStars: 7,
-    wdfName: "wdfjd6"
+    wdfName: "legacy"
 }
 ];
 
@@ -159,7 +159,7 @@ const mods = [{
     },
     stats: {},
     maxStars: 5,
-    wdfName: "wdf",
+    wdfName: "jd5",
     isJD5: true
 }];
 

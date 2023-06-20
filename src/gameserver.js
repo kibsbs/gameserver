@@ -59,6 +59,7 @@ let serviceConfig;
     global.ENV = args.env || process.env.ENV || serviceConfig.ENV || "local";
     global.HTTP_PORT = args.http_port || process.env.HTTP_PORT || serviceConfig.HTTP_PORT || 5000;
     global.HTTPS_PORT = args.https_port || process.env.HTTPS_PORT || serviceConfig.HTTPS_PORT || global.HTTPS_PORT + 443 || 5443;
+    global.IS_TEST_MODE = args["test-mode"] || serviceConfig.IS_TEST_MODE || false;
     global.IS_ON_CLOUDFLARE = serviceConfig.IS_ON_CLOUDFLARE || config.IS_ON_CLOUDFLARE || false;
     global.FQDN = serviceConfig.FQDN || null;
 

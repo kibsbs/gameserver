@@ -12,7 +12,9 @@ const validate = require("http-validate");
 const mids = require("http-middleware");
 const logger = require("logger")("wdf");
 const uenc = require("uenc");
+
 const worker = require("./worker");
+const loadFuncs = require("./load-funcs");
 
 global.logger = logger;
 global.httpSchema = require("./http-schema");
@@ -37,18 +39,21 @@ app.use((req, res, next) => {
 
 const rooms = {
     "wdf-jd5": "wdf",
-    "wdf-jd15": "wdf15",
-    "wdf-legacy": "wdfjd6"
+    "wdf-jd15": "wdf-jd15",
+    "wdf-legacy": "wdflgc"
 };
 
 app.use("/api", require("./api/service"));
 
 // Only initate WDF rooms if server isn't in test mode
-if (!global.args["test-mode"]) {
-    app.post("/wdf", require("./load-funcs")("wdf-jd5"));
-    app.post("/wdf15", mids.agentCheck, require("./load-funcs")("wdf-jd15"));
-    app.post("/wdfjd6", mids.agentCheck, require("./load-funcs")("wdf-legacy"));
-}
+if (!global.IS_TEST_MODE) {
+    // 2014 WDF
+    app.post("/jd5", loadFuncs("wdf-jd5"));
+    // 2015 WDF
+    app.post("/jd2015", mids.agentCheck, loadFuncs("wdf-jd15"));
+    // 2016 - 2017 - 2018 WDF
+    app.post("/legacy", mids.agentCheck, loadFuncs("wdf-legacy"));
+};
 
 app.use(mids.errorHandler);
 app.use(mids.notFound);
