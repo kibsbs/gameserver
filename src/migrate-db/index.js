@@ -1,5 +1,4 @@
-
-module.exports.migrateSongs = (cb) => {
+const migrateSongs = (cb) => {
     const model = require("../lib/models/song");
 
     const songdb = require("./songdb.json");
@@ -21,3 +20,7 @@ module.exports.migrateSongs = (cb) => {
         return cb(null, true);
     });
 };
+
+(async() => {
+    await require("../lib/clients/db-client")()
+})

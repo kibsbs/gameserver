@@ -32,4 +32,4 @@ app.post("/pr", b64body, require("./services/pr"));
 app.use(mids.errorHandler);
 app.use(mids.notFound);
 
-module.exports = app;
+module.exports.app = app;

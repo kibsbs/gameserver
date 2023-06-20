@@ -19,24 +19,31 @@ const isSuccessful = (status) => status >= 200 && status <= 300;
  */
 module.exports.errorHandler = (err, req, res, next) => {
     let data = {};
+    let reqId = uuid.v4();
+    let serverTime = new Date();
 
-    data.status = err.status || 400;
+    data.status = err.status || 500;
     data.success = isSuccessful(data.status);
     data.message = err.message || "Unknown error occured.";
     if (err.error) data.error = err.error;
     
-    data.requestId = uuid.v4();
-    data.serverTime = new Date();
+    data.requestId = reqId;
+    data.serverTime = serverTime;
 
+    // Log the error
     global.logger.error({
         path: req.originalUrl,
         ip: req.ip,
         body: JSON.stringify(req.body || {}),
+        headers: JSON.stringify(req.headers || {}),
         msg: err.message,
-        error: err.error
+        error: err.error,
+        reqId: reqId,
+        serverTime: serverTime
     });
 
-    // Only show error messages in response if it's true in config and if server is dev
+    // Only show error messages in response if the server is in DEV environment 
+    // or the header includes a debug header that can work on all ENVs
     if (utils.isDev() || req.headers.hasOwnProperty(global.gs.HEADER_DEBUG))
         return res.status(data.status).json(data);
     else

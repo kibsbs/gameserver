@@ -7,10 +7,8 @@ module.exports.BASE_URL = process.env.BASE_URL || "http://localhost:" + global.P
 module.exports.ENVS = ["local", "test", "docker", "prod", "dev", "uat", "qc", "beta"];
 module.exports.DEFAULT_PORT = 5000;
 module.exports.DEFAULT_ENV = "local";
-module.exports.BLOCKED_COUNTRIES = [
-    // Russia and Belarus
-    "RU", "BY"
-];
+module.exports.BLOCKED_COUNTRIES = [];
+module.exports.IS_ON_CLOUDFLARE = process.env.IS_ON_CLOUDFLARE || false;
 
 module.exports.GAMES = require("./games");
 module.exports.AVATARS = require("./avatars");

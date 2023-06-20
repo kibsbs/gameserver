@@ -11,6 +11,7 @@ global.ENV = "local";
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
+const https = require("https");
 const async = require("async");
 const dotenv = require("dotenv");
 const logger = require("./lib/logger")("gameserver");
@@ -19,6 +20,8 @@ const migrateDb = require("./migrate-db");
 const dbClient = require("./lib/clients/db-client");
 const redisClient = require("./lib/clients/redis-client");
 const memcachedClient = require("./lib/clients/memcached-client");
+
+const utils = require("./lib/utils");
 
 global.logger = logger;
 
@@ -54,7 +57,10 @@ let serviceConfig;
 
     // Set ENV and PORT
     global.ENV = args.env || process.env.ENV || serviceConfig.ENV || "local";
-    global.PORT = args.port || process.env.PORT || serviceConfig.PORT || 5000;
+    global.HTTP_PORT = args.http_port || process.env.HTTP_PORT || serviceConfig.HTTP_PORT || 5000;
+    global.HTTPS_PORT = args.https_port || process.env.HTTPS_PORT || serviceConfig.HTTPS_PORT || global.HTTPS_PORT + 443 || 5443;
+    global.IS_ON_CLOUDFLARE = serviceConfig.IS_ON_CLOUDFLARE || config.IS_ON_CLOUDFLARE || false;
+    global.FQDN = serviceConfig.FQDN || null;
 
     // Set globals for service and gs
     global.config = serviceConfig;
@@ -94,8 +100,21 @@ let serviceConfig;
     // Initate provided service
     logger.info(`Starting service ${service.name}...`);
     
-    const app = require(service.path);
-    app.listen(global.PORT, "127.0.0.1");
+    const { app, credentials = null } = require(service.path);
 
-    logger.success(`Service ${service.name} is listening on port ${global.PORT} in '${global.ENV}' enviroment successfully!`);
+    // Start HTTP server first
+    const httpServer = http.createServer(app);
+    httpServer.listen(global.HTTP_PORT, () => {
+        logger.success(`Service ${service.name} is listening on port HTTP ${global.HTTP_PORT} in '${global.ENV}' enviroment successfully.`);
+    });
+
+    // If credentials are given by service & SSL is enabled by Service config, start a HTTPS server
+    if (credentials && serviceConfig.SSL == true) {
+        const httpsServer = https.createServer({}, app);
+
+        httpsServer.listen(global.HTTPS_PORT, () => {
+            logger.success(`Service ${service.name} is listening on port HTTPS ${global.HTTPS_PORT} in '${global.ENV}' enviroment successfully.`);
+        });
+    };
+
 })();

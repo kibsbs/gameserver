@@ -61,4 +61,9 @@ for (let i = 0; i < services.length; i++) {
 app.use(mids.errorHandler);
 app.use(mids.notFound);
 
-module.exports = app;
+module.exports.app = app;
+module.exports.credentials = {
+	key: fs.readFileSync(global.config.SSL_PK, 'utf8'),
+	cert: fs.readFileSync(global.config.SSL_CERT, 'utf8'),
+	ca: fs.readFileSync(global.config.SSL_CA, 'utf8')
+};

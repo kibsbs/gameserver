@@ -16,9 +16,13 @@ module.exports = () => {
         type: "string",
         description: `Service enviroment`
     })
-    .option("port", {
+    .option("http-port", {
         type: "number",
-        description: "Port to bind on"
+        description: "HTTP port to bind on"
+    })
+    .option("https-port", {
+        type: "number",
+        description: "HTTPS port to bind on"
     })
     .option("no-scheduler", {
         type: "boolean",

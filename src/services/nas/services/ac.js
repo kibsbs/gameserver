@@ -65,11 +65,30 @@ module.exports = function (req, res, next) {
     })
     .catch(err => {
       global.logger.error(`[AC] Error on Wiimmfi end: ${err.message}`);
-      console.log(err.response.data)
-      return next({
-        status: 500,
-        message: `Can't connect to Wiimmfi`,
-        error: err.message
-      });
+    
+      const status = err?.response?.status || 500;
+      const message = err?.message || "Unknown error, couldn't detect error from Wiimmfi";
+      // todo: wiimmfi response data returns it in unicode
+      const context = err?.response?.data || "Unknown error, couldn't detect context from Wiimmfi"; 
+
+      // Give response depending on error
+      switch(errStatus) {
+        case 912:
+          return next({
+            status: 401,
+            message: `Dolphin NANDs are not authorized.`,
+            error: message
+          });
+        default:
+          return next({
+            status: 500,
+            message: `An error occured with Wiimmfi.`,
+            error: {
+              msg: message,
+              context: context
+            }
+          });
+      };
+
     });
 };

@@ -32,7 +32,7 @@ const games = [{
     version: 2014,
     ported: false,
     mod: false,
-    isAvailable: true,
+    isAvailable: false,
     regions: {
         SJOP: {
             region: PAL,
@@ -150,7 +150,7 @@ const mods = [{
     modVersion: 2014,
     ported: true,
     mod: true,
-    isAvailable: true,
+    isAvailable: false,
     regions: {
         SJME: {
             region: PAL,
@@ -161,24 +161,6 @@ const mods = [{
     maxStars: 5,
     wdfName: "wdf",
     isJD5: true
-}, {
-    name: "Just Dance Beats",
-    author: "SquareJDBR",
-    version: 2000,
-    modVersion: 2014,
-    ported: false,
-    mod: true,
-    isAvailable: true,
-    regions: {
-        SQRE: {
-            region: NTSC,
-            isAvailable: true
-        }
-    },
-    stats: {},
-    maxStars: 5,
-    wdfName: "wdf",
-    isJD5: true,
 }];
 
 module.exports = [

@@ -55,4 +55,4 @@ app.post("/", async (req, res, next) => {
 app.use(mids.errorHandler);
 app.use(mids.notFound);
 
-module.exports = app;
+module.exports.app = app;

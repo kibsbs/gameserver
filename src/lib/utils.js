@@ -35,10 +35,10 @@ class Utils {
 
     /**
      * Checks if server's enviroment is a dev enviroment
+     * @param {String} env Environent, global.ENV by default 
      * @returns {Boolean}
      */
-    isDev() {
-        let env = global.ENV;
+    isDev(env = global.ENV) {
         return ["dev", "local", "uat", "docker", "test", "beta"].includes(env.toLowerCase());
     }
 

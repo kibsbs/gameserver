@@ -38,11 +38,12 @@ module.exports = (req, res, next) => {
 
         // Block any forbidden country from access.
         (cb) => {
+            if (!global.IS_ON_CLOUDFLARE) return cb();
             const country = req.headers["cf-ipcountry"]
             if (!country) {
                 return next({
                     status: 403,
-                    message: "Country header is missing!"
+                    message: "Country header is missing from Cloudflare!"
                 });
             };
 

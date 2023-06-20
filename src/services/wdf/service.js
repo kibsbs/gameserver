@@ -56,4 +56,4 @@ app.use(mids.notFound);
 // Start worker
 worker();
 
-module.exports = app;
+module.exports.app = app;

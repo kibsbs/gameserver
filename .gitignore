@@ -1,14 +1,6 @@
 node_modules/
-logs/
 playlist-data/
 
 .env
 !.env.example
 package-lock.json
-
-# SRC
-src/logs/
-src/test/
-src/services/galaxy/
-
-src/test.*
