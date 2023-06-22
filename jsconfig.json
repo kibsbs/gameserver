@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "baseUrl": "./src",
+        "paths": {
+            "*": [
+                "./lib/*"
+            ],
+            "clients/*": [
+                "./lib/clients/*"
+            ],
+            "jobs/*": [
+                "./lib/jobs/*"
+            ],
+            "models/*": [
+                "./lib/models/*"
+            ],
+            "config/*": [
+                "./config/*"
+            ]
+        }
+    },
+    "exclude": ["node_modules"]
+}
