@@ -219,7 +219,7 @@ class Session {
         try {
             return await this.db.aggregate([
                 { $match: { ...this.baseQuery, sessionId: { $ne: excludeSid } } }, 
-                {  $sample: { size: amount }  }
+                { $sample: { size: Number(amount || 10) }  }
             ])
         }
         catch(err) {

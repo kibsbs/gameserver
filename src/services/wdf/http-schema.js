@@ -16,7 +16,7 @@ const lang = Joi.string().required();
 const sid = Joi.string().required();
 const sidList = Joi.versionArray().required();
 
-module.exports.wdf = {
+module.exports["jd5"] = {
     checkToken: {
         body: {}
     },
@@ -54,7 +54,7 @@ module.exports.wdf = {
     }
 };
 
-module.exports.wdfjd6 = {
+module.exports["jd2015"] = {
     checkToken: {
         body: {}
     },
@@ -99,7 +99,7 @@ module.exports.wdfjd6 = {
     }
 };
 
-module.exports.wdf15 = {
+module.exports["legacy"] = {
     checkToken: {
         body: {}
     },

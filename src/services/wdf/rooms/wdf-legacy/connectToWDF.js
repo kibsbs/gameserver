@@ -23,7 +23,9 @@ module.exports = {
 
             const cacheData = {
                 avatar,
-                name,
+                // some players are editing their save files to have lowercase names
+                // this avoids it by saving everyone's name uppercase to the cache
+                name: name.toUpperCase(), 
                 rank: onlinescore,
                 country: pays
             };

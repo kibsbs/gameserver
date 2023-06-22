@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.3] - 2023-06-21
+
+### Updated
+
+- Request validation schemas
+- Name regex
+
+### Fixed
+
+- Issue with request validation
+- "connectToWDF" now turns everyones name uppercase, which means names of users who edit their save files to have lowercase will appear uppercase to any other player.
+- Session library's randomSession function's first parameter, count now has Number(), which threw error for the first fix mentioned above.
+
 ## [1.7.2] - 2023-06-21
 
 ### Updated

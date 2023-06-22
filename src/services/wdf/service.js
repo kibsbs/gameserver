@@ -37,12 +37,6 @@ app.use((req, res, next) => {
     return next();
 });
 
-const rooms = {
-    "wdf-jd5": "wdf",
-    "wdf-jd15": "wdf-jd15",
-    "wdf-legacy": "wdflgc"
-};
-
 app.use("/api", require("./api/service"));
 
 // Only initate WDF rooms if server isn't in test mode

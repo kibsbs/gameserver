@@ -107,7 +107,7 @@ module.exports.MAX_WDF_LEVEL = 5000;
 module.exports.LEADERBOARD_RESET_INTERVAL = 7 * 86400000 // 7 days (1 week) so that it's weekly
 module.exports.MAX_LOBBY_PLAYERS = 8;
 module.exports.MAX_LEADERBOARD_SIZE = 3;
-module.exports.NAME_REGEX = new RegExp("^[A-Z0-9]{1,9}$");
+module.exports.NAME_REGEX = /^[A-Za-z0-9]+$/;
 
 // --------------------
 
