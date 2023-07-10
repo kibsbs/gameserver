@@ -20,6 +20,14 @@ function getSubTitle(map) {
     return "";
 };
 
+/**
+ * @api {get} /songs/all Get all songs in database
+ * @apiName GetSongs
+ * @apiGroup Songs
+ * @apiVersion 1.0.0
+ * 
+ * @apiSuccess {Object[]} songs Songs
+ */
 router.get("/all", async(req, res, next) => {
     const songs = await songsDb.find({});
     return res.send({ 
@@ -27,6 +35,16 @@ router.get("/all", async(req, res, next) => {
     });
 });
 
+/**
+ * @api {get} /songs/:idOrMapName Get specific song in database
+ * @apiName GetSong
+ * @apiGroup Songs
+ * @apiVersion 1.0.0
+ * 
+ * @apiParam {String} idOrMapName Song ID or Map Name of a song
+ * 
+ * @apiSuccess {Object} song Song object
+ */
 router.get("/:idOrMapName", async(req, res, next) => {
     const idOrMapName = req.params.idOrMapName;
     const song = await songsDb.findOne({

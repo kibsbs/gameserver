@@ -6,7 +6,7 @@ class CheatDetection {
     async banUser(data) {
         try {
             const entry = new this.db(data);
-            return await entry.save()
+            return await entry.save();
         }
         catch(err) {
             throw new Error(`Couldn't register cheat ${JSON.stringify(data)}: ${err}`)

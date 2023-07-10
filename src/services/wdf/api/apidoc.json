@@ -1,0 +1,7 @@
+{
+    "name": "Gameserver WDF API",
+    "version": "1.0.0",
+    "description": "This documentation will help you understand the API for Gameserver World Dance Floor server where you can access the current status of WDF and do more.",
+    "title": "WDF API",
+    "url" : "http://gs-wdf.lgc.danceparty.lol/api"
+}
