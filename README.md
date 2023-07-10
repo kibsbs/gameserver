@@ -1,7 +1,7 @@
 # Gameserver
 ![Discord Shield](https://discordapp.com/api/guilds/1101926320465772574/widget.png?style=shield)
 
-**Gameserver** acts as a centralized server, efficiently managing a range of essential services, including JMCS, WDF, and Galaxy. This robust server serves as the backbone for coordinating and overseeing these critical components, ensuring smooth operation and seamless integration within the DanceParty ecosystem.
+**Gameserver** acts as a centralized server for Wii, efficiently managing a range of essential services, including JMCS, WDF, and Galaxy. This robust server serves as the backbone for coordinating and overseeing these critical components, ensuring smooth operation and seamless integration within the DanceParty ecosystem.
 
 ## Sub-services
 
