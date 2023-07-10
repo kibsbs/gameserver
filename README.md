@@ -1,71 +1,73 @@
-
-  
 # Gameserver
+![Discord Shield](https://discordapp.com/api/guilds/1101926320465772574/widget.png?style=shield)
 
-DanceParty Gameserver is a central server that handles services like JMCS, WDF and Galaxy.
+**Gameserver** acts as a centralized server, efficiently managing a range of essential services, including JMCS, WDF, and Galaxy. This robust server serves as the backbone for coordinating and overseeing these critical components, ensuring smooth operation and seamless integration within the DanceParty ecosystem.
 
-**GAMESERVER IS CURRENTLY UNDER BETA, EVERYTHING YOU SEE WILL CHANGE DRASTICALLY**
+## Sub-services
 
-## Services
+- **JMCS** (Jean Mich Central Server):
+JMCS takes charge of numerous essential services, including leaderboards, user profiles, online maps, and the JD Wall. It serves as the core backend system responsible for managing and facilitating these functionalities, enhancing the overall user experience.
 
-- **JMCS** (Jean Mich Central Server)
+- **WDF** (World Dance Floor):
+WDF is responsible for the management of various World Dance Floor data, encompassing playlists, status updates, and parties. It serves as the central hub for handling and organizing these crucial elements of the World Dance Floor experience.
 
-Handles such services like leaderboards, profiles, online maps, JD Wall and more.
+- **NAS** (Nintendo Authentication Server):
+NAS handles authentication tokens from the Wii console. We developed a custom NAS instead of using Wiimmfi due to the limitations of their token payload, which did not meet the requirements of our system.
 
-- **WDF** (World Dance Floor)
+- **Tracking**:
+Tracking plays a crucial role in identifying issues, bugs, and gathering information sent by the game. However, we currently lack detailed information on how the API of Tracking is intended to function, which hinders its optimal performance. As a result, the tracking functionality may not be operating at its full capacity and may require further development and refinement.
 
-All World Dance Floor data goes through WDF. Playlist, status, parties and more.
-
-- ~~**Galaxy**~~
-
-Galaxy handles, serves and stores songs database for JMCS and WDF. It is not an official service, we made it internally for Gameserver.
-**Galaxy is no longer in use and has been removed from the repo.**
+- ~~**Galaxy**~~:
+Galaxy was initially designed to handle the distribution and storage of the song database for both JMCS and WDF. However, we have made the decision to remove Galaxy from the repository as it is no longer in active use. Alternative solutions have been implemented to fulfill the role that Galaxy previously served, ensuring efficient song management and storage within JMCS and WDF.
 
 ### Requirements
 
-- Node.JS *(15 or higher)*
+- Node.JS *(version 18 or higher)*
 - PM2 *(install via NPM)*
 	### Databases
 	- MongoDB
 	- Memcached
   
-### How to install/use?
+### Installation and Usage
 
-```
+To install and use the Gameserver, follow these steps:
+
+```shell
 git clone https://github.com/DancePartyOnline/gameserver.git
 cd gameserver
 npm install
 pm2 start ecosystem.json
 ```
 
-Using the code block above in your terminal will clone the server, install all modules and start **JMCS** and **WDF** with PM2.
-  
+The above code block will clone the server repository, install all required modules, and start all services in `ecosystem.json` with PM2.
 
-### Using command line
+### Using the Command Line
 
-If you don't want to run the server with PM2 or want to run specific service, you can always use the command line.
+If you prefer not to run the server with PM2 or want to run a specific service, you can use the command line interface.
 
-```
+```shell
 gameserver.js <command>
 
 Commands:
-gameserver.js serve <service> Initalize a service
+	gameserver.js serve <service> Initialize a service
 
 Options:
 
---help Show help [boolean]
---version Show version number [boolean]
--e, --env Service enviroment [string]
--p, --port Port to bind on [number]
+	--help Show help [boolean]
+	--version Show version number [boolean]
+	-e, --env Service environment [string]
+	-p, --port Port to bind on [number]
 ```
 
 ### Examples
-`node src\gameserver.js serve jmcs --env local` will start JMCS in local enviroment.
 
-`node src\gameserver.js serve wdf --env dev --port 5000` will start WDF in dev enviroment and bind on port 5000.
+- `node src\gameserver.js serve jmcs --env local`: Start JMCS in the local environment.
+- `node src\gameserver.js serve wdf --env dev --port 5000`: Start WDF in the development environment, binding to port 5000.
 
 ## Changelog
-Take a look at our (changelog)[https://github.com/dancepartyonline/gameserver/CHANGELOG.md]
+
+For a detailed list of changes, refer to our [changelog](https://github.com/dancepartyonline/gameserver/CHANGELOG.md).
 
 ## Contribute
-Feel free to contribute to improve our services, solutions and workflow.
+
+We welcome contributions to enhance our services, solutions, and workflow. Feel free to contribute!
