@@ -1,0 +1,1 @@
+apidoc-swagger -i services/ -o .
