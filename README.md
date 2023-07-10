@@ -1,7 +1,9 @@
 # Gameserver
 ![Discord Shield](https://discordapp.com/api/guilds/1101926320465772574/widget.png?style=shield)
 
-**Gameserver** acts as a centralized server for Wii, efficiently managing a range of essential services, including JMCS, WDF, and Galaxy. This robust server serves as the backbone for coordinating and overseeing these critical components, ensuring smooth operation and seamless integration within the DanceParty ecosystem.
+**Gameserver** is a centralized server specifically designed for **Wii**, providing efficient management of a diverse range of essential services, including JMCS, WDF, and Galaxy. This powerful server acts as the core infrastructure, responsible for coordinating and overseeing these critical components, ensuring optimal performance and seamless integration within the DanceParty ecosystem.
+
+It's important to note that the Gameserver should not be confused with our repository, **KrystalUDP**, which focuses on handling UDP connections for online services of PlayStation 3, Xbox 360, and Wii U. The Gameserver and KrystalUDP serve distinct purposes and cater to different platforms within our comprehensive online infrastructure.
 
 ## Sub-services
 
