@@ -52,7 +52,6 @@ Commands:
 	gameserver.js serve <service> Initialize a service
 
 Options:
-
 	--help Show help [boolean]
 	--version Show version number [boolean]
 	-e, --env Service environment [string]
@@ -66,7 +65,7 @@ Options:
 
 ## Changelog
 
-For a detailed list of changes, refer to our [changelog](https://github.com/dancepartyonline/gameserver/CHANGELOG.md).
+For a detailed list of changes, refer to our [changelog](https://github.com/dancepartyonline/gameserver/blob/main/CHANGELOG.md).
 
 ## Contribute
 
