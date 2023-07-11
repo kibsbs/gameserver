@@ -36,6 +36,20 @@ router.get("/all", async(req, res, next) => {
 });
 
 /**
+ * @api {get} /songs/count Get amount of songs
+ * @apiName GetSongsCount
+ * @apiGroup Songs
+ * @apiVersion 1.0.0
+ * 
+ * @apiSuccess {Number} count Count
+ */
+router.get("/count", async(req, res, next) => {
+    return res.json({
+        count: await songsDb.count()
+    })
+});
+
+/**
  * @api {get} /songs/:idOrMapName Get specific song in database
  * @apiName GetSong
  * @apiGroup Songs

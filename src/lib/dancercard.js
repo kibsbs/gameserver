@@ -79,6 +79,10 @@ class DancerCard {
     async exists(filter) {
         return await this.db.exists(filter) ? true : false;
     }
+
+    async count() {
+        return await this.db.count();
+    };
 };
 
 module.exports = new DancerCard();

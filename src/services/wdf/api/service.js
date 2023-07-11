@@ -24,6 +24,7 @@ router.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 router.use(mids.apiAuth);
 
 router.use("/config", require("./services/config"));
+router.use("/dancercard", require("./services/dancercard"));
 router.use("/leaderboard", require("./services/leaderboard"));
 router.use("/moderation", require("./services/moderation"));
 router.use("/playlist", require("./services/playlist"));
