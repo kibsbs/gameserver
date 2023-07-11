@@ -1,9 +1,19 @@
+
 # Gameserver
 ![Discord Shield](https://discordapp.com/api/guilds/1101926320465772574/widget.png?style=shield)
 
 **Gameserver** is a centralized server specifically designed for **Wii**, providing efficient management of a diverse range of essential services, including JMCS, WDF, and Galaxy. This powerful server acts as the core infrastructure, responsible for coordinating and overseeing these critical components, ensuring optimal performance and seamless integration within the DanceParty ecosystem.
 
 It's important to note that the Gameserver should not be confused with our repository, **KrystalUDP**, which focuses on handling UDP connections for online services of PlayStation 3, Xbox 360, and Wii U. The Gameserver and KrystalUDP serve distinct purposes and cater to different platforms within our comprehensive online infrastructure.
+
+## Games & features availability
+| Game |  World Dance Floor | Leaderboards | Online Challengers | Streamable Maps | Monthly Mashups  |
+| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
+| 2014 | Under work | - | - | - |   Available |
+| 2015 | Available | Available | Under work | Under work | - |
+| 2016 | Available | Available | Under work | Under work | - |
+| 2017 | Available | Available | Under work | Under work | - |
+| 2018 | Available | Available | Under work | Under work | - |
 
 ## Sub-services
 
