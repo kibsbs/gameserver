@@ -9,6 +9,8 @@ module.exports.NAS_TOKEN = {
 // Keys which are allowed to access the API.
 module.exports.API_KEYS = process.env.API_KEYS.split(",") || [];
 
+module.exports.MGMT_TOKEN = process.env.MGMT_TOKEN || "";
+
 // Used in development.
 module.exports.TEST_TOKENS = [
     "test"

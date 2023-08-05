@@ -62,6 +62,8 @@ let serviceConfig;
     global.IS_TEST_MODE = args.testMode || serviceConfig.IS_TEST_MODE || false;
     global.IS_ON_CLOUDFLARE = serviceConfig.IS_ON_CLOUDFLARE || config.IS_ON_CLOUDFLARE || false;
     global.FQDN = serviceConfig.FQDN || null;
+    global.SERVER_IP = process.env.SERVER_IP || "";
+    global.IS_PUBLIC_SERVER = process.env.IS_SERVER_PUBLIC == "true" ? true : false
 
     // Set globals for service and gs
     global.config = serviceConfig;
@@ -78,14 +80,13 @@ let serviceConfig;
     if (clients.length > 0) {
         logger.info("Initalizing clients...");
 
-        const dbURI = process.env.DB_URI || config.DATABASE[service.id][global.ENV];
-        const redisURI = process.env.REDIS_URI || config.REDIS[service.id][global.ENV];
-
         if (clients.includes("db")) {
+            const dbURI = process.env.DB_URI || config.DATABASE[service.id][global.ENV];
             await dbClient(dbURI);
             global.logger.info("Initalized Database client!");
         }
         if (clients.includes("redis")) {
+            const redisURI = process.env.REDIS_URI || config.REDIS[service.id][global.ENV];
             await redisClient(redisURI);
             global.logger.info("Initalized Redis client!");
         }

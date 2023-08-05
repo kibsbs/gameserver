@@ -10,7 +10,8 @@ module.exports = {
     async init(app, router) {
 
         router.use((req, res, next) => {
-            if (utils.isDev() || req.headers.hasOwnProperty(global.gs.HEADER_DEBUG)) return next();
+            if (global.IS_PUBLIC_SERVER) return res.sendStatus(403);
+            if (utils.isDev() || req.headers.hasOwnProperty(global.gs.HEADER_DEBUG) || !global.IS_PUBLIC_SERVER) return next();
             else return res.sendStatus(403);
         });
 

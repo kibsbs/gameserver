@@ -22,4 +22,10 @@
 	"args": "serve tracking",
 	"exec_mode": "fork_mode",
 	"instances": 1
+}, {
+	"name": "Shop",
+	"script": "src/gameserver.js",
+	"args": "serve shop",
+	"exec_mode": "fork_mode",
+	"instances": 1
 }]

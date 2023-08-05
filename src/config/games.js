@@ -27,120 +27,184 @@
 const PAL = "PAL";
 const NTSC = "NTSC";
 
-const games = [{
-    name: "Just Dance 2014",
-    version: 2014,
-    ported: false,
-    mod: false,
-    isAvailable: false,
-    regions: {
-        SJOP: {
-            region: PAL,
-            isAvailable: true
-        },
-        SJOE: {
-            region: NTSC,
-            isAvailable: true
+// Disabling a game:
+// - If a game has isAvailable as "false" it will be disabled completely, you can disable whatever you want but isAvailable will always overwrite.
+// - If current service is WDF but game has "wdf" as false, it will be unavailable.
+// - If current service is Shop but game has "shop" as false, it will be unavailable.
+// - You can also disable specific regions with "isAvailable" in the region object.
+const games = [
+    {
+        name: "Just Dance 3",
+        isLyn: true,
+        version: 3,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: false,
+        regions: {
+            SD2P: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SD2E: {
+                region: "NTSC",
+                titleId: "0001000573443245",
+                isAvailable: true
+            }
         }
     },
-    stats: {},
-    maxStars: 5,
-    wdfName: "jd5",
-    isJD5: true
-}, {
-    name: "Just Dance 2015",
-    version: 2015,
-    ported: false,
-    mod: false,
-    isAvailable: true,
-    regions: {
-        SE3P: {
-            region: PAL,
-            isAvailable: true
-        },
-        SE3E: {
-            region: NTSC,
-            isAvailable: true
+    {
+        name: "Just Dance 3",
+        isLyn: true,
+        version: 3,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: false,
+        regions: {
+            SJDP: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SJDE: {
+                region: "NTSC",
+                titleId: "00010005734A4450",
+                isAvailable: true
+            }
         }
     },
-    stats: {
-        totalStars: 465,
-        songsCount: 93,
-        unlocksCount: 27
-    },
-    maxStars: 5,
-    wdfName: "jd2015",
-    isJD15: true
-}, {
-    name: "Just Dance 2016",
-    version: 2016,
-    ported: false,
-    mod: false,
-    isAvailable: true,
-    regions: {
-        SJNP: {
-            region: PAL,
-            isAvailable: true
-        },
-        SJNE: {
-            region: NTSC,
-            isAvailable: true
+    {
+        name: "Just Dance 2014",
+        isJD5: true,
+        version: 2014,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: false,
+        wdfName: "jd5",
+        stats: {},
+        maxStars: 5,
+        regions: {
+            SJOP: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SJOE: {
+                region: "NTSC",
+                titleId: "00010000534A4F45",
+                isAvailable: true
+            }
         }
     },
-    stats: {
-        totalStars: 280,
-        songsCount: 56,
-        unlocksCount: 32
-    },
-    maxStars: 5,
-    wdfName: "legacy"
-}, {
-    name: "Just Dance 2017",
-    version: 2017,
-    ported: false,
-    mod: false,
-    isAvailable: true,
-    regions: {
-        SZ7P: {
-            region: PAL,
-            isAvailable: true
+    {
+        name: "Just Dance 2015",
+        isJD15: true,
+        version: 2015,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: true,
+        wdfName: "jd2015",
+        stats: {
+            totalStars: 465,
+            songsCount: 93,
+            unlocksCount: 27
         },
-        SZ7E: {
-            region: NTSC,
-            isAvailable: true
+        maxStars: 5,
+        regions: {
+            SE3P: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SE3E: {
+                region: "NTSC",
+                titleId: "0001000573453345",
+                isAvailable: true
+            }
         }
     },
-    stats: {
-        totalStars: 275,
-        songsCount: 55,
-        unlocksCount: 24
-    },
-    maxStars: 6,
-    wdfName: "legacy"
-}, {
-    name: "Just Dance 2018",
-    version: 2018,
-    ported: false,
-    mod: false,
-    isAvailable: true,
-    regions: {
-        SE8P: {
-            region: PAL,
-            isAvailable: true
+    {
+        name: "Just Dance 2016",
+        version: 2016,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: true,
+        wdfName: "legacy",
+        stats: {
+            totalStars: 280,
+            songsCount: 56,
+            unlocksCount: 32
         },
-        SE8E: {
-            region: NTSC,
-            isAvailable: true
+        maxStars: 5,
+        regions: {
+            SJNP: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SJNE: {
+                region: "NTSC",
+                isAvailable: true
+            }
         }
     },
-    stats: {
-        totalStars: 420,
-        songsCount: 60,
-        unlocksCount: 12
+    {
+        name: "Just Dance 2017",
+        version: 2017,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: true,
+        wdfName: "legacy",
+        stats: {
+            totalStars: 275,
+            songsCount: 55,
+            unlocksCount: 24
+        },
+        maxStars: 6,
+        regions: {
+            SZ7P: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SZ7E: {
+                region: "NTSC",
+                isAvailable: true
+            }
+        }
     },
-    maxStars: 7,
-    wdfName: "legacy"
-}
+    {
+        name: "Just Dance 2018",
+        version: 2018,
+        isAvailable: true,
+        ported: false,
+        mod: false,
+        shop: true,
+        wdf: true,
+        wdfName: "legacy",
+        stats: {
+            totalStars: 420,
+            songsCount: 60,
+            unlocksCount: 12
+        },
+        maxStars: 7,
+        regions: {
+            SE8P: {
+                region: "PAL",
+                isAvailable: true
+            },
+            SE8E: {
+                region: "NTSC",
+                isAvailable: true
+            }
+        }
+    }
 ];
 
 const mods = [{
@@ -160,7 +224,9 @@ const mods = [{
     stats: {},
     maxStars: 5,
     wdfName: "jd5",
-    isJD5: true
+    isJD5: true,
+    wdf: true,
+    shop: false
 }];
 
 module.exports = [

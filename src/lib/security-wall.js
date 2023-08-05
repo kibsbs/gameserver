@@ -4,8 +4,7 @@ const ipRangeCheck = require("ip-range-check");
 /**
  * Security Wall is a middleware that protects Gameserver from any hijacking etc.
  * - Ubisoft IPs
- * - Russian / Belarussian IPs (for competitors)
- * - VPN IPs 
+ * - VPN & Proxy IPs (TODO)
  */
 
 module.exports = (req, res, next) => {
@@ -16,7 +15,8 @@ module.exports = (req, res, next) => {
     const blocklist = blockedIps.map(a => a.ips).flat(2);
     const blockedCountries = global.gs.BLOCKED_COUNTRIES;
 
-    if (ip == "127.0.0.1") return next();
+    const localIps = ["127.0.0.1", "::ffff:127.0.0.1", "0.0.0.0"]
+    if (localIps.includes(ip)) return next();
 
     async.waterfall([
 

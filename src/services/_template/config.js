@@ -1,6 +1,6 @@
-module.exports.HTTP_PORT = 12000;
-module.exports.HTTPS_PORT = 12443;
-module.exports.FQDN = `nas.lgc.danceparty.lol`; // Service's FQDN
+module.exports.HTTP_PORT = 80;
+module.exports.HTTPS_PORT = 443;
+module.exports.FQDN = `example.danceparty.lol`; // Service's FQDN
 
 module.exports.SSL = false; // Enable SSL
 // Path to certificates, ex: "/etc/letsencrypt/live/hello.com/privkey.pem"

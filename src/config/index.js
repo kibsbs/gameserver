@@ -46,6 +46,12 @@ module.exports.SERVICES = {
         name: "Tracking",
         path: "services/tracking/service.js",
         clients: []
+    },
+    shop: {
+        id: "shop",
+        name: "Shop",
+        path: "services/shop/service.js",
+        clients: ["db"]
     }
 
 };
