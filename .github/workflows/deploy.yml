@@ -16,8 +16,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - name: Branch name
-      run: echo running on branch ${GITHUB_REF##*/}
+    - name: Set environment variables
+      run: |
+          echo "GIT_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
     - name: Deploy using ssh
       uses: appleboy/ssh-action@master
       with:
@@ -28,8 +30,8 @@ jobs:
         script: |
           source ~/.profile
           nvm use --lts
-          mkdir -p /root/dp/gameserver/${GITHUB_REF##*/}
-          cd /root/dp/gameserver/${GITHUB_REF##*/}
+          mkdir -p /root/dp/gameserver/${GIT_BRANCH}
+          cd /root/dp/gameserver/${GIT_BRANCH}
           git pull
           git status
           npm install
