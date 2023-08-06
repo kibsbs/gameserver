@@ -1,1 +1,0 @@
-node src\gameserver.js serve wdf --nb --tg
