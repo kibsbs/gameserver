@@ -160,6 +160,7 @@ module.exports.sessionJd15 = async (req, res, next) => {
     const session = new Session(2015);
 
     const userSession = await session.getSession(sid);
+    console.log(sid, userSession, ip)
     if (!userSession) return next({
         status: 401,
         message: `Player does not have a session!`
@@ -188,15 +189,17 @@ module.exports.sessionJd15 = async (req, res, next) => {
 module.exports.sessionCache = async (req, res, next) => {
     const sid = req.body.sid || req.body.player_sid;
     const version = req.version || 2015;
+    const ip = req.ip;
     
     if (!sid) return next({
         status: 401,
         message: `SessionId is required for session client!`
     });
 
-    const session = new Session(version, req.ip);
+    const session = new Session(version, ip);
 
     const userCache = await session.getSessionCache(sid);
+    //console.log(sid, version, userCache, ip)
     if (!userCache) return next({
         status: 401,
         message: `Player does not have a session!`
