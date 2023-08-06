@@ -15,7 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:       
+    steps:
+    - name: Branch name
+      run: echo running on branch ${GITHUB_REF##*/}
     - name: Deploy using ssh
       uses: appleboy/ssh-action@master
       with:
@@ -24,7 +26,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          mkdir /root/dp/gameserver/$GITHUB_REF_NAME
+          mkdir -p /root/dp/gameserver/$GITHUB_REF_NAME
           cd /root/dp/gameserver/$GITHUB_REF_NAME
           git pull
           git status
