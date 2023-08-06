@@ -26,6 +26,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
+          source ~/.profile
+          nvm use --lts
           mkdir -p /root/dp/gameserver/$GITHUB_REF_NAME
           cd /root/dp/gameserver/$GITHUB_REF_NAME
           git pull
