@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  db:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongodb_data:/data/db
+    logging:
+      driver: none
+    networks:
+      - db
+
+  jmcs:
+    build:
+      context: ./
+      target: dev
+    volumes:
+      - ".:/src"
+    command: nodemon src/gameserver.js serve jmcs
+    environment:
+      DB_URI: mongodb://db:27017/gameserver-${NODE_ENV}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jmcs.rule=Host(`gs-rhode.lgc.danceparty.lol`)
+      - traefik.http.routers.jmcs.entrypoints=web
+      - traefik.http.routers.jmcs.service=jmcs
+      - traefik.http.services.jmcs.loadbalancer.server.port=${HTTP_PORT}
+    networks:
+      - db
+      - traefik
+
+volumes:
+  mongodb_data:
+
+networks:
+  db:
+  traefik:
+    external: true

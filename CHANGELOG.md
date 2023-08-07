@@ -5,12 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2023-08-05
+## [1.8.7] - 2023-08-07
 
 ### Added
-- Docker support & better CI/CD
+- Database migration, songDB is now handled by migrate-db. If you edit, create or delete songs, migrate-db will automatically detect changes and it will upsert the mongoDB database.
+- NGINX configurations for services are now updated each server restart, we created this because we have multiple environments for 5+ services and it's painful to update all of them regularly. You can enable them with ENV value, e.g. `NGINX_LIB_ENABLED=true`
+- With the new NGINX library, you can declare path to your sites-enabled/sites-available with ENV value, e.g. `NGINX_SITES_PATH=/etc/nginx/sites-enabled`
 ### Updated
-- Better commentary on libraries and services
+- DB models
+- Cache library
 
 ## [1.8.6] - 2023-08-05
 
