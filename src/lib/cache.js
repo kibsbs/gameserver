@@ -20,6 +20,7 @@ class Cache {
     async get(key) {
         this.m = global.memcached;
         const { value } = await this.m.get(key);
+        if (value == null) return value;
         try {
             return JSON.parse(value);
         }
@@ -32,6 +33,7 @@ class Cache {
     async getStr(key) {
         this.m = global.memcached;
         const { value } = await this.m.get(key);
+        if (value == null) return value;
         try {
             return Buffer.from(value).toString();
         }
@@ -44,6 +46,7 @@ class Cache {
     async getRaw(key) {
         this.m = global.memcached;
         const { value } = await this.m.get(key);
+        if (value == null) return value;
         try {
             return value;
         }

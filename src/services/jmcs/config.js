@@ -4,7 +4,6 @@
 
 module.exports.HTTP_PORT = 3000;
 module.exports.HTTPS_PORT = 3443;
-module.exports.FQDN = `gs-jmcs.lgc.danceparty.lol`; // Service's FQDN
 
 module.exports.CONSTANTS = {
 

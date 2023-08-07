@@ -5,21 +5,24 @@ module.exports = {
         local: "mongodb://127.0.0.1:27017/dp-legacy-local",
         prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
         dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
-        beta: "mongodb://127.0.0.1:27017/dp-legacy-beta",
-        test: "mongodb://127.0.0.1:27017/dp-legacy-test"
+        qc: "mongodb://127.0.0.1:27017/dp-legacy-qc"
     },
     wdf: {
         local: "mongodb://127.0.0.1:27017/dp-legacy-local",
         prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
         dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
-        beta: "mongodb://127.0.0.1:27017/dp-legacy-beta",
-        test: "mongodb://127.0.0.1:27017/dp-legacy-test"
+        qc: "mongodb://127.0.0.1:27017/dp-legacy-qc",
     },
     shop: {
         local: "mongodb://127.0.0.1:27017/dp-legacy-local",
         prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
         dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
-        beta: "mongodb://127.0.0.1:27017/dp-legacy-beta",
-        test: "mongodb://127.0.0.1:27017/dp-legacy-test"
+        qc: "mongodb://127.0.0.1:27017/dp-legacy-qc",
+    },
+    migrateDb: {
+        local: "mongodb://127.0.0.1:27017/dp-legacy-local",
+        prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
+        dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
+        qc: "mongodb://127.0.0.1:27017/dp-legacy-qc",
     }
-}
+};

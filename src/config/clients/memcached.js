@@ -1,25 +1,16 @@
 
-// Database configuration per service and per enviroment.
+// Memcached configuration per service and per enviroment.
 module.exports = {
-    jmcs: {
-        local: "mongodb://127.0.0.1:27017/dp-legacy-local",
-        prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
-        dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
-        beta: "mongodb://127.0.0.1:27017/dp-legacy-beta",
-        test: "mongodb://127.0.0.1:27017/dp-legacy-test"
-    },
     wdf: {
-        local: "mongodb://127.0.0.1:27017/dp-legacy-local",
-        prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
-        dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
-        beta: "mongodb://127.0.0.1:27017/dp-legacy-beta",
-        test: "mongodb://127.0.0.1:27017/dp-legacy-test"
+        local: "127.0.0.1:11212",
+        dev: "127.0.0.1:11212",
+        prod: "127.0.0.1:11211",
+        qc: "127.0.0.1:11213",
     },
-    shop: {
-        local: "mongodb://127.0.0.1:27017/dp-legacy-local",
-        prod: "mongodb://127.0.0.1:27017/dp-legacy-prod",
-        dev: "mongodb://127.0.0.1:27017/dp-legacy-dev",
-        beta: "mongodb://127.0.0.1:27017/dp-legacy-beta",
-        test: "mongodb://127.0.0.1:27017/dp-legacy-test"
+    migrateDb: {
+        local: "127.0.0.1:11212",
+        dev: "127.0.0.1:11212",
+        prod: "127.0.0.1:11211",
+        qc: "127.0.0.1:11213",
     }
-}
+};
