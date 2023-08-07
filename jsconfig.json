@@ -17,6 +17,12 @@
             ],
             "config/*": [
                 "./config/*"
+            ],
+            "config/clients/*": [
+                "./config/clients/*"
+            ],
+            "config/data/*": [
+                "./config/data/*"
             ]
         }
     },

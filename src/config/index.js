@@ -9,13 +9,17 @@ module.exports.DEFAULT_PORT = 5000;
 module.exports.DEFAULT_ENV = "local";
 module.exports.BLOCKED_COUNTRIES = [];
 
-module.exports.GAMES = require("./games");
-module.exports.AVATARS = require("./avatars");
-module.exports.COUNTRIES = require("./countries");
-
 module.exports.SECRETS = require("./secrets");
-module.exports.DATABASE = require("./database");
-module.exports.REDIS = require("./redis");
+module.exports.GAMES = require("./games");
+
+module.exports.AVATARS = require("./data/avatars.json");
+module.exports.COUNTRIES = require("./data/countries.json");
+module.exports.BLOCKLIST = require("./data/ip-blocklist.json");
+module.exports.PROFANITY = require("./data/profanity.json");
+
+module.exports.DATABASE = require("./clients/database");
+module.exports.REDIS = require("./clients/redis");
+module.exports.MEMCACHED = require("./clients/memcached");
 module.exports.SERVICES = {
 
     // --- Legacy services
@@ -54,7 +58,6 @@ module.exports.SERVICES = {
     }
 
 };
-module.exports.BLOCKLIST = require("./ip-blocklist.json")
 
 // --------------------
 // Server configuration
@@ -70,8 +73,6 @@ module.exports.EXPIRED_SESSION_INTERVAL_JD5 = (35 * 1000); // 1 minute
 module.exports.EXPIRED_SCORE_INTERVAL = (45 * 1000); // 45 seconds
 module.exports.WORLD_RESULT_LIMIT = 15;
 module.exports.WORLD_RESULT_LIMIT_JD5 = 25;
-
-
 
 module.exports.TOKEN_EXPIRATION = 3 * 3600; // Tokens aren't valid 3 hours after creation
 

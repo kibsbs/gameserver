@@ -31,16 +31,18 @@ module.exports = async () => {
 
     // Migrate needs memcached to keep the hash of the migration data in cache
     // so that each update it checks the hash and then updates if it changed.
+    
+    // If DB is not used by current service, connect to it for Migrate.
+    if (!global.dbClient) {
+        const dbURI = process.env.DB_URI || config.DATABASE[service.id] ? config.DATABASE[service.id][global.ENV] : null;
+        if (!dbURI) return;
+        await dbClient(dbURI);
+    };
 
     // If memcached is not used by current service, connect to it for Migrate.
     if (!global.memcached) {
         memcachedClient();
         cache.m = global.memcached; // Since cache is initalized before memcached, update it's local variable
-    };
-    // If DB is not used by current service, connect to it for Migrate.
-    if (!global.dbClient) {
-        const dbURI = process.env.DB_URI || config.DATABASE[service.id][global.ENV];
-        await dbClient(dbURI);
     };
 
     // We migrate by folders in migrate-db folder, if you want to add additional migration data, you can update the array below.

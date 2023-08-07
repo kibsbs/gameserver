@@ -8,12 +8,12 @@ module.exports = (service) => {
     const logFolder = path.resolve(__dirname, "../logs", (service));
 
     const levels = {
-        debug: 0,
-        http: 1,
-        success: 2,
-        info: 3,
-        warn: 4,
-        error: 5
+        debug: 5,
+        http: 4,
+        success: 3,
+        info: 2,
+        warn: 1,
+        error: 0,
     };
     const COLORS = {
         error: "red",
