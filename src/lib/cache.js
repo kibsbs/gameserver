@@ -26,6 +26,28 @@ class Cache {
             throw new Error(err);
         }
     }
+
+    async getStr(key) {
+        const { value } = await this.m.get(key);
+        try {
+            return Buffer.from(value).toString();
+        }
+        catch(err) {
+            if (!err) return null;
+            throw new Error(err);
+        }
+    };
+
+    async getRaw(key) {
+        const { value } = await this.m.get(key);
+        try {
+            return value;
+        }
+        catch(err) {
+            if (!err) return null;
+            throw new Error(err);
+        }
+    };
 }
 
 module.exports = new Cache();

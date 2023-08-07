@@ -1,3 +1,0 @@
-{
-  "exec": "node src/gameserver.js serve shop"
-}

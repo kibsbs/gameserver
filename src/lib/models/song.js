@@ -8,6 +8,10 @@ const Schema = new mongoose.Schema(
         type: String,
         required: true
     },
+    mapNameJP: {
+        type: String,
+        default: null,
+    },
     songId: {
         type: String,
         required: true

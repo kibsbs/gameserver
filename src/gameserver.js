@@ -22,6 +22,7 @@ const redisClient = require("./lib/clients/redis-client");
 const memcachedClient = require("./lib/clients/memcached-client");
 
 const utils = require("./lib/utils");
+const nginx = require("./lib/nginx");
 
 global.logger = logger;
 
@@ -56,14 +57,19 @@ let serviceConfig;
     serviceConfig = require("./lib/load-config").service(service);
 
     // Set ENV and PORT
-    global.ENV = args.env || process.env.ENV || serviceConfig.ENV || "local";
+    global.ENV = args.env || process.env.NODE_ENV || serviceConfig.NODE_ENV || "local";
     global.HTTP_PORT = args.httpPort || process.env.HTTP_PORT || serviceConfig.HTTP_PORT || 5000;
     global.HTTPS_PORT = args.httpsPort || process.env.HTTPS_PORT || serviceConfig.HTTPS_PORT || global.HTTPS_PORT + 443 || 5443;
-    global.IS_TEST_MODE = args.testMode || serviceConfig.IS_TEST_MODE || false;
-    global.IS_ON_CLOUDFLARE = serviceConfig.IS_ON_CLOUDFLARE || config.IS_ON_CLOUDFLARE || false;
-    global.FQDN = serviceConfig.FQDN || null;
-    global.SERVER_IP = process.env.SERVER_IP || "";
-    global.IS_PUBLIC_SERVER = process.env.IS_SERVER_PUBLIC == "true" ? true : false
+    
+    global.FQDN = process.env.FQDN || serviceConfig.FQDN; // Environmental OR service config wise
+    global.SERVER_IP = process.env.SERVER_IP || ""; // Enviromental wise
+
+     // Argumental OR enviromental OR service config wise
+    global.IS_TEST_MODE = args.testMode || (process.env.IS_TEST_MODE == "true" ? true : false) || serviceConfig.IS_TEST_MODE || false;
+    
+    global.IS_PUBLIC_SERVER = process.env.IS_SERVER_PUBLIC == "true" ? true : false; // Enviromental wise
+    // Service OR enviromental wise (Some services might not need cloudflare)
+    global.IS_ON_CLOUDFLARE = serviceConfig.IS_ON_CLOUDFLARE || (process.env.IS_ON_CLOUDFLARE == "true" ? true : false);
 
     // Set globals for service and gs
     global.config = serviceConfig;
@@ -96,28 +102,21 @@ let serviceConfig;
         }
 
         logger.success("Initalized all clients!");
-    }
+    };
 
-    // DB migration here TODO
+    
+    await migrateDb(); // DB Migration
+    nginx(); // Write NGINX conf
 
     // Initate provided service
     logger.info(`Starting service ${service.name}...`);
     
-    const { app, credentials = null } = require(service.path);
+    const { app } = require(service.path);
 
     // Start HTTP server first
     const httpServer = http.createServer(app);
     httpServer.listen(global.HTTP_PORT, () => {
         logger.success(`Service ${service.name} is listening on port HTTP ${global.HTTP_PORT} in '${global.ENV}' enviroment successfully.`);
     });
-
-    // If credentials are given by service & SSL is enabled by Service config, start a HTTPS server
-    if (credentials && serviceConfig.SSL == true) {
-        const httpsServer = https.createServer({}, app);
-
-        httpsServer.listen(global.HTTPS_PORT, () => {
-            logger.success(`Service ${service.name} is listening on port HTTPS ${global.HTTPS_PORT} in '${global.ENV}' enviroment successfully.`);
-        });
-    };
 
 })();
