@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
+const dbClient = require("../lib/clients/db-client");
 const memcachedClient = require("../lib/clients/memcached-client");
 const cache = require("../lib/cache");
 
@@ -36,7 +37,7 @@ module.exports = async () => {
     if (!global.dbClient) {
         let dbURI;
         if (process.env.DB_URI) dbURI = process.env.DB_URI;
-        else dbURI = global.gs.DATABASES.migrateDb[global.ENV];
+        else dbURI = global.gs.DATABASE.migrateDb[global.ENV];
         
         await dbClient(dbURI);
     };
