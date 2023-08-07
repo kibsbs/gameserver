@@ -4,8 +4,7 @@ name: Deploy
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: 
-      - "*"
+    branches: ["main"]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -36,3 +35,5 @@ jobs:
           git pull
           git status
           npm install
+          pm2 restart ecosystem.config.js --env prod
+          pm2 restart ecosystem.config.js --env qc
