@@ -30,8 +30,8 @@ jobs:
         script: |
           source ~/.profile
           nvm use --lts
-          mkdir -p /root/dp/gameserver/${{ steps.extract_branch.outputs.branch }}
-          cd /root/dp/gameserver/${{ steps.extract_branch.outputs.branch }}
+          mkdir -p /root/dp/gameserver/main
+          cd /root/dp/gameserver/main
           git pull
           git status
           npm install

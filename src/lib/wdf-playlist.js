@@ -4,6 +4,7 @@ const games = require("games");
 const songs = require("songs");
 const time = require("time");
 const scheduler = require("scheduler");
+const fs = require("fs");
 
 const Vote = require("wdf-vote");
 
@@ -185,7 +186,8 @@ class Playlist {
         });
         
         if (utils.isDev()) {
-            require("fs").writeFileSync("./playlist-data/" + now + ".json", JSON.stringify({
+            fs.mkdirSync("./playlist-data");
+            fs.writeFileSync("./playlist-data/" + now + ".json", JSON.stringify({
                 prev: cur,
                 cur: next,
                 next: newScreen
