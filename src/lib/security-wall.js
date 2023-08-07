@@ -9,7 +9,7 @@ const ipRangeCheck = require("ip-range-check");
 
 module.exports = (req, res, next) => {
 
-    const blockedIps = require("../config/ip-blocklist.json");
+    const blockedIps = global.gs.BLOCKLIST;
     
     const ip = req.ip;
     const blocklist = blockedIps.map(a => a.ips).flat(2);
