@@ -72,6 +72,9 @@ let serviceConfig;
     global.IS_ON_CLOUDFLARE = serviceConfig.IS_ON_CLOUDFLARE || (process.env.IS_ON_CLOUDFLARE == "true" ? true : false);
 
     // Set globals for service and gs
+    /**
+     * Config of the service
+     */
     global.config = serviceConfig;
     global.config.service = global.service;
     global.service = service;

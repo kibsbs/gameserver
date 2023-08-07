@@ -1,6 +1,5 @@
 module.exports.HTTP_PORT = 42000;
 module.exports.HTTPS_PORT = 42443;
-module.exports.FQDN = `shop.lgc.danceparty.lol`; // Service's FQDN
 
 module.exports.CCS_URL = `http://${this.FQDN}/ccs/download`;
 module.exports.CCS_URL = `http://${this.FQDN}/ccs-cdn/download`;

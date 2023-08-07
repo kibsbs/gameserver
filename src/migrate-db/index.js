@@ -31,11 +31,15 @@ module.exports = async () => {
 
     // Migrate needs memcached to keep the hash of the migration data in cache
     // so that each update it checks the hash and then updates if it changed.
-    
+
     // If DB is not used by current service, connect to it for Migrate.
     if (!global.dbClient) {
-        const dbURI = process.env.DB_URI || config.DATABASE[service.id] ? config.DATABASE[service.id][global.ENV] : null;
-        if (!dbURI) return;
+        // Find dBURI in ENV, if not, database config, and if none of the 2 exists, just exit migrate-db with "return" on last else
+        let dbURI;
+        if (process.env.DB_URI) dbURI = process.env.DB_URI;
+        else if (global.gs.DATABASE && global.gs.DATABASE[global.service.id] && global.gs.DATABASE[global.service.id][global.ENV]) dbURI = global.gs.DATABASE[global.service.id][global.ENV];
+        else return;
+
         await dbClient(dbURI);
     };
 
@@ -56,7 +60,7 @@ module.exports = async () => {
 
         const key = `migrate-db:${folder}`; // e.g. migrate-db:songdb
         const cacheHash = await cache.getStr(key);
-        
+
         // If cache hash does not match the folder's current hash, it means something must've changed
         // so update the hash and migrate the data if anything has changed.
         if (cacheHash !== currentHash) {
@@ -94,7 +98,7 @@ module.exports = async () => {
                             query, songDesc, { upsert: true }
                         );
                     }
-                    catch(err) {
+                    catch (err) {
                         global.logger.error(`An error occured with migrate-db songdb: ${err}`);
                         process.exit(1);
                     };
