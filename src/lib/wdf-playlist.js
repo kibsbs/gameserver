@@ -186,8 +186,9 @@ class Playlist {
         });
         
         if (utils.isDev()) {
-            fs.mkdirSync("./playlist-data");
-            fs.writeFileSync("./playlist-data/" + now + ".json", JSON.stringify({
+            const dataFolder = "./playlist-data";
+            if (!fs.existsSync(dataFolder)) fs.mkdirSync(dataFolder);
+            fs.writeFileSync(`${dataFolder}/${now}.json`, JSON.stringify({
                 prev: cur,
                 cur: next,
                 next: newScreen

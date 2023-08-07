@@ -1,11 +1,7 @@
 const BadWords = require('bad-words');
 
 class Utils {
-    constructor() {
-        this.profanity = new BadWords({
-            list: require("../config/profanity.json")
-        });
-    }
+    constructor() {}
 
     random(arr = []) {
         return arr[Math.floor((Math.random() * arr.length))];
@@ -54,16 +50,15 @@ class Utils {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    isProfane(string) {
-        return this.profanity.isProfane(string)
-    }
-
-    profane = (value, helpers) => {
-        if (this.profanity.isProfane(value)) {
+    profane(value, helpers) {
+        const profanity = new BadWords({
+            list: global.gs.PROFANITY
+        });
+        if (profanity.isProfane(value)) {
             throw new Error(`"${value}" is not an allowed word!`);
         }
         return value;
-    }
+    };
 }
 
 module.exports = new Utils();

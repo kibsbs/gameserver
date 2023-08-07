@@ -8,12 +8,12 @@ module.exports = (service) => {
     const logFolder = path.resolve(__dirname, "../logs", (service));
 
     const levels = {
-        debug: 0,
-        http: 1,
-        success: 2,
-        info: 3,
-        warn: 4,
-        error: 5
+        debug: 5,
+        http: 4,
+        success: 3,
+        info: 2,
+        warn: 1,
+        error: 0,
     };
     const COLORS = {
         error: "red",
@@ -28,7 +28,7 @@ module.exports = (service) => {
     fs.mkdirSync(logFolder, { recursive: true }); // Create log folder if it doesn't exist
     winston.addColors(COLORS); // Add colors
 
-    const level = global.gs?.LOG_LEVEL || global.config?.LOG_LEVEL || process.env.LOG_LEVEL || (utils.isDev() ? "debug" : "success") || "debug";
+    const level = global.gs?.LOG_LEVEL || global.config?.LOG_LEVEL || process.env.LOG_LEVEL || (utils.isDev() ? "debug" : "warn") || "debug";
 
     const format = winston.format.combine(
         winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), // Date format
