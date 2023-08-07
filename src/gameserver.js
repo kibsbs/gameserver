@@ -93,16 +93,17 @@ let serviceConfig;
             const dbURI = process.env.DB_URI || config.DATABASE[service.id][global.ENV];
             await dbClient(dbURI);
             global.logger.info("Initalized Database client!");
-        }
+        };
         if (clients.includes("redis")) {
             const redisURI = process.env.REDIS_URI || config.REDIS[service.id][global.ENV];
             await redisClient(redisURI);
             global.logger.info("Initalized Redis client!");
-        }
+        };
         if (clients.includes("memcached")) {
-            memcachedClient();
+            const memURI = process.env.MEMCACHED_URI || config.MEMCACHED[service.id][global.ENV];
+            memcachedClient(memURI);
             global.logger.info("Initalized Memcached client!");
-        }
+        };
 
         logger.success("Initalized all clients!");
     };

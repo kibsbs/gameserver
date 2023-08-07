@@ -34,18 +34,20 @@ module.exports = async () => {
 
     // If DB is not used by current service, connect to it for Migrate.
     if (!global.dbClient) {
-        // Find dBURI in ENV, if not, database config, and if none of the 2 exists, just exit migrate-db with "return" on last else
         let dbURI;
         if (process.env.DB_URI) dbURI = process.env.DB_URI;
-        else if (global.gs.DATABASE && global.gs.DATABASE[global.service.id] && global.gs.DATABASE[global.service.id][global.ENV]) dbURI = global.gs.DATABASE[global.service.id][global.ENV];
-        else return;
-
+        else dbURI = global.gs.DATABASES.migrateDb[global.ENV];
+        
         await dbClient(dbURI);
     };
 
     // If memcached is not used by current service, connect to it for Migrate.
     if (!global.memcached) {
-        memcachedClient();
+        let memURI;
+        if (process.env.MEMCACHED_URI) memURI = process.env.MEMCACHED_URI;
+        else memURI = global.gs.MEMCACHED.migrateDb[global.ENV];
+
+        memcachedClient(memURI);
         cache.m = global.memcached; // Since cache is initalized before memcached, update it's local variable
     };
 

@@ -1,8 +1,8 @@
 const { Client } = require("memjs");
 
-module.exports = (cb) => {
+module.exports = (memURI) => {
     try {
-        const client = Client.create("127.0.0.1:11211");
+        const client = Client.create(memURI);
         global.memcached = client;
         return;
     }

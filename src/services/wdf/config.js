@@ -4,7 +4,6 @@
 
 module.exports.HTTP_PORT = 9000;
 module.exports.HTTPS_PORT = 9443;
-module.exports.FQDN = `gs-wdf.lgc.danceparty.lol`; // Service's FQDN
 
 module.exports.COMMUNITIES = require("./config/communities");
 module.exports.DURATIONS = require("./config/durations");
