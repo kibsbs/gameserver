@@ -84,11 +84,11 @@ module.exports.TOKEN_KEY = "token";
 module.exports.VALID_USER_AGENT = "WiiDance";
 
 // Bots
-module.exports.ENABLE_BOTS = false;
+module.exports.ENABLE_BOTS = true;
 module.exports.MIN_BOT_NAME = 4;
 module.exports.MAX_BOT_NAME = 8;
-module.exports.MIN_BOT_AMOUNT = 5;
-module.exports.MAX_BOT_AMOUNT = 10;
+module.exports.MIN_BOT_AMOUNT = 2;
+module.exports.MAX_BOT_AMOUNT = 2;
 
 module.exports.PLAYLIST_HISTORY_SIZE = 12;
 

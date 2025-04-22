@@ -117,7 +117,7 @@ const locs = {
         da: "Robotter"
     },
     Aliens: {
-        en: "Aliens",
+        en: "Kudamae",
         fr: "Extraterrestres",
         de: "Aliens",
         it: "Alieni",
@@ -129,12 +129,12 @@ const locs = {
         sv: "Utomjordingar",
         da: "Rumvæsner"
     },
-    Dad: { en: "Dad", fr: "Papa" },
-    Mom: { en: "Mom", fr: "Maman" },
-    Brother: { en: "Brother", fr: "Frère" },
-    Sister: { en: "Sister", fr: "Soeur" },
+    Dad: { en: "Cigarro", fr: "Papa" },
+    Mom: { en: "Mamae", fr: "Maman" },
+    Brother: { en: "Python", fr: "Frère" },
+    Sister: { en: "Lua", fr: "Soeur" },
     Dog: {
-        en: "Dog",
+        en: "Estados Unidos",
         fr: "Chien",
         de: "Hund",
         it: "Cane",
@@ -147,7 +147,7 @@ const locs = {
         da: "Hund"
     },
     Cat: {
-        en: "Cat",
+        en: "Brasil",
         fr: "Chat",
         de: "Katze",
         it: "Gatto",
@@ -430,28 +430,28 @@ const locs = {
         en: "Nicki Minaj"
     },
     Rama: {
-        en: "Rama"
+        en: "Puta"
     },
     Devd: {
-        en: "devd"
+        en: "Cagao"
     },
     Love: {
-        en: "Love"
+        en: "Minecraft"
     },
     Hate: {
-        en: "Hate"
+        en: "Roblox"
     },
     IVE: {
-        en: "IVE"
+        en: "Lady Gaga"
     },
     LSR: {
-        en: "LESSERAFIM"
+        en: "Katy Perry"
     },
     Kebab: {
-        en: "Kebab"
+        en: "Christine"
     },
     Delight: {
-        en: "Turkish Delight"
+        en: "Meryl"
     },
     Eighties: {
         en: "1980s"
@@ -489,7 +489,7 @@ const list = [
     //[locs.RiiConnect24, locs.WiiLink],
     //[locs.Top, locs.Bottom],
     //[locs.JDU, locs.JDP],
-    // [locs.Rama, locs.Devd]
+    [locs.Rama, locs.Devd]
 ];
 
 module.exports = {
